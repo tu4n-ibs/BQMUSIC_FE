@@ -60,7 +60,19 @@ const userService = {
         return response.data;
     },
 
+    /**
+     * Reset password after OTP verification
+     * @param {Object} resetData { email, newPassword, confirmPassword }
+     * @returns {Promise<Object>} Response data
+     */
+    resetPasswordForgot: async (resetData) => {
+        // API endpoint: /user/new-password-fp
+        const response = await axiosClient.post("/user/new-password-fp", resetData);
+        return response.data;
+    },
+
     // Placeholder for other user services
+
 };
 
 export default userService;

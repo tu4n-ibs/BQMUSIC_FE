@@ -90,5 +90,47 @@ describe('ForgotPassword Component', () => {
             // Success message "OTP Verified!"
             expect(screen.getByText(/OTP Verified!/i)).toBeInTheDocument();
         });
+
+        await screen.findByPlaceholderText(/^New Password$/i);
     });
+
+    test('Step 3: Resets password successfully', async () => {
+        // Setup Step 3
+        userService.sendOtpForgot.mockResolvedValue({ success: true });
+        userService.verifyOtpForgot.mockResolvedValue({ success: true });
+        userService.resetPasswordForgot.mockResolvedValue({ success: true });
+
+        renderWithRouter(<ForgotPassword />);
+
+        // Step 1
+        userEvent.type(screen.getByPlaceholderText(/^Email$/i), 'test@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /Send Login Link/i }));
+
+        // Step 2
+        await screen.findByPlaceholderText(/Enter OTP Code/i);
+        userEvent.type(screen.getByPlaceholderText(/Enter OTP Code/i), '123456');
+        fireEvent.click(screen.getByRole('button', { name: /Verify OTP/i }));
+
+        // Step 3
+        const newPasswordInput = await screen.findByPlaceholderText(/^New Password$/i);
+        const confirmPasswordInput = screen.getByPlaceholderText(/^Confirm New Password$/i);
+        const resetButton = screen.getByRole('button', { name: /Reset Password/i });
+
+        userEvent.type(newPasswordInput, 'NewPass123!');
+        userEvent.type(confirmPasswordInput, 'NewPass123!');
+        fireEvent.click(resetButton);
+
+        await waitFor(() => {
+            expect(userService.resetPasswordForgot).toHaveBeenCalledWith({
+                email: 'test@example.com',
+                newPassword: 'NewPass123!',
+                confirmPassword: 'NewPass123!'
+            });
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText(/Password reset successfully!/i)).toBeInTheDocument();
+        });
+    });
+
 });

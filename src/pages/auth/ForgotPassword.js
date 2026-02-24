@@ -11,7 +11,11 @@ function ForgotPassword() {
     const [isSent, setIsSent] = useState(false); // True if email send success
     const [isVerified, setIsVerified] = useState(false); // True if OTP verified
     const [errorMessage, setErrorMessage] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const navigate = useNavigate();
+
 
     const handleSendOtp = async (e) => {
         e.preventDefault();
@@ -44,9 +48,44 @@ function ForgotPassword() {
 
             if (response && response.success) {
                 setIsVerified(true);
-                // Optional: Redirect to reset password page or show success
+                setSuccessMessage("OTP Verified! Please enter your new password.");
+                setTimeout(() => setSuccessMessage(""), 3000);
             } else {
                 setErrorMessage(response.message || "Invalid OTP. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setErrorMessage(getErrorMessage(err));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+
+        if (newPassword !== confirmPassword) {
+            setErrorMessage("Passwords do not match!");
+            return;
+        }
+
+        setIsLoading(true);
+        setErrorMessage("");
+
+        try {
+            const response = await userService.resetPasswordForgot({
+                email,
+                newPassword,
+                confirmPassword
+            });
+
+            if (response && response.success) {
+                setSuccessMessage("Password reset successfully! Redirecting to login...");
+                setTimeout(() => {
+                    navigate("/login");
+                }, 2000);
+            } else {
+                setErrorMessage(response.message || "Failed to reset password.");
             }
         } catch (err) {
             console.error(err);
@@ -71,15 +110,21 @@ function ForgotPassword() {
                         </svg>
                     </div>
 
-                    <h4 style={{ fontWeight: '600', fontSize: '18px', marginBottom: '10px', color: '#262626' }}>Trouble Logging In?</h4>
+                    <h4 className="forgot-title">Trouble Logging In?</h4>
 
-                    <p style={{ color: '#8e8e8e', fontSize: '14px', lineHeight: '18px', marginBottom: '25px' }}>
+                    <p className="forgot-subtitle">
                         {isSent ? "Enter the code we sent to your email." : "Enter your email and we'll send you a link to get back into your account."}
                     </p>
 
                     {errorMessage && (
                         <div className="alert-message alert-error">
                             {errorMessage}
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="alert-message alert-success">
+                            {successMessage}
                         </div>
                     )}
 
@@ -134,37 +179,57 @@ function ForgotPassword() {
                             <button
                                 type="button"
                                 onClick={() => setIsSent(false)}
-                                style={{
-                                    border: 'none',
-                                    background: 'none',
-                                    color: '#0095f6',
-                                    fontWeight: '600',
-                                    fontSize: '12px',
-                                    cursor: 'pointer',
-                                    marginTop: '10px'
-                                }}
+                                className="change-email-button"
                             >
                                 Change Email
                             </button>
                         </form>
                     ) : (
-                        <div className="alert-message alert-success">
-                            <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>OTP Verified!</div>
-                            <div>You can now reset your password. (Next step implementation)</div>
-                        </div>
+                        <form onSubmit={handleResetPassword} className="login-form">
+                            <div className="form-group">
+                                <input
+                                    type="password"
+                                    className="form-input"
+                                    placeholder="New Password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <input
+                                    type="password"
+                                    className="form-input"
+                                    placeholder="Confirm New Password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="login-button"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Resetting...' : 'Reset Password'}
+                            </button>
+                        </form>
                     )}
 
-                    <div className="divider-container" style={{ margin: '20px 0' }}>
-                        <div className="divider-line" style={{ backgroundColor: '#dbdbdb' }}></div>
-                        <span className="divider-text" style={{ padding: '0 10px', backgroundColor: '#fff', color: '#8e8e8e', fontSize: '13px', fontWeight: '600', position: 'relative', top: '-10px' }}>OR</span>
+                    <div className="divider-container">
+                        <div className="divider-line"></div>
+                        <span className="divider-text">OR</span>
+                        <div className="divider-line"></div>
                     </div>
 
-                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <button onClick={() => navigate("/register")} style={{ border: 'none', background: 'none', color: '#262626', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}>Create New Account</button>
+                    <div className="auth-footer-link">
+                        <button onClick={() => navigate("/register")}>Create New Account</button>
                     </div>
 
-                    <div style={{ borderTop: '1px solid #dbdbdb', margin: '0 -45px', paddingTop: '15px', backgroundColor: '#fafafa', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
-                        <button onClick={() => navigate("/login")} style={{ border: 'none', background: 'none', color: '#262626', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}>Back to Login</button>
+                    <div className="auth-card-footer">
+                        <button onClick={() => navigate("/login")}>Back to Login</button>
                     </div>
 
                 </div>

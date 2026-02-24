@@ -135,6 +135,12 @@ function AdminMenu() {
             <div className="header-actions">
               <button
                 className="btn-history"
+                onClick={() => navigate("/admin/genres")}
+              >
+                <i className="bi bi-music-note-list"></i> Genre Management
+              </button>
+              <button
+                className="btn-history"
                 onClick={() => navigate("/history")}
               >
                 <i className="bi bi-clock-history"></i> Log History

@@ -250,23 +250,22 @@ function Register() {
                                 <div className="form-group">
                                     <input
                                         type="text"
-                                        className="form-input"
                                         placeholder="Enter OTP"
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value)}
                                         required
-                                        style={{ textAlign: 'center', letterSpacing: '4px', fontWeight: 'bold' }}
+                                        className="form-input otp-input"
                                     />
                                 </div>
 
-                                <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '14px', color: '#8e8e8e' }}>
+                                <div className="text-center my-2 text-sm text-[var(--text-secondary)]">
                                     {timeLeft > 0 ? (
                                         <span>Resend OTP in {timeLeft}s</span>
                                     ) : (
                                         <button
                                             type="button"
                                             onClick={handleResendOtp}
-                                            style={{ border: 'none', background: 'none', color: '#0095f6', fontWeight: 'bold', cursor: 'pointer' }}
+                                            className="resend-button"
                                         >
                                             Resend OTP
                                         </button>
@@ -280,7 +279,7 @@ function Register() {
                                 <button
                                     type="button"
                                     onClick={() => { setStep(1); setOtp(""); setErrorMessage(""); }}
-                                    style={{ border: 'none', background: 'none', color: '#8e8e8e', marginTop: '10px', cursor: 'pointer', fontSize: '13px' }}
+                                    className="change-email-button"
                                 >
                                     Change Email
                                 </button>
@@ -334,8 +333,8 @@ function Register() {
                             </form>
                         )}
 
-                        <div className="signup-box" style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px' }}>
-                            Have an account? <button onClick={() => navigate("/login")} style={{ border: 'none', background: 'none', color: '#0095f6', fontWeight: 'bold', cursor: 'pointer' }}>Log in</button>
+                        <div className="signup-box">
+                            Have an account? <button onClick={() => navigate("/login")}>Log in</button>
                         </div>
                     </div>
                 </div>

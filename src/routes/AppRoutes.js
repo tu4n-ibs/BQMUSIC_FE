@@ -7,6 +7,7 @@ import History from "../pages/admin/History";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import CreateUser from "../pages/admin/CreateUser";
+import GenreManagement from "../pages/admin/GenreManagement";
 import NewFeed from "../pages/user/Feed";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
@@ -30,10 +31,9 @@ function AppRoutes() {
             </Route>
             <Route path="/list" element={<List />} />
             <Route path="/admin" element={<AdminMenu />} />
-            <Route path="/admin" element={<AdminMenu />} />
+            <Route path="/admin/genres" element={<GenreManagement />} />
             <Route path="/user/:userId" element={<UserMenu />} />
             <Route path="/user" element={<UserMenu />} />
-            <Route path="/history" element={<History />} />
             <Route path="/history" element={<History />} />
             <Route path="/newF" element={<NewFeed />} />
         </Routes>
