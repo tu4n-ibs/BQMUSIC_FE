@@ -10,6 +10,10 @@ import CreateUser from "../pages/admin/CreateUser";
 import GenreManagement from "../pages/admin/GenreManagement";
 import AlbumManagement from "../pages/admin/AlbumManagement";
 import NewFeed from "../pages/user/Feed";
+import Search from "../pages/user/Search";
+import Explore from "../pages/user/Explore";
+import Messages from "../pages/user/Messages";
+import Notifications from "../pages/user/Notifications";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
 
@@ -38,6 +42,10 @@ function AppRoutes() {
             <Route path="/user" element={<UserMenu />} />
             <Route path="/history" element={<History />} />
             <Route path="/newF" element={<NewFeed />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/notifications" element={<Notifications />} />
         </Routes>
     );
 }
