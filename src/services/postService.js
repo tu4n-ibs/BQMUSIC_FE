@@ -32,10 +32,12 @@ const postService = {
 
     /**
      * Get all posts (Feed)
+     * @param {number} page
+     * @param {number} size
      * @returns {Promise}
      */
-    getAllPosts: async () => {
-        return axiosClient.get('/posts');
+    getAllPosts: async (page = 0, size = 20) => {
+        return axiosClient.get(`/posts/test-find-all-post?page=${page}&size=${size}`);
     }
 };
 

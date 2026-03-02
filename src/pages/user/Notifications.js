@@ -7,6 +7,7 @@ import userService from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import './css/Notifications.css';
+import { getUserAvatar } from '../../utils/userUtils';
 
 const MOCK_NOTIFICATIONS = {
     new: [
@@ -61,8 +62,6 @@ const MOCK_NOTIFICATIONS = {
     ]
 };
 
-const IMAGE_BASE_URL = 'http://localhost:8080';
-
 const Notifications = () => {
     const { user } = useAuth();
     const { suggestions, handleFollow: handleFollowSuggestion } = useSuggestions();
@@ -70,7 +69,7 @@ const Notifications = () => {
     const currentUser = {
         name: user?.name || "Người dùng",
         username: user?.email || "",
-        avatar: user?.imageUrl ? `${IMAGE_BASE_URL}${user.imageUrl}` : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"
+        avatar: getUserAvatar(user?.imageUrl)
     };
 
     const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
@@ -78,73 +77,71 @@ const Notifications = () => {
 
     const handleToggleFollowNotification = async (section, notificationId, userId) => {
         const sectionItems = notifications[section];
-        const itemIndex = sectionItems.findIndex(n => n.id === notificationId);
-        if (itemIndex === -1) return;
-
-        const isCurrentlyFollowed = sectionItems[itemIndex].isFollowed;
-
-        // Optimistic UI update
-        setNotifications(prev => {
-            const updatedSection = prev[section].map(n =>
-                n.id === notificationId ? { ...n, isFollowed: !isCurrentlyFollowed } : n
-            );
-            return { ...prev, [section]: updatedSection };
-        });
+        const item = sectionItems.find(n => n.id === notificationId);
 
         try {
-            if (isCurrentlyFollowed) {
+            if (item.isFollowed) {
                 await userService.unfollowUser(userId);
             } else {
                 await userService.followUser(userId);
             }
+
+            setNotifications(prev => ({
+                ...prev,
+                [section]: prev[section].map(n =>
+                    n.id === notificationId ? { ...n, isFollowed: !n.isFollowed } : n
+                )
+            }));
         } catch (error) {
-            console.error("Lỗi khi thay đổi trạng thái follow từ thông báo:", error);
-            // Revert on error
-            setNotifications(prev => {
-                const updatedSection = prev[section].map(n =>
-                    n.id === notificationId ? { ...n, isFollowed: isCurrentlyFollowed } : n
-                );
-                return { ...prev, [section]: updatedSection };
-            });
+            console.error("Lỗi khi thay đổi trạng thái theo dõi:", error);
         }
     };
 
-    // handleFollowSuggestion is now provided by useSuggestions
-
-    const renderIcon = (type) => {
+    const renderNotificationIcon = (type) => {
         switch (type) {
-            case 'like': return <Heart className="w-4 h-4 text-pink-500 fill-pink-500" />;
             case 'follow': return <UserPlus className="w-4 h-4 text-indigo-500" />;
-            case 'comment': return <MessageSquare className="w-4 h-4 text-indigo-400" />;
+            case 'like': return <Heart className="w-4 h-4 text-pink-500 fill-pink-500" />;
+            case 'comment': return <MessageSquare className="w-4 h-4 text-blue-500" />;
             case 'mention': return <AtSign className="w-4 h-4 text-purple-500" />;
-            default: return <Music className="w-4 h-4 text-slate-400" />;
+            default: return <Music className="w-4 h-4 text-slate-500" />;
         }
     };
 
-    const NotificationItem = ({ item, section }) => (
-        <div className="notification-item animate-slide-in">
-            <img src={item.avatar} alt={item.user} className="notification-avatar" />
-            <div className="notification-content">
-                <span className="notification-user">{item.user}</span>{' '}
-                <span className="notification-text">{item.text}</span>
-                <span className="notification-time">{item.time}</span>
-            </div>
-
-            {item.type === 'follow' ? (
-                <div className="notification-actions">
-                    <button
-                        className={item.isFollowed ? 'following-btn' : 'follow-btn'}
-                        onClick={() => handleToggleFollowNotification(section, item.id, item.userId || item.user)}
-                    >
-                        {item.isFollowed ? 'Following' : 'Follow Base'}
-                    </button>
+    const renderSection = (title, items, key) => (
+        items.length > 0 && (
+            <div className="notification-section">
+                <h3 className="section-title">{title}</h3>
+                <div className="notification-list">
+                    {items.map(notif => (
+                        <div key={notif.id} className="notification-item">
+                            <div className="user-avatar-wrapper">
+                                <img src={notif.avatar} alt={notif.user} className="user-avatar" />
+                                <div className="type-icon-badge">
+                                    {renderNotificationIcon(notif.type)}
+                                </div>
+                            </div>
+                            <div className="notification-info">
+                                <span className="user-name">{notif.user}</span>
+                                <span className="notification-text line-clamp-2">{notif.text}</span>
+                                <span className="notification-time">{notif.time}</span>
+                            </div>
+                            <div className="notification-action">
+                                {notif.type === 'follow' ? (
+                                    <button
+                                        onClick={() => handleToggleFollowNotification(key, notif.id, notif.user)}
+                                        className={`btn-follow-action ${notif.isFollowed ? 'following' : ''}`}
+                                    >
+                                        {notif.isFollowed ? 'Following' : 'Follow'}
+                                    </button>
+                                ) : notif.media ? (
+                                    <img src={notif.media} alt="content" className="media-preview" />
+                                ) : null}
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ) : item.media ? (
-                <img src={item.media} alt="Preview" className="notification-media" />
-            ) : (
-                <div className="p-2 opacity-50">{renderIcon(item.type)}</div>
-            )}
-        </div>
+            </div>
+        )
     );
 
     return (
@@ -153,27 +150,15 @@ const Notifications = () => {
             <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
 
             <main className="notifications-main">
-                <div className="notifications-wrapper">
+                <div className="notifications-wrapper animate-slide-up">
                     <header className="notifications-header">
                         <h1 className="notifications-title">Notifications</h1>
-                        <p className="text-sm opacity-50">Updates from your activity and network</p>
                     </header>
 
-                    <div className="notifications-list">
-                        <section className="notification-section">
-                            <h2 className="section-label">New</h2>
-                            {notifications.new.map(n => <NotificationItem key={n.id} item={n} section="new" />)}
-                        </section>
-
-                        <section className="notification-section">
-                            <h2 className="section-label">This Week</h2>
-                            {notifications.thisWeek.map(n => <NotificationItem key={n.id} item={n} section="thisWeek" />)}
-                        </section>
-
-                        <section className="notification-section">
-                            <h2 className="section-label">Earlier</h2>
-                            {notifications.earlier.map(n => <NotificationItem key={n.id} item={n} section="earlier" />)}
-                        </section>
+                    <div className="notifications-content">
+                        {renderSection('New', notifications.new, 'new')}
+                        {renderSection('This Week', notifications.thisWeek, 'thisWeek')}
+                        {renderSection('Earlier', notifications.earlier, 'earlier')}
                     </div>
                 </div>
             </main>

@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
-import { Settings, Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Music, Lock } from 'lucide-react';
+import { Settings, Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Music, Lock, ListMusic } from 'lucide-react';
 import userService from "../../services/userService";
 import songService from "../../services/songService";
+import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
 import "./css/Profile.css";
+import { getUserAvatar } from "../../utils/userUtils";
+import { useAuth } from "../../context/AuthContext";
 
 function UserMenu() {
   const params = useParams();
+  const { user: currentUserData, updateUser } = useAuth();
   const navigate = useNavigate();
 
   // Handle userId from URL
@@ -28,6 +32,13 @@ function UserMenu() {
   const [userSongs, setUserSongs] = useState([]);
   const [songsLoading, setSongsLoading] = useState(false);
 
+  // Playlist Modal State
+  const [playlistModal, setPlaylistModal] = useState({
+    isOpen: false,
+    songId: null,
+    songName: ''
+  });
+
   // Change Password State
   const [pwdForm, setPwdForm] = useState({
     oldPassword: "",
@@ -45,14 +56,6 @@ function UserMenu() {
     imagePreview: null,
   });
 
-  const getImageUrl = (imageUrl) => {
-    if (!imageUrl) return null;
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
-    }
-    return `http://localhost:8080${imageUrl}`;
-  };
-
   // Fetch User
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -63,20 +66,33 @@ function UserMenu() {
 
     const fetchUser = async () => {
       try {
-        const data = await userService.getUserById(targetId);
-        setUser(data.data || data);
+        // We now consistently use numeric IDs for all profile fetches
+        const response = await userService.getUserById(targetId);
+
+        const userData = response.data || response;
+        setUser(userData);
+
+        // Lấy ID thật sự từ response để gọi các API khác
+        const realId = userData.userId || userData.idUser || userData.id;
+
+        // Nếu store đang lưu email mà ta đã có ID thật, cập nhật lại store qua AuthContext
+        if (realId && targetId === storedIdUser && (targetId.includes('@') || isNaN(targetId))) {
+          updateUser({ idUser: realId });
+          // Cập nhật lại localStorage để chắc chắn
+          localStorage.setItem("idUser", realId);
+        }
 
         // Init form
         setForm({
-          name: (data.data || data).name || "",
-          email: (data.data || data).email || "",
-          isActive: (data.data || data).isActive ?? true,
-          imagePreview: getImageUrl((data.data || data).imageUrl),
+          name: userData.name || "",
+          email: userData.email || "",
+          isActive: userData.isActive ?? true,
+          imagePreview: getUserAvatar(userData.imageUrl),
         });
-        setIsFollowing((data.data || data).isFollowed || false);
+        setIsFollowing(userData.isFollowed || false);
 
-        // Fetch Songs
-        fetchSongs();
+        // Fetch Songs with realId or fallback to targetId
+        fetchSongs(realId || targetId);
 
       } catch (err) {
         console.error("Error fetching user:", err);
@@ -85,10 +101,10 @@ function UserMenu() {
       }
     };
 
-    const fetchSongs = async () => {
+    const fetchSongs = async (id) => {
       try {
         setSongsLoading(true);
-        const response = await songService.getUserSongs(targetId);
+        const response = await songService.getUserSongs(id || targetId);
         const songList = response.data?.data?.content || response.data?.content || response.data || [];
         setUserSongs(Array.isArray(songList) ? songList : []);
       } catch (err) {
@@ -99,17 +115,15 @@ function UserMenu() {
     };
 
     fetchUser();
-  }, [targetId, navigate]);
+  }, [targetId, navigate, storedIdUser, currentUserData?.email]);
+
+
 
   // Edit Handlers
   const handleSave = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token || !user) {
-        alert("Không có token hoặc user");
-        return;
-      }
+      if (!user) return;
 
       // 1. Update Name if changed
       if (form.name !== user.name) {
@@ -121,18 +135,28 @@ function UserMenu() {
         await userService.updateImage(form.imageFile);
       }
 
-      // 3. Fetch updated user data
-      const updatedResponse = await userService.getUserById(targetId);
+      // 3. Fetch updated user data using real ID
+      const realId = user.userId || user.idUser || user.id || targetId;
+      const updatedResponse = await userService.getUserById(realId);
+
       const updatedUser = updatedResponse.data || updatedResponse;
 
       setUser(updatedUser);
+
+      // 4. Update Global Auth State
+      const numericId = updatedUser.userId || updatedUser.idUser || updatedUser.id || user.userId || user.idUser || user.id;
+      updateUser({
+        name: updatedUser.name,
+        imageUrl: updatedUser.imageUrl,
+        idUser: numericId // STRICTLY numeric, no email fallback
+      });
 
       setForm({
         name: updatedUser.name || "",
         email: updatedUser.email || "",
         isActive: updatedUser.isActive ?? true,
         imageFile: null,
-        imagePreview: getImageUrl(updatedUser.imageUrl),
+        imagePreview: getUserAvatar(updatedUser.imageUrl),
       });
 
       setIsEditModalOpen(false);
@@ -273,7 +297,7 @@ function UserMenu() {
           <div className="profile-header-meta">
             <div className="ig-avatar-wrapper">
               <img
-                src={getImageUrl(user.imageUrl) || "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}
+                src={getUserAvatar(user.imageUrl)}
                 alt={user.name}
                 className="ig-avatar-img"
               />
@@ -365,7 +389,7 @@ function UserMenu() {
                     <div key={song.id || song.idSong} className="song-card bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all group">
                       <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
                         <img
-                          src={getImageUrl(song.imageUrl) || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=400"}
+                          src={getUserAvatar(song.imageUrl)}
                           alt={song.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
@@ -383,6 +407,20 @@ function UserMenu() {
                               <Camera className="w-4 h-4 text-white" />
                             </button>
                           )}
+                          <button
+                            className="absolute top-2 left-2 p-2 bg-white/20 hover:bg-white/40 rounded-full backdrop-blur-md transition-all"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPlaylistModal({
+                                isOpen: true,
+                                songId: song.id || song.idSong,
+                                songName: song.name
+                              });
+                            }}
+                            title="Add to Playlist"
+                          >
+                            <ListMusic className="w-4 h-4 text-white" />
+                          </button>
                         </div>
                         {targetId === storedIdUser && (
                           <input
@@ -548,6 +586,14 @@ function UserMenu() {
           </div>
         </div>
       )}
+
+      {/* Add to Playlist Modal */}
+      <AddToPlaylistModal
+        isOpen={playlistModal.isOpen}
+        onClose={() => setPlaylistModal({ ...playlistModal, isOpen: false })}
+        songId={playlistModal.songId}
+        songName={playlistModal.songName}
+      />
     </div>
   );
 }

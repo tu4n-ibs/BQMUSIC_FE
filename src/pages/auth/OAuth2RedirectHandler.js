@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { getUserIdFromToken } from "../../utils/jwtUtils";
 import axios from "axios";
 
 const OAuth2RedirectHandler = () => {
@@ -29,61 +30,30 @@ const OAuth2RedirectHandler = () => {
       // 3. Kiểm tra token
       if (token && refreshToken) {
         try {
-          // 4. GỌI API LẤY THÔNG TIN USER ĐỂ XÁC THỰC
-          // Dùng token vừa nhận được để gọi API
-          // Email có thể lấy từ param hoặc đợi response từ API user
+          // Extract numeric ID from JWT token
+          const userId = getUserIdFromToken(token);
 
-          let targetEmail = emailParam;
-
-          // Nếu không có email trên param, ta vẫn thử gọi endpoint user (nếu backend hỗ trợ /me)
-          // Nhưng ở đây ta giả sử backend trả về email trên URL hoặc ta cần nó để gọi API /user/{email}
-
-          if (!targetEmail) {
-            throw new Error("Không tìm thấy email trong phản hồi OAuth2");
+          if (!userId) {
+            throw new Error("Không thể giải mã ID người dùng từ Token");
           }
 
-          const userRes = await axios.get(`http://localhost:8080/api/v1/user/${targetEmail}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-
-          const userData = userRes.data;
-
-          if (!userData || !userData.email) {
-            throw new Error("Không lấy được thông tin người dùng");
-          }
-
-          console.log("Xác thực người dùng thành công:", userData);
-
-          // 5. Login qua Context với thông tin đầy đủ
+          // 5. Login qua Context với thông tin từ token/params
+          // Roles will be determined by the backend or default to USER
           login({
             token,
             refreshToken,
-            role: userData.role || ["USER"], // Fallback role
-            idUser: userData.idUser || userData.email, // Đảm bảo có idUser
-            email: userData.email
+            idUser: userId,
+            email: emailParam || "", // Fallback if email not in params
+            name: "", // Will be updated on profile load if needed
+            imageUrl: "",
+            role: ["USER"] // Default role, actual roles might be fetched later or embedded in token
           });
 
           // 6. Chuyển hướng
-          const roles = userData.role || [];
-          if (roles.includes("ADMIN")) {
-            navigate("/admin");
-          } else {
-            navigate("/newF");
-          }
-
+          navigate("/newF");
         } catch (err) {
           console.error("Lỗi xác thực người dùng sau khi OAuth2:", err);
-          // Fallback: Proceed with params from URL if fetch fails
-          // This allows the user to at least get into the app, even if profile loading might fail later.
-          login({
-            token,
-            refreshToken,
-            role: ["USER"], // Fallback role if not in params/fetched
-            idUser: emailParam,
-            email: emailParam
-          });
-
-          navigate("/newF");
+          navigate("/login");
         }
       } else {
         console.error("Thiếu token từ Google");

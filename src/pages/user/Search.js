@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Search.css';
+import { getUserAvatar } from '../../utils/userUtils';
 
 const MOCK_RESULTS = {
     all: [
@@ -33,8 +34,6 @@ const SUGGESTED = [
     { id: 't2', name: 'Lo-fi Beats', meta: 'Perfect for studying', type: 'trending', icon: <Music className="w-5 h-5" /> },
 ];
 
-const IMAGE_BASE_URL = 'http://localhost:8080';
-
 const Search = () => {
     const { user } = useAuth();
     const { suggestions, handleFollow } = useSuggestions();
@@ -43,7 +42,7 @@ const Search = () => {
     const currentUser = {
         name: user?.name || "Người dùng",
         username: user?.email || "",
-        avatar: user?.imageUrl ? `${IMAGE_BASE_URL}${user.imageUrl}` : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"
+        avatar: getUserAvatar(user?.imageUrl)
     };
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -56,8 +55,6 @@ const Search = () => {
     ]);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    // handleFollow is now provided by useSuggestions
-
     // Debounce search
     useEffect(() => {
         if (!searchQuery.trim()) {
@@ -68,7 +65,6 @@ const Search = () => {
 
         setIsSearching(true);
         const timer = setTimeout(() => {
-            // Filter mock results based on active tab and query
             const baseResults = MOCK_RESULTS[activeTab] || [];
             const filtered = baseResults.filter(item =>
                 item.name.toLowerCase().includes(searchQuery.toLowerCase())

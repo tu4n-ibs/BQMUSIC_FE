@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Explore.css';
+import { getUserAvatar } from '../../utils/userUtils';
 
 const MOCK_EXPLORE_DATA = [
     { id: 'e1', type: 'image', title: 'Urban Rhythm', meta: '24k likes', image: 'https://images.unsplash.com/photo-1514525253361-bee8a487409e?q=80&w=800', height: '400px' },
@@ -20,8 +21,6 @@ const MOCK_EXPLORE_DATA = [
     { id: 'e9', type: 'image', title: 'Vintage Vibes', meta: '18k likes', image: 'https://images.unsplash.com/photo-1485579149621-0da62f02607e?q=80&w=800', height: '420px' }
 ];
 
-const IMAGE_BASE_URL = 'http://localhost:8080';
-
 const Explore = () => {
     const { user } = useAuth();
     const { suggestions, handleFollow } = useSuggestions();
@@ -30,7 +29,7 @@ const Explore = () => {
     const currentUser = {
         name: user?.name || "Người dùng",
         username: user?.email || "",
-        avatar: user?.imageUrl ? `${IMAGE_BASE_URL}${user.imageUrl}` : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"
+        avatar: getUserAvatar(user?.imageUrl)
     };
 
     const [activeTab, setActiveTab] = useState('all');

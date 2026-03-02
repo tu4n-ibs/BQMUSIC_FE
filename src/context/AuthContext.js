@@ -57,6 +57,21 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    const updateUser = (data) => {
+        setUser(prev => {
+            const newUser = { ...prev, ...data };
+
+            // Update localStorage
+            if (data.name) localStorage.setItem("name", data.name);
+            if (data.imageUrl) localStorage.setItem("imageUrl", data.imageUrl);
+            if (data.idUser) localStorage.setItem("idUser", data.idUser);
+            if (data.email) localStorage.setItem("email", data.email);
+            if (data.roles) localStorage.setItem("roles", JSON.stringify(data.roles));
+
+            return newUser;
+        });
+    };
+
     const logout = () => {
         localStorage.clear();
         setIsAuthenticated(false);
@@ -65,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

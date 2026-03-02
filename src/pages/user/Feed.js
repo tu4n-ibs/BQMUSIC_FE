@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Play, Pause, Music, Volume2, VolumeX, Heart, MessageCircle } from 'lucide-react';
 import axiosClient from '../../services/axiosClient';
 import CreatePostModal from '../../components/modals/CreatePostModal';
@@ -7,16 +8,19 @@ import RightSidebar from '../../components/layout/RightSidebar';
 import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
+import postService from '../../services/postService';
 import './css/Feed.css';
+import { getUserAvatar } from '../../utils/userUtils';
 
 import { MOCK_POSTS, MOCK_STORIES } from '../../mocks/mockData';
 
 const IMAGE_BASE_URL = 'http://localhost:8080';
-const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop";
 const DEFAULT_AVATAR_URL = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360";
+const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop";
 
 function NewFeed() {
-  const [posts, setPosts] = useState(MOCK_POSTS);
+  const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
   const { suggestions, handleFollow } = useSuggestions();
   const { playTrack, currentTrack, isPlaying } = usePlayer();
 
@@ -34,7 +38,7 @@ function NewFeed() {
       setCurrentUser({
         name: user.name || "Người dùng",
         username: user.email || "",
-        avatar: user.imageUrl ? `${IMAGE_BASE_URL}${user.imageUrl}` : DEFAULT_AVATAR_URL
+        avatar: getUserAvatar(user.imageUrl)
       });
     }
   }, [user]);
@@ -53,26 +57,36 @@ function NewFeed() {
   // --- 2. Fetch Posts ---
   const fetchPosts = useCallback(async () => {
     try {
-      const response = await axiosClient.get('/posts');
+      const response = await postService.getAllPosts(0, 20);
       const data = response.data;
-      const mappedPosts = data.content.map(post => ({
-        id: post.id,
-        username: post.authorName,
-        userAvatar: post.authorAvatar ? `${IMAGE_BASE_URL}${post.authorAvatar}` : 'https://i.pravatar.cc/150',
-        postImage: post.imageUrl ? `${IMAGE_BASE_URL}${post.imageUrl}` : DEFAULT_COVER_URL,
-        musicLink: post.musicLink ? `${IMAGE_BASE_URL}${post.musicLink}` : null,
-        likes: post.likes || 0,
-        caption: post.content,
-        comments: 0,
-        timeAgo: 'Vừa xong',
-        isLiked: false,
-      }));
-      // Ghép mock data vào để hiển thị nếu API ít dữ liệu hoặc để demo
-      setPosts([...mappedPosts.reverse(), ...MOCK_POSTS]);
+
+      // Standarizing response format (handling data.data or data directly)
+      const content = data.data?.content || data.content || data.data || data || [];
+
+      const mappedPosts = content.map(post => {
+        // Use numeric ID for profile navigation
+        const authorId = post.user?.idUser || post.user?.userId || post.user?.id || post.authorId;
+
+        return {
+          id: post.id,
+          authorId: authorId,
+          username: post.authorName || (post.user?.name) || 'Unknown',
+          userAvatar: getUserAvatar(post.authorAvatar || post.user?.imageUrl),
+          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `${IMAGE_BASE_URL}${post.imageUrl}`) : DEFAULT_COVER_URL,
+          musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `${IMAGE_BASE_URL}${post.musicLink}`) : null,
+          likes: post.likes || 0,
+          caption: post.content,
+          comments: 0,
+          timeAgo: 'Vừa xong',
+          isLiked: false,
+        };
+      });
+
+      // Strictly use mapped posts, no mock fallback
+      setPosts(mappedPosts);
     } catch (error) {
-      console.error("Lỗi khi tải bài viết:", error);
-      // Fallback khi lỗi API vẫn còn mock data
-      setPosts(MOCK_POSTS);
+      console.error("Lỗi khi tải bài viết từ API:", error);
+      setPosts([]); // Clear posts on error
     }
   }, []);
 
@@ -108,6 +122,12 @@ function NewFeed() {
 
   const stories = MOCK_STORIES;
 
+  const handleProfileClick = (authorId) => {
+    if (authorId) {
+      navigate(`/user/userId=${authorId}`);
+    }
+  };
+
   return (
     <div className="flex min-h-screen feed-container">
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onPostCreated={fetchPosts} />
@@ -138,13 +158,13 @@ function NewFeed() {
           {/* Posts List */}
           <div className="space-y-4">
             {posts.length === 0 ? (
-              <div className="text-center text-gray-500 py-10">Đang tải bài viết...</div>
+              <div className="text-center text-gray-500 py-10">Không có bài viết nào.</div>
             ) : (
               posts.map(post => (
                 <article key={post.id} className="post-article">
                   <div className="post-header">
                     <div className="flex items-center gap-3">
-                      <div className="relative">
+                      <div className="relative cursor-pointer" onClick={() => handleProfileClick(post.authorId)}>
                         <img
                           src={post.userAvatar}
                           alt={post.username}
@@ -153,7 +173,7 @@ function NewFeed() {
                         />
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                       </div>
-                      <div className="flex flex-col">
+                      <div className="flex flex-col cursor-pointer" onClick={() => handleProfileClick(post.authorId)}>
                         <span className="username">{post.username}</span>
                         {post.musicLink && (
                           <div className="flex items-center music-info">

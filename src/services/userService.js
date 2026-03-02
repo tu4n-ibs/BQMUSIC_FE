@@ -79,6 +79,7 @@ const userService = {
      * @returns {Promise<Object>} Response data
      */
     getUserById: async (userId) => {
+        // API endpoint: /user/userId/{id}
         const response = await axiosClient.get(`/user/userId/${userId}`);
         return response.data;
     },
@@ -93,8 +94,14 @@ const userService = {
         return response.data;
     },
 
-    updateUser: async (email, formData) => {
-        const response = await axiosClient.put(`/user/${email}`, formData, {
+    /**
+     * Update user profile
+     * @param {string} userId 
+     * @param {FormData|Object} formData 
+     * @returns {Promise<Object>} Response data
+     */
+    updateUser: async (userId, formData) => {
+        const response = await axiosClient.put(`/user/userId/${userId}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
         return response.data;
@@ -147,11 +154,21 @@ const userService = {
     },
 
     /**
-     * Get user suggestions
-     * @returns {Promise<Array>} List of suggested users
+     * Get all users (Admin)
+     * @returns {Promise<Object>} List of users
      */
-    getSuggestions: async () => {
-        const response = await axiosClient.get("/user/suggestions");
+    getAllUsers: async () => {
+        const response = await axiosClient.get("/user");
+        return response.data;
+    },
+
+    /**
+     * Delete a user (Admin)
+     * @param {string} userId 
+     * @returns {Promise<Object>} Response data
+     */
+    deleteUser: async (userId) => {
+        const response = await axiosClient.delete(`/user/userId/${userId}`);
         return response.data;
     },
 

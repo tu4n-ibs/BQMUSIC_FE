@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram
+    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram, List
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import '../layout/css/Sidebar.css';
+import { getUserAvatar } from '../../utils/userUtils';
 
 const Sidebar = ({ onOpenCreateModal }) => {
     const navigate = useNavigate();
@@ -91,6 +92,12 @@ const Sidebar = ({ onOpenCreateModal }) => {
                     onClick={() => handleNavigation('/notifications')}
                 />
                 <NavItem
+                    icon={<List className="w-6 h-6" />}
+                    label="Playlists"
+                    active={isActive('/playlists')}
+                    onClick={() => handleNavigation('/playlists')}
+                />
+                <NavItem
                     icon={<PlusSquare className="w-6 h-6" />}
                     label="Create"
                     onClick={onOpenCreateModal}
@@ -101,7 +108,7 @@ const Sidebar = ({ onOpenCreateModal }) => {
                 >
                     <div className="ig-icon-wrapper">
                         <img
-                            src={user?.imageUrl ? `http://localhost:8080${user.imageUrl}` : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}
+                            src={getUserAvatar(user?.imageUrl)}
                             alt="Profile"
                             className="ig-profile-avatar"
                             onError={(e) => e.target.src = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}

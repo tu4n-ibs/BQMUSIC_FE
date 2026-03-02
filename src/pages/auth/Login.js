@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import userService from "../../services/userService";
+import { getUserIdFromToken } from "../../utils/jwtUtils";
 import BQMusicLogo from "../../components/common/BQMusicLogo";
 import { getErrorMessage } from "../../utils/errorUtils";
 import "./css/Login.css";
@@ -34,14 +35,22 @@ function Login() {
     try {
       const data = await userService.login({ email, password });
 
-      const { token, refreshToken, role, idUser, email: resEmail } = data;
+      const userObj = data.data || data;
+      const token = data.token || userObj.token;
+      const refreshToken = data.refreshToken || userObj.refreshToken;
+      const role = data.role || userObj.role;
+
+      // Extract numeric ID from JWT token
+      const userId = getUserIdFromToken(token);
 
       login({
         token,
         refreshToken,
         role: role,
-        idUser,
-        email: resEmail || email
+        idUser: userId,
+        email: userObj.email || data.email || email,
+        name: userObj.name,
+        imageUrl: userObj.imageUrl
       });
 
       if (role && role.includes("ADMIN")) {

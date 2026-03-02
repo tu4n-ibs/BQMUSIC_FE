@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"; // Giữ bootstrap cho Modal, Container behavior
+import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../admin/css/Block.css";
+import userService from "../../services/userService";
 
 function AdminMenu() {
   const [users, setUsers] = useState([]);
@@ -26,13 +25,10 @@ function AdminMenu() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/api/v1/user", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        // API có thể trả về { content: [...] } hoặc mảng trực tiếp, tuỳ backend
-        setUsers(response.data.content || response.data || []);
+        const data = await userService.getAllUsers();
+        // API có thể trả về { data: { content: [...] } } hoặc { content: [...] } hoặc mảng trực tiếp
+        const userList = data.data?.content || data.content || data.data || data || [];
+        setUsers(userList);
       } catch (error) {
         console.error("Lỗi khi tải user:", error);
       }
@@ -52,18 +48,11 @@ function AdminMenu() {
   // Giả lập "New Today"
   const newUsersToday = Math.floor(Math.random() * 5);
 
-  // --- Handlers (Read, Update, Delete) giữ nguyên logic ---
-  const handleRead = async (email) => {
+  // --- Handlers (Read, Update, Delete) ---
+  const handleRead = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/user/${email}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
-      setSelectedUser(response.data);
+      const data = await userService.getUserById(id);
+      setSelectedUser(data.data || data);
       setShowDetailModal(true);
     } catch (error) {
       console.error("Lỗi khi xem chi tiết:", error);
@@ -84,7 +73,6 @@ function AdminMenu() {
 
   const submitUpdate = async () => {
     try {
-      const token = localStorage.getItem("token");
       const form = new FormData();
       form.append("name", formData.name);
       form.append("email", formData.email);
@@ -92,11 +80,8 @@ function AdminMenu() {
       if (formData.password) form.append("password", formData.password);
       if (image) form.append("image", image);
 
-      await axios.put(
-        `http://localhost:8080/api/v1/user/${selectedUser.email}`,
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const targetId = selectedUser.userId || selectedUser.idUser || selectedUser.id;
+      await userService.updateUser(targetId, form);
 
       alert("Cập nhật thành công!");
       setShowUpdateModal(false);
@@ -107,17 +92,15 @@ function AdminMenu() {
     }
   };
 
-  const handleDelete = async (email) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa user này?")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8080/api/v1/user/${email}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await userService.deleteUser(id);
       alert("Xóa thành công!");
-      setUsers(users.filter((u) => u.email !== email));
+      setUsers(users.filter((u) => (u.userId || u.idUser || u.id) !== id));
     } catch (error) {
       console.error("Lỗi khi xóa user:", error);
+      alert("Xóa thất bại!");
     }
   };
 
@@ -257,7 +240,7 @@ function AdminMenu() {
                     <td className="text-end" style={{ paddingRight: '32px' }}>
                       <button
                         className="action-btn btn-view"
-                        onClick={() => handleRead(user.email)}
+                        onClick={() => handleRead(user.userId || user.idUser || user.id)}
                         title="View Details"
                       >
                         <i className="bi bi-eye-fill"></i>
@@ -271,7 +254,7 @@ function AdminMenu() {
                       </button>
                       <button
                         className="action-btn btn-delete"
-                        onClick={() => handleDelete(user.email)}
+                        onClick={() => handleDelete(user.userId || user.idUser || user.id)}
                         title="Delete User"
                       >
                         <i className="bi bi-trash-fill"></i>

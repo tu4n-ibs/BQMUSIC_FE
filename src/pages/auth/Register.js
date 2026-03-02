@@ -161,14 +161,21 @@ function Register() {
                         }
                     );
 
-                    const { token, refreshToken, role, idUser, email: resEmail } = loginRes.data;
+                    const loginData = loginRes.data;
+                    const userObj = loginData.data || loginData;
+                    const token = loginData.token || userObj.token;
+                    const refreshToken = loginData.refreshToken || userObj.refreshToken;
+                    const role = loginData.role || userObj.role;
+                    const userIdVal = userObj.userId || userObj.idUser || userObj.id;
 
                     login({
                         token,
                         refreshToken,
                         role: role,
-                        idUser,
-                        email: resEmail || email
+                        idUser: userIdVal || userObj.email || loginData.email || email,
+                        email: userObj.email || loginData.email || email,
+                        name: userObj.name,
+                        imageUrl: userObj.imageUrl
                     });
 
                     // Redirect based on role or to home

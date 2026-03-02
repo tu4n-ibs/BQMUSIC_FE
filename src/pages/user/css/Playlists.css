@@ -1,0 +1,192 @@
+.playlists-page-container {
+    min-height: 100vh;
+    background-color: black;
+    color: white;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+}
+
+.playlists-main {
+    padding: 2rem 4rem;
+    padding-bottom: 120px;
+    /* Space for PlayerBar */
+}
+
+.playlists-header-section {
+    max-width: 1000px;
+    margin: 0 auto 3rem;
+}
+
+.create-playlist-btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.create-playlist-btn:hover {
+    background: #6366f1;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.playlists-search-bar {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.playlists-search-bar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    width: 100%;
+    font-size: 0.9375rem;
+}
+
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.playlist-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2rem;
+    padding: 1.25rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.playlist-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.playlist-cover-placeholder {
+    aspect-ratio: 1;
+    background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.playlist-cover-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4));
+}
+
+.playlist-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.5rem;
+}
+
+.play-btn-circle {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #6366f1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+}
+
+.playlist-card:hover .play-btn-circle {
+    transform: scale(1);
+}
+
+.play-btn-circle:hover {
+    transform: scale(1.1) !important;
+    background: #4f46e5;
+}
+
+.playlist-info h3 {
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+}
+
+.playlist-info p {
+    color: #94a3b8;
+    line-height: 1.6;
+}
+
+/* Modal Styling */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.create-playlist-modal {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.playlist-input,
+.playlist-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    padding: 1rem 1.25rem;
+    color: white;
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
+}
+
+.playlist-input:focus,
+.playlist-textarea:focus {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: #6366f1;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.playlist-textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+@media (max-width: 768px) {
+    .playlists-main {
+        padding: 1.5rem;
+        margin-left: 0;
+    }
+
+    .playlists-header-section {
+        margin-bottom: 2rem;
+    }
+}
