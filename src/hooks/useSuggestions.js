@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import userService from '../services/userService';
-
-const IMAGE_BASE_URL = 'http://localhost:8080';
-const DEFAULT_AVATAR_URL = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360";
+import { getUserAvatar } from '../utils/userUtils';
 
 /**
  * Hook to manage user suggestions and follow state
@@ -17,9 +15,9 @@ export const useSuggestions = () => {
         try {
             const data = await userService.getSuggestions();
             const mappedSuggestions = data.map((user) => ({
-                id: user.userId,
+                id: user.userId || user.idUser || user.id,
                 username: user.name || "Người dùng ẩn danh",
-                avatar: user.imageUrl ? `${IMAGE_BASE_URL}${user.imageUrl}` : DEFAULT_AVATAR_URL,
+                avatar: getUserAvatar(user.imageUrl),
                 mutual: 'Gợi ý cho bạn',
                 isFollowed: false // API suggestions are typically for users not yet followed
             }));

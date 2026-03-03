@@ -12,9 +12,10 @@ import AlbumManagement from "../pages/admin/AlbumManagement";
 import NewFeed from "../pages/user/Feed";
 import Search from "../pages/user/Search";
 import Explore from "../pages/user/Explore";
-import Messages from "../pages/user/Messages";
 import Notifications from "../pages/user/Notifications";
 import Playlists from "../pages/user/Playlists";
+import Groups from "../pages/user/Groups";
+import GroupDetail from "../pages/user/GroupDetail";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
 
@@ -45,9 +46,10 @@ function AppRoutes() {
             <Route path="/newF" element={<NewFeed />} />
             <Route path="/search" element={<Search />} />
             <Route path="/explore" element={<Explore />} />
-            <Route path="/messages" element={<Messages />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/playlists" element={<Playlists />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/groups/:groupId" element={<GroupDetail />} />
         </Routes>
     );
 }

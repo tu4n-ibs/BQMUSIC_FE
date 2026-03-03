@@ -1,5 +1,4 @@
 .search-container {
-    display: flex;
     min-height: 100vh;
     background: var(--bg-primary);
     background-image:
@@ -11,15 +10,14 @@
 
 .search-main {
     flex: 1;
-    margin-left: 300px;
-    margin-right: 360px;
-    padding: 50px 20px;
+    padding: 2rem 4rem;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-wrapper {
     width: 100%;
-    margin: 0;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Header Section */
@@ -158,7 +156,7 @@
 /* Result Cards */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
 }
 

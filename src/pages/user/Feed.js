@@ -14,8 +14,6 @@ import { getUserAvatar } from '../../utils/userUtils';
 
 import { MOCK_POSTS, MOCK_STORIES } from '../../mocks/mockData';
 
-const IMAGE_BASE_URL = 'http://localhost:8080';
-const DEFAULT_AVATAR_URL = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360";
 const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop";
 
 function NewFeed() {
@@ -30,7 +28,7 @@ function NewFeed() {
   const [currentUser, setCurrentUser] = useState({
     name: '',
     username: '',
-    avatar: DEFAULT_AVATAR_URL
+    avatar: null
   });
 
   useEffect(() => {
@@ -72,8 +70,8 @@ function NewFeed() {
           authorId: authorId,
           username: post.authorName || (post.user?.name) || 'Unknown',
           userAvatar: getUserAvatar(post.authorAvatar || post.user?.imageUrl),
-          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `${IMAGE_BASE_URL}${post.imageUrl}`) : DEFAULT_COVER_URL,
-          musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `${IMAGE_BASE_URL}${post.musicLink}`) : null,
+          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : DEFAULT_COVER_URL,
+          musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
           likes: post.likes || 0,
           caption: post.content,
           comments: 0,
@@ -136,7 +134,7 @@ function NewFeed() {
       <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
 
       {/* Main Content */}
-      <main className="flex-1 ml-[80px] mr-[320px] transition-all duration-300">
+      <main className="flex-1 ml-[120px] mr-[320px] transition-all duration-300">
         <div className="max-w-[630px] mx-auto px-4 py-8">
           {/* Stories */}
           <div className="stories-container">

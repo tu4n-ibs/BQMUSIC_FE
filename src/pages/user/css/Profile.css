@@ -60,6 +60,12 @@
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.ig-avatar-wrapper.editable {
+    cursor: pointer;
 }
 
 .ig-avatar-img {
@@ -67,6 +73,22 @@
     height: 100%;
     border-radius: 54px;
     object-fit: cover;
+}
+
+.avatar-edit-overlay {
+    position: absolute;
+    inset: 6px;
+    border-radius: 54px;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ig-avatar-wrapper.editable:hover .avatar-edit-overlay {
+    opacity: 1;
 }
 
 /* --- INFO COLUMN --- */
@@ -81,6 +103,11 @@
     margin-bottom: 0.75rem;
 }
 
+.ig-name-edit-wrapper {
+    display: flex;
+    align-items: center;
+}
+
 .ig-username {
     font-size: 2.5rem;
     font-weight: 900;
@@ -89,6 +116,41 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.ig-name-input {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0 10px;
+    color: var(--text-primary);
+    width: auto;
+    min-width: 200px;
+    outline: none;
+}
+
+.ig-edit-name-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    opacity: 0.5;
+}
+
+.ig-edit-name-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .ig-action-btns {

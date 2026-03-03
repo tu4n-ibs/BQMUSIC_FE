@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Music, Film, Image as ImageIcon } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
-import RightSidebar from '../../components/layout/RightSidebar';
 import CreatePostModal from '../../components/modals/CreatePostModal';
 import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
@@ -23,14 +22,7 @@ const MOCK_EXPLORE_DATA = [
 
 const Explore = () => {
     const { user } = useAuth();
-    const { suggestions, handleFollow } = useSuggestions();
     const { playTrack } = usePlayer();
-
-    const currentUser = {
-        name: user?.name || "Người dùng",
-        username: user?.email || "",
-        avatar: getUserAvatar(user?.imageUrl)
-    };
 
     const [activeTab, setActiveTab] = useState('all');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -60,7 +52,7 @@ const Explore = () => {
             <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
             <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
 
-            <main className="explore-main">
+            <main className="explore-main ml-[120px]">
                 <div className="explore-wrapper">
                     <header className="explore-header">
                         <h1 className="explore-title">Explore</h1>
@@ -105,12 +97,6 @@ const Explore = () => {
                     </div>
                 </div>
             </main>
-
-            <RightSidebar
-                currentUser={currentUser}
-                suggestions={suggestions}
-                onFollow={handleFollow}
-            />
         </div>
     );
 };

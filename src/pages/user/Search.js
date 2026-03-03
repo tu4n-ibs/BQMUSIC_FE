@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search as SearchIcon, X, Clock, User, Music, Disc, TrendingUp, ChevronRight } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
-import RightSidebar from '../../components/layout/RightSidebar';
 import CreatePostModal from '../../components/modals/CreatePostModal';
-import { useAuth } from '../../context/AuthContext';
-import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Search.css';
-import { getUserAvatar } from '../../utils/userUtils';
 
 const MOCK_RESULTS = {
     all: [
@@ -35,15 +31,7 @@ const SUGGESTED = [
 ];
 
 const Search = () => {
-    const { user } = useAuth();
-    const { suggestions, handleFollow } = useSuggestions();
     const { playTrack } = usePlayer();
-
-    const currentUser = {
-        name: user?.name || "Người dùng",
-        username: user?.email || "",
-        avatar: getUserAvatar(user?.imageUrl)
-    };
 
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('all');
@@ -111,7 +99,7 @@ const Search = () => {
             <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
             <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
 
-            <main className="search-main">
+            <main className="search-main ml-[120px]">
                 <div className="search-wrapper">
                     <header className="search-header">
                         <h1 className="search-title">Search</h1>
@@ -237,12 +225,6 @@ const Search = () => {
                     </div>
                 </div>
             </main>
-
-            <RightSidebar
-                currentUser={currentUser}
-                suggestions={suggestions}
-                onFollow={handleFollow}
-            />
         </div>
     );
 };

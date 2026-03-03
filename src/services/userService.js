@@ -191,6 +191,18 @@ const userService = {
         const response = await axiosClient.delete(`/follow-user/${userId}/unfollow`);
         return response.data;
     },
+
+    /**
+     * Get user suggestions for current user
+     * @returns {Promise<Array>} List of suggested users
+     */
+    getSuggestions: async () => {
+        // Since there's no specific suggestions endpoint, we fetch all users 
+        // and let the frontend filter or just show a subset.
+        const response = await axiosClient.get("/user");
+        // Ensure we return the content array if it's paginated
+        return response.data?.data?.content || response.data?.content || response.data || [];
+    },
 };
 
 export default userService;

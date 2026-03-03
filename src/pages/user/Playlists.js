@@ -56,7 +56,7 @@ const Playlists = () => {
         <div className="playlists-page-container">
             <Sidebar />
 
-            <main className="playlists-main ml-[80px]">
+            <main className="playlists-main ml-[120px]">
                 <div className="playlists-header-section">
                     <div className="flex justify-between items-end mb-8">
                         <div>

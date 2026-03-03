@@ -8,15 +8,22 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Helper to get non-stringified null values from localStorage
+    const getStorageItem = (key) => {
+        const item = localStorage.getItem(key);
+        if (item === "null" || item === "undefined" || !item) return null;
+        return item;
+    };
+
     // Initialize Auth State from LocalStorage
     useEffect(() => {
         const initializeAuth = async () => {
-            const token = localStorage.getItem("token");
-            const email = localStorage.getItem("email");
-            const roles = localStorage.getItem("roles");
-            const idUser = localStorage.getItem("idUser");
-            const name = localStorage.getItem("name");
-            const imageUrl = localStorage.getItem("imageUrl");
+            const token = getStorageItem("token");
+            const email = getStorageItem("email");
+            const roles = getStorageItem("roles");
+            const idUser = getStorageItem("idUser");
+            const name = getStorageItem("name");
+            const imageUrl = getStorageItem("imageUrl");
 
             if (token && email) {
                 setIsAuthenticated(true);

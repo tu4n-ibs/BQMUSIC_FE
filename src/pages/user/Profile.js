@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
-import { Settings, Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Music, Lock, ListMusic } from 'lucide-react';
+import { Settings, Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Music, Lock, ListMusic, Edit2, Check, X } from 'lucide-react';
 import userService from "../../services/userService";
 import songService from "../../services/songService";
 import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
@@ -26,11 +26,12 @@ function UserMenu() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("posts");
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isChangePwdOpen, setIsChangePwdOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [userSongs, setUserSongs] = useState([]);
   const [songsLoading, setSongsLoading] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState("");
 
   // Playlist Modal State
   const [playlistModal, setPlaylistModal] = useState({
@@ -76,10 +77,21 @@ function UserMenu() {
         const realId = userData.userId || userData.idUser || userData.id;
 
         // Nếu store đang lưu email mà ta đã có ID thật, cập nhật lại store qua AuthContext
-        if (realId && targetId === storedIdUser && (targetId.includes('@') || isNaN(targetId))) {
-          updateUser({ idUser: realId });
-          // Cập nhật lại localStorage để chắc chắn
+        // Hoặc đơn giản là sync name/imageUrl nếu đang xem profile của chính mình
+        const isOwnProfile = String(realId) === String(storedIdUser) ||
+          String(targetId) === String(storedIdUser) ||
+          userData.email === localStorage.getItem("email");
+
+        if (realId && isOwnProfile) {
+          updateUser({
+            idUser: realId,
+            name: userData.name,
+            imageUrl: userData.imageUrl
+          });
+          // Cập nhật lại localStorage
           localStorage.setItem("idUser", realId);
+          if (userData.name) localStorage.setItem("name", userData.name);
+          if (userData.imageUrl) localStorage.setItem("imageUrl", userData.imageUrl);
         }
 
         // Init form
@@ -120,65 +132,75 @@ function UserMenu() {
 
 
   // Edit Handlers
-  const handleSave = async () => {
+  const handleAvatarUpdate = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
     try {
       setLoading(true);
-      if (!user) return;
+      await userService.updateImage(file);
 
-      // 1. Update Name if changed
-      if (form.name !== user.name) {
-        await userService.updateName(form.name);
-      }
-
-      // 2. Update Image if new file selected
-      if (form.imageFile) {
-        await userService.updateImage(form.imageFile);
-      }
-
-      // 3. Fetch updated user data using real ID
+      // Refresh user data
       const realId = user.userId || user.idUser || user.id || targetId;
       const updatedResponse = await userService.getUserById(realId);
-
       const updatedUser = updatedResponse.data || updatedResponse;
 
       setUser(updatedUser);
-
-      // 4. Update Global Auth State
-      const numericId = updatedUser.userId || updatedUser.idUser || updatedUser.id || user.userId || user.idUser || user.id;
       updateUser({
         name: updatedUser.name,
         imageUrl: updatedUser.imageUrl,
-        idUser: numericId // STRICTLY numeric, no email fallback
+        idUser: updatedUser.userId || updatedUser.idUser || updatedUser.id
       });
 
-      setForm({
-        name: updatedUser.name || "",
-        email: updatedUser.email || "",
-        isActive: updatedUser.isActive ?? true,
-        imageFile: null,
-        imagePreview: getUserAvatar(updatedUser.imageUrl),
-      });
-
-      setIsEditModalOpen(false);
-      alert("Cập nhật thành công!");
+      setForm(prev => ({
+        ...prev,
+        imagePreview: getUserAvatar(updatedUser.imageUrl)
+      }));
     } catch (err) {
-      console.error("Lỗi khi update user:", err);
-      const msg = err?.response?.data?.message || "Cập nhật thất bại";
-      alert(msg);
+      console.error("Lỗi cập nhật avatar:", err);
+      alert(err?.response?.data?.message || "Cập nhật avatar thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNameUpdate = async () => {
+    if (!tempName || tempName.trim() === "" || tempName === user.name) {
+      setIsEditingName(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await userService.updateName(tempName.trim());
+
+      // Refresh user data
+      const realId = user.userId || user.idUser || user.id || targetId;
+      const updatedResponse = await userService.getUserById(realId);
+      const updatedUser = updatedResponse.data || updatedResponse;
+
+      setUser(updatedUser);
+      updateUser({
+        name: updatedUser.name,
+        imageUrl: updatedUser.imageUrl,
+        idUser: updatedUser.userId || updatedUser.idUser || updatedUser.id
+      });
+
+      setForm(prev => ({
+        ...prev,
+        name: updatedUser.name
+      }));
+      setIsEditingName(false);
+    } catch (err) {
+      console.error("Lỗi cập nhật tên:", err);
+      alert(err?.response?.data?.message || "Cập nhật tên thất bại");
     } finally {
       setLoading(false);
     }
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setForm(prev => ({
-        ...prev,
-        imageFile: file,
-        imagePreview: URL.createObjectURL(file)
-      }));
-    }
+    handleAvatarUpdate(e);
   };
 
   const handleChangePassword = async (e) => {
@@ -282,7 +304,7 @@ function UserMenu() {
       <Sidebar />
 
       {/* 2. Main Content */}
-      <main className="ig-profile-main ml-[80px] transition-all duration-300">
+      <main className="ig-profile-main ml-[120px] transition-all duration-300">
         <div className="profile-cover-container">
           <img
             src="https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop"
@@ -295,24 +317,66 @@ function UserMenu() {
         <div className="ig-profile-wrapper">
           {/* Header Section */}
           <div className="profile-header-meta">
-            <div className="ig-avatar-wrapper">
+            <div className={`ig-avatar-wrapper ${targetId === storedIdUser ? 'editable' : ''}`} onClick={() => targetId === storedIdUser && document.getElementById('avatar-upload-input').click()}>
               <img
                 src={getUserAvatar(user.imageUrl)}
                 alt={user.name}
                 className="ig-avatar-img"
               />
+              {targetId === storedIdUser && (
+                <div className="avatar-edit-overlay">
+                  <Camera className="w-8 h-8 text-white" />
+                </div>
+              )}
+              <input
+                type="file"
+                id="avatar-upload-input"
+                hidden
+                accept="image/*"
+                onChange={handleAvatarUpdate}
+              />
             </div>
 
             <div className="ig-info-column flex-1">
               <div className="ig-user-row">
-                <h2 className="ig-username">{user.name}</h2>
+                <div className="ig-name-edit-wrapper">
+                  {isEditingName ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={tempName}
+                        onChange={(e) => setTempName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleNameUpdate()}
+                        className="ig-name-input"
+                        autoFocus
+                      />
+                      <button onClick={handleNameUpdate} className="p-1 hover:text-green-500 transition-colors">
+                        <Check className="w-5 h-5" />
+                      </button>
+                      <button onClick={() => setIsEditingName(false)} className="p-1 hover:text-red-500 transition-colors">
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <h2 className="ig-username">{user.name}</h2>
+                      {targetId === storedIdUser && (
+                        <button
+                          className="ig-edit-name-btn"
+                          onClick={() => {
+                            setTempName(user.name);
+                            setIsEditingName(true);
+                          }}
+                        >
+                          <Edit2 className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <div className="ig-action-btns">
                   {targetId === storedIdUser ? (
                     <>
-                      <button className="ig-btn flex items-center gap-2" onClick={() => setIsEditModalOpen(true)}>
-                        <Settings className="w-4 h-4" />
-                        Edit Profile
-                      </button>
                       <button className="ig-btn flex items-center gap-2" onClick={() => setIsChangePwdOpen(true)}>
                         <Lock className="w-4 h-4" />
                         Change Password
@@ -332,7 +396,7 @@ function UserMenu() {
               <div className="flex items-center gap-4 text-sm opacity-70 font-medium">
                 <span className="flex items-center gap-1"><UserIcon className="w-3 h-3" /> @{user.email?.split('@')[0]}</span>
                 {user.email && (
-                  <span className="flex items-center gap-1"><LinkIcon className="w-3 h-3" /> music.app/{user.email.split('@')[0]}</span>
+                  <span className="flex items-center gap-1"><LinkIcon className="w-3 h-3" /> {user.email}</span>
                 )}
               </div>
             </div>
@@ -466,54 +530,7 @@ function UserMenu() {
         </div>
       </main>
 
-      {/* Edit Profile Modal */}
-      {isEditModalOpen && (
-        <div className="ig-modal-overlay" onClick={() => setIsEditModalOpen(false)}>
-          <div className="edit-profile-card" onClick={e => e.stopPropagation()}>
-            <h3 className="edit-profile-title">Edit Profile</h3>
-            <div className="edit-form-container">
-              <div className="edit-avatar-container">
-                <label className="edit-avatar-label">
-                  <img
-                    src={form.imagePreview || "/placeholder-avatar.png"}
-                    alt="Preview"
-                    className="edit-avatar-preview"
-                  />
-                  <div className="edit-avatar-overlay">
-                    <Camera className="w-6 h-6 text-white" />
-                  </div>
-                  <input type="file" hidden onChange={handleFileChange} accept="image/*" />
-                </label>
-              </div>
 
-              <div className="edit-form-group">
-                <label className="edit-label">Full Name</label>
-                <input
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="edit-input"
-                  placeholder="Enter your name"
-                />
-              </div>
-
-              <div className="edit-actions">
-                <button
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="btn-cancel"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="btn-save"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Change Password Modal */}
       {isChangePwdOpen && (

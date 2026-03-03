@@ -1,5 +1,4 @@
 .notifications-container {
-    display: flex;
     min-height: 100vh;
     background: var(--bg-primary);
     background-image:
@@ -11,11 +10,7 @@
 
 .notifications-main {
     flex: 1;
-    margin-left: 300px;
-    /* Safe space for Sidebar */
-    margin-right: 360px;
-    /* Safe space for RightSidebar */
-    padding: 50px 40px;
+    padding: 2rem 4rem;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

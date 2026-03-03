@@ -149,7 +149,7 @@ const Notifications = () => {
             <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
             <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
 
-            <main className="notifications-main">
+            <main className="notifications-main ml-[120px]">
                 <div className="notifications-wrapper animate-slide-up">
                     <header className="notifications-header">
                         <h1 className="notifications-title">Notifications</h1>

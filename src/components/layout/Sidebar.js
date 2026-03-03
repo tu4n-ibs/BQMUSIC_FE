@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram, List
+    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram, List, Users
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -80,10 +80,10 @@ const Sidebar = ({ onOpenCreateModal }) => {
                     onClick={() => handleNavigation('/explore')}
                 />
                 <NavItem
-                    icon={<MessageCircle className="w-6 h-6" />}
-                    label="Messages"
-                    active={isActive('/messages')}
-                    onClick={() => handleNavigation('/messages')}
+                    icon={<Users className="w-6 h-6" />}
+                    label="Groups"
+                    active={isActive('/groups')}
+                    onClick={() => handleNavigation('/groups')}
                 />
                 <NavItem
                     icon={<Heart className="w-6 h-6" />}
@@ -135,8 +135,6 @@ const Sidebar = ({ onOpenCreateModal }) => {
             {/* More Menu Popup */}
             {isMoreMenuOpen && (
                 <div ref={menuRef} className="ig-more-menu">
-                    <MenuItem icon={<Settings className="w-5 h-5" />} label="Settings" />
-                    <MenuItem icon={<Activity className="w-5 h-5" />} label="Your activity" />
                     <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
                     <MenuItem
                         icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
