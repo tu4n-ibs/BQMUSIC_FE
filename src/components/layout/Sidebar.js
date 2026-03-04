@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import '../layout/css/Sidebar.css';
 import { getUserAvatar } from '../../utils/userUtils';
+import NotificationPanel from './NotificationPanel';
 
 const Sidebar = ({ onOpenCreateModal }) => {
     const navigate = useNavigate();
@@ -15,8 +16,21 @@ const Sidebar = ({ onOpenCreateModal }) => {
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
+    const notifTimeoutRef = useRef(null);
+
+    const handleNotifMouseEnter = () => {
+        if (notifTimeoutRef.current) clearTimeout(notifTimeoutRef.current);
+        setIsNotificationsOpen(true);
+    };
+
+    const handleNotifMouseLeave = () => {
+        notifTimeoutRef.current = setTimeout(() => {
+            setIsNotificationsOpen(false);
+        }, 150);
+    };
 
     const isActive = (path) => location.pathname === path;
 
@@ -24,9 +38,15 @@ const Sidebar = ({ onOpenCreateModal }) => {
         navigate(path);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+            // Even if API fails, we should clear local state and redirect
+            navigate('/login');
+        }
     };
 
     // Close menu when clicking outside
@@ -49,114 +69,125 @@ const Sidebar = ({ onOpenCreateModal }) => {
     }, []);
 
     return (
-        <aside className="ig-sidebar">
-            {/* Logo */}
-            <div className="ig-logo-container" onClick={() => navigate('/newF')}>
-                <div className="ig-logo-icon">
+        <>
+            <aside className="ig-sidebar">
+                {/* Logo */}
+                <div className="ig-logo-container" onClick={() => navigate('/newF')}>
+                    <div className="ig-logo-icon">
+                    </div>
+                    <div className="ig-logo-text" style={{ fontFamily: 'cursive' }}>
+                        BQMUSIC
+                    </div>
                 </div>
-                <div className="ig-logo-text" style={{ fontFamily: 'cursive' }}>
-                    BQMUSIC
-                </div>
-            </div>
 
-            {/* Nav Items */}
-            <nav className="ig-nav">
-                <NavItem
-                    icon={<Home className="w-6 h-6" />}
-                    label="Home"
-                    active={isActive('/newF')}
-                    onClick={() => handleNavigation('/newF')}
-                />
-                <NavItem
-                    icon={<Search className="w-6 h-6" />}
-                    label="Search"
-                    active={isActive('/search')}
-                    onClick={() => handleNavigation('/search')}
-                />
-                <NavItem
-                    icon={<Compass className="w-6 h-6" />}
-                    label="Explore"
-                    active={isActive('/explore')}
-                    onClick={() => handleNavigation('/explore')}
-                />
-                <NavItem
-                    icon={<Users className="w-6 h-6" />}
-                    label="Explore Groups"
-                    active={isActive('/groups')}
-                    onClick={() => handleNavigation('/groups')}
-                />
-                <NavItem
-                    icon={<Bookmark className="w-6 h-6" />}
-                    label="My Groups"
-                    active={isActive('/my-groups')}
-                    onClick={() => handleNavigation('/my-groups')}
-                />
-                <NavItem
-                    icon={<Heart className="w-6 h-6" />}
-                    label="Notifications"
-                    active={isActive('/notifications')}
-                    onClick={() => handleNavigation('/notifications')}
-                />
-                <NavItem
-                    icon={<List className="w-6 h-6" />}
-                    label="Playlists"
-                    active={isActive('/playlists')}
-                    onClick={() => handleNavigation('/playlists')}
-                />
-                <NavItem
-                    icon={<PlusSquare className="w-6 h-6" />}
-                    label="Create"
-                    onClick={onOpenCreateModal}
-                />
-                <div
-                    className={`ig-nav-item ${isActive(`/user/userId=${user?.idUser}`) ? 'active' : ''}`}
-                    onClick={() => handleNavigation(`/user/userId=${user?.idUser || ""}`)}
-                >
-                    <div className="ig-icon-wrapper">
-                        <img
-                            src={getUserAvatar(user?.imageUrl)}
-                            alt="Profile"
-                            className="ig-profile-avatar"
-                            onError={(e) => e.target.src = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}
+                {/* Nav Items */}
+                <nav className="ig-nav">
+                    <NavItem
+                        icon={<Home className="w-6 h-6" />}
+                        label="Home"
+                        active={isActive('/newF')}
+                        onClick={() => handleNavigation('/newF')}
+                    />
+                    <NavItem
+                        icon={<Search className="w-6 h-6" />}
+                        label="Search"
+                        active={isActive('/search')}
+                        onClick={() => handleNavigation('/search')}
+                    />
+                    <NavItem
+                        icon={<Compass className="w-6 h-6" />}
+                        label="Explore"
+                        active={isActive('/explore')}
+                        onClick={() => handleNavigation('/explore')}
+                    />
+                    <NavItem
+                        icon={<Users className="w-6 h-6" />}
+                        label="Explore Groups"
+                        active={isActive('/groups')}
+                        onClick={() => handleNavigation('/groups')}
+                    />
+                    <NavItem
+                        icon={<Bookmark className="w-6 h-6" />}
+                        label="My Groups"
+                        active={isActive('/my-groups')}
+                        onClick={() => handleNavigation('/my-groups')}
+                    />
+                    <div
+                        onMouseEnter={handleNotifMouseEnter}
+                        onMouseLeave={handleNotifMouseLeave}
+                    >
+                        <NavItem
+                            icon={<Heart className="w-6 h-6" />}
+                            label="Notifications"
+                            active={isNotificationsOpen}
                         />
                     </div>
-                    <span className="ig-nav-label">Profile</span>
-                </div>
-            </nav>
-
-            {/* Bottom Actions */}
-            <div className="ig-bottom-actions">
-                <div
-                    className="ig-nav-item"
-                    ref={buttonRef}
-                    onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                >
-                    <div className="ig-icon-wrapper">
-                        <Menu className="w-6 h-6" />
-                    </div>
-                    <span className="ig-nav-label">More</span>
-                </div>
-            </div>
-
-            {/* More Menu Popup */}
-            {isMoreMenuOpen && (
-                <div ref={menuRef} className="ig-more-menu">
-                    <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
-                    <MenuItem
-                        icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-                        label="Switch appearance"
-                        onClick={toggleTheme}
+                    <NavItem
+                        icon={<List className="w-6 h-6" />}
+                        label="Playlists"
+                        active={isActive('/playlists')}
+                        onClick={() => handleNavigation('/playlists')}
                     />
-                    <MenuItem icon={<AlertCircle className="w-5 h-5" />} label="Report a problem" />
+                    <NavItem
+                        icon={<PlusSquare className="w-6 h-6" />}
+                        label="Create"
+                        onClick={onOpenCreateModal}
+                    />
+                    <div
+                        className={`ig-nav-item ${isActive(`/user/userId=${user?.idUser}`) ? 'active' : ''}`}
+                        onClick={() => handleNavigation(`/user/userId=${user?.idUser || ""}`)}
+                    >
+                        <div className="ig-icon-wrapper">
+                            <img
+                                src={getUserAvatar(user?.imageUrl)}
+                                alt="Profile"
+                                className="ig-profile-avatar"
+                                onError={(e) => e.target.src = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}
+                            />
+                        </div>
+                        <span className="ig-nav-label">Profile</span>
+                    </div>
+                </nav>
 
-                    <div className="h-0.5 bg-gray-700 my-1"></div>
-
-                    <div className="ig-menu-item" onClick={handleLogout}>
-                        Log out
+                {/* Bottom Actions */}
+                <div className="ig-bottom-actions">
+                    <div
+                        className="ig-nav-item"
+                        ref={buttonRef}
+                        onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                    >
+                        <div className="ig-icon-wrapper">
+                            <Menu className="w-6 h-6" />
+                        </div>
+                        <span className="ig-nav-label">More</span>
                     </div>
                 </div>
-            )}
-        </aside>
+
+                {/* More Menu Popup */}
+                {isMoreMenuOpen && (
+                    <div ref={menuRef} className="ig-more-menu">
+                        <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
+                        <MenuItem
+                            icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                            label="Switch appearance"
+                            onClick={toggleTheme}
+                        />
+                        <MenuItem icon={<AlertCircle className="w-5 h-5" />} label="Report a problem" />
+
+                        <div className="h-0.5 bg-gray-700 my-1"></div>
+
+                        <div className="ig-menu-item" onClick={handleLogout}>
+                            Log out
+                        </div>
+                    </div>
+                )}
+            </aside>
+            <NotificationPanel
+                isOpen={isNotificationsOpen}
+                onMouseEnter={handleNotifMouseEnter}
+                onMouseLeave={handleNotifMouseLeave}
+            />
+        </>
     );
 };
 

@@ -59,29 +59,29 @@ function GenreManagement() {
     };
 
     const handleDeleteGenre = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa thể loại "${name}"?`)) return;
+        if (!window.confirm(`Are you sure you want to delete the genre "${name}"?`)) return;
 
         setLoading(true);
         setError("");
         try {
             const response = await genreService.deleteGenre(id);
             if (response && (response.success || response.status === 200)) {
-                setSuccessMessage(`Đã xóa thể loại "${name}" thành công!`);
+                setSuccessMessage(`Genre "${name}" deleted successfully!`);
                 fetchGenres(searchTerm);
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
                 // Specific handling for "in use" case if backend provides message
                 const msg = response?.message || "";
-                if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("liên kết")) {
-                    setError(`Cảnh báo: Thể loại "${name}" hiện đang có bài hát. Vui lòng chuyển các bài hát sang thể loại khác trước khi xóa.`);
+                if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("link")) {
+                    setError(`Warning: Genre "${name}" currently has associated songs. Please move these songs to another genre before deleting.`);
                 } else {
-                    setError(msg || "Xóa thể loại thất bại.");
+                    setError(msg || "Failed to delete genre.");
                 }
             }
         } catch (err) {
             const msg = getErrorMessage(err);
-            if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("liên kết")) {
-                setError(`Cảnh báo: Thể loại "${name}" hiện đang có bài hát. Vui lòng chuyển các bài hát sang thể loại khác trước khi xóa.`);
+            if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("link")) {
+                setError(`Warning: Genre "${name}" currently has associated songs. Please move these songs to another genre before deleting.`);
             } else {
                 setError(msg);
             }
@@ -97,7 +97,7 @@ function GenreManagement() {
         try {
             let response;
             const now = new Date().toISOString();
-            const userId = localStorage.getItem("userId") || ""; // Lấy userId từ localStorage
+            const userId = localStorage.getItem("userId") || ""; // Get userId from localStorage
 
             if (isEditing) {
                 response = await genreService.updateGenre(currentGenre.id, {
@@ -128,14 +128,14 @@ function GenreManagement() {
                 });
             }
 
-            // Kiểm tra success hoặc nếu res trả về object có ID (trường hợp backend không bọc success)
+            // Check for success or if res returns object with ID (case where backend doesn't wrap success)
             if (response && (response.success || response.id || response.idGenre)) {
-                setSuccessMessage(response.message || `Thể loại đã được ${isEditing ? "cập nhật" : "tạo"} thành công!`);
+                setSuccessMessage(response.message || `Genre ${isEditing ? "updated" : "created"} successfully!`);
                 handleCloseModal();
                 fetchGenres(searchTerm);
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
-                setError(response?.message || "Thao tác thất bại. Vui lòng kiểm tra lại.");
+                setError(response?.message || "Operation failed. Please check again.");
             }
         } catch (err) {
             setError(getErrorMessage(err));

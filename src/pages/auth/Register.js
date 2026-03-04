@@ -65,7 +65,7 @@ function Register() {
         e.preventDefault();
 
         if (!validateEmail(email)) {
-            setErrorMessage("Vui lòng nhập đúng định dạng email (ví dụ: user@example.com)");
+            setErrorMessage("Please enter a valid email address (e.g., user@example.com)");
             return;
         }
 
@@ -82,8 +82,8 @@ function Register() {
             } else {
                 // Handle "Email already exists" if returned in response.message
                 const msg = response.message || "Failed to send OTP.";
-                if (msg.toLowerCase().includes("exists") || msg.toLowerCase().includes("tồn tại")) {
-                    setErrorMessage("Email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác.");
+                if (msg.toLowerCase().includes("exists")) {
+                    setErrorMessage("This email is already in use. Please log in or use a different email.");
                 } else {
                     setErrorMessage(getErrorMessage({ response }, msg));
                 }
@@ -121,17 +121,17 @@ function Register() {
         e.preventDefault();
 
         if (form.name.trim().length < 2) {
-            setErrorMessage("Họ tên phải có ít nhất 2 ký tự.");
+            setErrorMessage("Full name must be at least 2 characters.");
             return;
         }
 
         if (!validatePassword(form.password)) {
-            setErrorMessage("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và chữ số.");
+            setErrorMessage("Password must be at least 8 characters long, including uppercase, lowercase, and numbers.");
             return;
         }
 
         if (form.password !== form.rePassword) {
-            setErrorMessage("Mật khẩu xác nhận không khớp!");
+            setErrorMessage("Confirmation password does not match!");
             return;
         }
 

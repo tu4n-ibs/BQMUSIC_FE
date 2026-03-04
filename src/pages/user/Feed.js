@@ -27,7 +27,7 @@ function NewFeed() {
 
   const { user } = useAuth();
 
-  // State lưu thông tin user hiện tại
+  // State to store current user info
   const [currentUser, setCurrentUser] = useState({
     name: '',
     username: '',
@@ -37,7 +37,7 @@ function NewFeed() {
   useEffect(() => {
     if (user) {
       setCurrentUser({
-        name: user.name || "Người dùng",
+        name: user.name || "User",
         username: user.email || "",
         avatar: getUserAvatar(user.imageUrl)
       });
@@ -55,9 +55,9 @@ function NewFeed() {
 
   const audioRef = useRef(null);
 
-  // --- 1. Fetch User Info (Đã chuyển sang dùng AuthContext) ---
+  // --- 1. Fetch User Info (Migrated to AuthContext) ---
   const fetchCurrentUser = useCallback(async () => {
-    // Không cần gọi API nữa vì đã có user từ context
+    // No need to call API as user is available from context
   }, []);
 
   // --- 2. Fetch Posts ---
@@ -80,12 +80,12 @@ function NewFeed() {
           userAvatar: getUserAvatar(post.authorAvatar || post.user?.imageUrl),
           postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : DEFAULT_COVER_URL,
           musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
-          likes: post.likeCount || post.likes || 0,
-          likeCount: post.likeCount || post.likes || 0,
           caption: post.content,
           content: post.content,
-          comments: 0,
-          timeAgo: 'Vừa xong',
+          commentCount: post.commentCount || 0,
+          likes: post.likeCount || post.likes || 0,
+          likeCount: post.likeCount || post.likes || 0,
+          timeAgo: 'Just now',
           isLiked: post.liked || post.isLiked || false,
           liked: post.liked || post.isLiked || false,
         };
@@ -94,7 +94,7 @@ function NewFeed() {
       // Strictly use mapped posts, no mock fallback
       setPosts(mappedPosts);
     } catch (error) {
-      console.error("Lỗi khi tải bài viết từ API:", error);
+      console.error("Error loading posts from API:", error);
       setPosts([]); // Clear posts on error
     }
   }, []);
@@ -133,7 +133,7 @@ function NewFeed() {
         )
       );
     } catch (error) {
-      console.error("Lỗi khi toggle like:", error);
+      console.error("Error toggling like:", error);
     }
   };
 
@@ -141,7 +141,7 @@ function NewFeed() {
 
   const handleProfileClick = (authorId) => {
     if (authorId) {
-      navigate(`/user/userId=${authorId}`);
+      navigate(`/user/${authorId}`);
     }
   };
 
@@ -194,7 +194,7 @@ function NewFeed() {
           {/* Posts List */}
           <div className="space-y-4">
             {posts.length === 0 ? (
-              <div className="text-center text-gray-500 py-10">Không có bài viết nào.</div>
+              <div className="text-center text-gray-500 py-10">No posts available.</div>
             ) : (
               posts.map(post => (
                 <article key={post.id} className="post-article">
@@ -289,6 +289,12 @@ function NewFeed() {
                     {expandedComments[post.id] && (
                       <CommentSection
                         postId={post.id}
+                        totalComments={post.commentCount}
+                        onCommentAdded={() => {
+                          setPosts(prev => prev.map(p =>
+                            p.id === post.id ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p
+                          ));
+                        }}
                         onClose={() => setExpandedComments(prev => ({ ...prev, [post.id]: false }))}
                       />
                     )}

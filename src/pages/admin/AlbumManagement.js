@@ -67,10 +67,10 @@ const AlbumManagement = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validation 2: Lỗi tải ảnh bìa (định dạng)
+            // Validation 2: Cover image upload error (format)
             const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
             if (!validTypes.includes(file.type)) {
-                setFormErrors(prev => ({ ...prev, image: "Lỗi định dạng ảnh! Yêu cầu Admin chọn lại file ảnh đúng định dạng (JPG, PNG, WEBP)." }));
+                setFormErrors(prev => ({ ...prev, image: "Invalid image format! Please choose a valid image file (JPG, PNG, WEBP)." }));
                 setForm(prev => ({ ...prev, imageFile: null, imagePreview: null }));
                 return;
             }
@@ -87,7 +87,7 @@ const AlbumManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.name.trim()) {
-            setFormErrors({ name: "Tên album không được để trống" });
+            setFormErrors({ name: "Album name cannot be empty" });
             return;
         }
 
@@ -112,7 +112,7 @@ const AlbumManagement = () => {
 
             setIsModalOpen(false);
             fetchAlbums();
-            alert("Thao tác thành công!");
+            alert("Operation successful!");
         } catch (err) {
             alert(getErrorMessage(err));
         } finally {
@@ -121,7 +121,7 @@ const AlbumManagement = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa album này?")) return;
+        if (!window.confirm("Are you sure you want to delete this album?")) return;
         try {
             await albumService.deleteAlbum(id);
             fetchAlbums();
@@ -149,15 +149,15 @@ const AlbumManagement = () => {
     };
 
     const addSongToAlbum = async (song) => {
-        // Validation 1: Bài hát đã thuộc Album khác
+        // Validation 1: Song already belongs to another Album
         if (song.albumId && song.albumId !== selectedAlbumId) {
-            alert(`Cảnh báo: Bài hát "${song.name}" đã thuộc Album khác! (Quy định 1 bài chỉ thuộc 1 album).`);
+            alert(`Warning: Song "${song.name}" already belongs to another Album! (Each song can only belong to one album).`);
             return;
         }
 
         try {
             await albumService.addSongToAlbum(selectedAlbumId, song.id || song.idSong);
-            alert("Đã thêm bài hát vào album!");
+            alert("Song added to album!");
         } catch (err) {
             alert(getErrorMessage(err));
         }

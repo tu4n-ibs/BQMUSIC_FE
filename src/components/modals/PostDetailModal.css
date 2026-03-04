@@ -12,15 +12,17 @@
 }
 
 .post-detail-modal {
-    background: white;
+    background: #020617;
+    /* slate-950 */
     width: 100%;
     max-width: 1200px;
     height: auto;
     max-height: 90vh;
     border-radius: 2rem;
     overflow: hidden;
-    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
     animation: scaleInModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dark .post-detail-modal {
@@ -114,7 +116,8 @@
 .post-content-text {
     font-size: 1rem;
     line-height: 1.7;
-    color: #1e293b;
+    color: #cbd5e1;
+    /* slate-300 */
     font-weight: 500;
 }
 

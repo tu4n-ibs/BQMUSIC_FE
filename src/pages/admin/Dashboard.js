@@ -21,16 +21,16 @@ function AdminMenu() {
 
   const navigate = useNavigate();
 
-  // Load danh sách user
+  // Load user list
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const data = await userService.getAllUsers();
-        // API có thể trả về { data: { content: [...] } } hoặc { content: [...] } hoặc mảng trực tiếp
+        // API can return { data: { content: [...] } } or { content: [...] } or direct array
         const userList = data.data?.content || data.content || data.data || data || [];
         setUsers(userList);
       } catch (error) {
-        console.error("Lỗi khi tải user:", error);
+        console.error("Error loading users:", error);
       }
     };
     fetchUsers();
@@ -45,7 +45,7 @@ function AdminMenu() {
   // Statistics
   const totalUsers = users.length;
   const activeUsers = users.filter((u) => u.isActive).length;
-  // Giả lập "New Today"
+  // Mock "New Today"
   const newUsersToday = Math.floor(Math.random() * 5);
 
   // --- Handlers (Read, Update, Delete) ---
@@ -55,7 +55,7 @@ function AdminMenu() {
       setSelectedUser(data.data || data);
       setShowDetailModal(true);
     } catch (error) {
-      console.error("Lỗi khi xem chi tiết:", error);
+      console.error("Error viewing details:", error);
     }
   };
 
@@ -83,24 +83,24 @@ function AdminMenu() {
       const targetId = selectedUser.userId || selectedUser.idUser || selectedUser.id;
       await userService.updateUser(targetId, form);
 
-      alert("Cập nhật thành công!");
+      alert("Update successful!");
       setShowUpdateModal(false);
       window.location.reload();
     } catch (error) {
-      console.error("Lỗi khi update:", error);
-      alert("Cập nhật thất bại!");
+      console.error("Update error:", error);
+      alert("Update failed!");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn xóa user này?")) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       await userService.deleteUser(id);
-      alert("Xóa thành công!");
+      alert("Delete successful!");
       setUsers(users.filter((u) => (u.userId || u.idUser || u.id) !== id));
     } catch (error) {
-      console.error("Lỗi khi xóa user:", error);
-      alert("Xóa thất bại!");
+      console.error("Error deleting user:", error);
+      alert("Delete failed!");
     }
   };
 
@@ -274,7 +274,7 @@ function AdminMenu() {
           {/* Pagination Placeholder */}
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
             <span className="text-muted small">Showing {filteredUsers.length} of {users.length} entries</span>
-            {/* Logic phân trang sẽ thêm sau */}
+            {/* Pagination logic will be added later */}
           </div>
         </div>
       </div>

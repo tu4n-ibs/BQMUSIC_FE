@@ -70,7 +70,7 @@ function Login() {
     <div className="instagram-login-container">
       <div className="instagram-login-content">
 
-        {/* Cột bên trái: Giới thiệu */}
+        {/* Left Column: Intro */}
         <div className="welcome-section">
           <div className="instagram-logo">
             <BQMusicLogo />
@@ -80,7 +80,7 @@ function Login() {
           </h1>
         </div>
 
-        {/* Cột bên phải: Form đăng nhập */}
+        {/* Right Column: Login Form */}
         <div className="login-section">
           <div className="login-card">
             <h2 className="login-title">Log into BQMUSIC</h2>
@@ -129,7 +129,7 @@ function Login() {
               <div className="divider-line"></div>
             </div>
 
-            {/* Nút Đăng nhập Google */}
+            {/* Google Login Button */}
             <button
               type="button"
               className="google-login-button"

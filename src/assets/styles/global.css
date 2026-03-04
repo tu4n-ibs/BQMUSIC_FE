@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +12,10 @@
     --text-secondary: #64748b;
     --text-muted: #94a3b8;
     --border-color: #e2e8f0;
+
+    /* Sidebar Dimensions */
+    --sidebar-width-collapsed: 80px;
+    --sidebar-width-expanded: 240px;
 
     /* Glassmorphism & Effects */
     --glass-bg: rgba(255, 255, 255, 0.7);
@@ -50,6 +56,10 @@
     --input-bg: #1e293b;
     --btn-secondary-bg: #1e293b;
     --btn-secondary-hover: #334155;
+}
+
+* {
+    font-family: 'Outfit', sans-serif !important;
 }
 
 body {

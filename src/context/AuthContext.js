@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import userService from "../services/userService";
 
 
 const AuthContext = createContext();
@@ -83,11 +84,19 @@ export const AuthProvider = ({ children }) => {
         });
     }, []);
 
-    const logout = useCallback(() => {
-        localStorage.clear();
-        setIsAuthenticated(false);
-        setUser(null);
-        // Optional: Call API to revoke token
+    const logout = useCallback(async () => {
+        try {
+            const refreshToken = localStorage.getItem("refreshToken");
+            if (refreshToken) {
+                await userService.logout(refreshToken);
+            }
+        } catch (error) {
+            console.error("API Logout failed:", error);
+        } finally {
+            localStorage.clear();
+            setIsAuthenticated(false);
+            setUser(null);
+        }
     }, []);
 
     const contextValue = useMemo(() => ({

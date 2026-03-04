@@ -49,7 +49,7 @@ function CreateUser() {
         name: form.name,
         password: form.password,
         email: form.email,
-        roles: form.roles // Mặc định role USER nếu rỗng? Tùy backend. Code cũ cho phép rỗng.
+        roles: form.roles // Default to USER if empty? Depends on backend.
       };
 
       formData.append(
@@ -67,11 +67,11 @@ function CreateUser() {
         },
       });
 
-      alert("✨ Tạo user thành công!");
+      alert("✨ User created successfully!");
       navigate("/admin");
     } catch (err) {
       console.error(err);
-      alert("❌ Lỗi khi tạo user! Vui lòng kiểm tra lại.");
+      alert("❌ Error creating user! Please check again.");
     } finally {
       setIsLoading(false);
     }

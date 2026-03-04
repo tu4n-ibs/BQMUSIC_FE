@@ -143,6 +143,18 @@ const userService = {
     },
 
     /**
+     * Logout user
+     * @param {string} refreshToken 
+     * @returns {Promise<Object>} Response data
+     */
+    logout: async (refreshToken) => {
+        // API endpoint: /auth/logout
+        // Payload: { "refreshToken": "..." }
+        const response = await axiosClient.post("/auth/logout", { refreshToken });
+        return response.data;
+    },
+
+    /**
      * Change password for logged-in user
      * @param {Object} data { email, oldPassword, newPassword, confirmPassword }
      * @returns {Promise<Object>} Response data
@@ -207,10 +219,7 @@ const userService = {
      * @returns {Promise<Array>} List of suggested users
      */
     getSuggestions: async () => {
-        // Since there's no specific suggestions endpoint, we fetch all users 
-        // and let the frontend filter or just show a subset.
-        const response = await axiosClient.get("/user");
-        // Ensure we return the content array if it's paginated
+        const response = await axiosClient.get("/user/suggestions");
         return response.data?.data?.content || response.data?.content || response.data || [];
     },
 

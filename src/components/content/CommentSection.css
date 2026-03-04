@@ -1,7 +1,7 @@
 .comment-section-container {
     padding: 1rem 0;
     margin-top: 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -19,16 +19,81 @@
     border-radius: 1rem;
 }
 
-.comment-form {
-    background: white;
-    border-radius: 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    overflow: hidden;
+.comment-form-v2 {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    margin: 0.5rem;
 }
 
-.dark .comment-form {
-    background: #1e293b;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.comment-form-v2:focus-within {
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 15px 40px -12px rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.comment-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+
+.comment-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    padding: 0.5rem 0;
+    resize: none;
+    max-height: 120px;
+    min-height: 40px;
+    font-weight: 400;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.comment-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.comment-send-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid transparent;
+}
+
+.comment-send-btn.active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.6);
+}
+
+.comment-send-btn.active:hover {
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 12px 25px -8px rgba(99, 102, 241, 0.8);
+}
+
+.comment-send-btn.active:active {
+    transform: scale(0.95);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -40,7 +105,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
 }
 
@@ -69,11 +134,7 @@
     display: block;
 }
 
-.comment-form textarea::placeholder {
-    color: #94a3b8;
-    font-weight: 500;
-}
-
-.comment-form textarea:focus {
-    box-shadow: none;
+/* PostDetailModal integration tweaks */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
 }

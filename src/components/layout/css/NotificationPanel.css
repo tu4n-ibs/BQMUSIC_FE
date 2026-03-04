@@ -1,0 +1,210 @@
+.notification-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 998;
+    /* Below sidebar which is 1000 */
+    background: transparent;
+}
+
+.notification-panel {
+    position: fixed;
+    top: 0;
+    /* Move it left purely so it starts under the inner edge of sidebar */
+    left: calc(20px + var(--sidebar-width-collapsed));
+    width: 380px;
+    height: 100vh;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 20px 0 30px -10px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, visibility 0.4s ease;
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.ig-sidebar:hover~.notification-panel {
+    left: calc(20px + var(--sidebar-width-expanded));
+}
+
+.notification-panel.open {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.notification-panel-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-panel-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.notification-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    /* Custom Scrollbar for better UX */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.notification-panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-panel-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notification-panel-content::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+}
+
+/* Base styles ported from old Notifications */
+.notification-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    padding-left: 8px;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: var(--bg-secondary);
+}
+
+.user-avatar-wrapper {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.user-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+}
+
+.type-icon-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--card-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--card-bg);
+}
+
+.notification-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.4;
+}
+
+.user-name {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.notification-text {
+    color: var(--text-secondary);
+    font-size: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.notification-action {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 60px;
+}
+
+.btn-follow-action {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-follow-action:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-follow-action.following {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-follow-action.following:hover {
+    background-color: var(--border-color);
+}
+
+.media-preview {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+}

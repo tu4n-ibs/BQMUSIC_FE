@@ -34,7 +34,7 @@ function ForgotPassword() {
     const handleSendOtp = async (e) => {
         e.preventDefault();
         if (!validateEmail(email)) {
-            setErrorMessage("Vui lòng nhập đúng định dạng email.");
+            setErrorMessage("Please enter a valid email address.");
             return;
         }
 
@@ -47,7 +47,7 @@ function ForgotPassword() {
             if (response && response.success) {
                 setIsSent(true);
             } else {
-                setErrorMessage(response.message || "Email không tồn tại trong hệ thống.");
+                setErrorMessage(response.message || "Email does not exist in our system.");
             }
         } catch (err) {
             console.error(err);
@@ -67,12 +67,12 @@ function ForgotPassword() {
 
             if (response && response.success) {
                 setIsVerified(true);
-                setSuccessMessage("Xác thực OTP thành công! Vui lòng nhập mật khẩu mới.");
+                setSuccessMessage("OTP verified successfully! Please enter your new password.");
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
-                const msg = response.message || "Mã OTP không hợp lệ hoặc đã hết hạn.";
-                if (msg.includes("5") || msg.toLowerCase().includes("lock") || msg.toLowerCase().includes("khóa")) {
-                    setErrorMessage("Bạn đã nhập sai quá 5 lần. Yêu cầu đã bị tạm khóa trong 15 phút.");
+                const msg = response.message || "Invalid or expired OTP code.";
+                if (msg.includes("5") || msg.toLowerCase().includes("lock")) {
+                    setErrorMessage("You have entered the wrong code more than 5 times. Requests are temporarily locked for 15 minutes.");
                 } else {
                     setErrorMessage(msg);
                 }
@@ -89,12 +89,12 @@ function ForgotPassword() {
         e.preventDefault();
 
         if (!validatePassword(newPassword)) {
-            setErrorMessage("Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và chữ số.");
+            setErrorMessage("New password must be at least 8 characters long, including uppercase, lowercase, and numbers.");
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            setErrorMessage("Mật khẩu xác nhận không khớp!");
+            setErrorMessage("Confirmation password does not match!");
             return;
         }
 

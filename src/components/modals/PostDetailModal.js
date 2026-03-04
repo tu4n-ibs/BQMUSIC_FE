@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Heart, MessageCircle, Music, Play, Pause, MoreHorizontal, Share2 } from 'lucide-react';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
 import CommentSection from '../content/CommentSection';
 import { getUserAvatar } from '../../utils/userUtils';
+import { formatDate } from '../../utils/dateUtils';
 import { useAuth } from '../../context/AuthContext';
 import { usePlayer } from '../../context/PlayerContext';
 import './PostDetailModal.css';
 
 const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const { playTrack, currentTrack, isPlaying } = usePlayer();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -64,12 +67,12 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 imageUrl: imageUrl,
                 musicLink: musicLink,
                 songName: songName,
-                authorName: authorName,
-                authorAvatar: authorAvatar,
-                likeCount: rawData.likeCount ?? rawData.likes ?? 0,
-                liked: rawData.liked ?? rawData.isLiked ?? false,
-                createdAt: rawData.createdAt || new Date().toISOString(),
-                user: author
+                authorName: rawData.userName || 'Unknown',
+                authorAvatar: getUserAvatar(rawData.userImage),
+                likeCount: rawData.likeCount || 0,
+                commentCount: rawData.commentCount || 0,
+                liked: rawData.isLiked || false,
+                createdAt: rawData.timeCreated || new Date().toISOString()
             };
 
             console.log("PostDetailModal: Formatted Post ->", formattedPost);
@@ -90,8 +93,9 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             console.log("PostDetailModal: Like Response ->", response);
 
             // Standarize response to isLiked/likeCount
-            const isLikedResult = response.isLiked ?? response.liked;
-            const likeCountResult = response.likeCount ?? response.likes ?? 0;
+            const resultData = response.data?.data || response.data || {};
+            const isLikedResult = resultData.isLiked;
+            const likeCountResult = resultData.likeCount || 0;
 
             setPost(prev => ({ ...prev, liked: isLikedResult, likeCount: likeCountResult }));
 
@@ -104,7 +108,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             });
         } catch (error) {
             console.error("PostDetailModal: Error toggling like ->", error);
-            alert(`Lỗi khi tương tác (Like). ID sử dụng: ${post.id}. Vui lòng kiểm tra console.`);
+            alert(`Error during interaction (Like). ID used: ${post.id}. Please check console.`);
         }
     };
 
@@ -116,6 +120,22 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             artist: post.authorName,
             avatar: post.imageUrl || post.authorAvatar,
             url: post.musicLink
+        });
+    };
+
+    const handleProfileClick = (authorId) => {
+        if (authorId) {
+            onClose && onClose(); // Close modal before navigating
+            navigate(`/user/${authorId}`);
+        }
+    };
+
+    const handleCommentAdded = () => {
+        setPost(prev => {
+            const newCount = (prev?.commentCount || 0) + 1;
+            // Sync back to Feed/Profile
+            if (onUpdate) onUpdate(post.id, { commentCount: newCount });
+            return { ...prev, commentCount: newCount };
         });
     };
 
@@ -169,20 +189,27 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                         </div>
 
                         {/* Right Side: Details & Comments */}
-                        <div className="lg:w-[40%] flex flex-col bg-white dark:bg-slate-900 border-l border-slate-100 dark:border-slate-800">
+                        <div className="lg:w-[40%] flex flex-col bg-slate-950 border-l border-slate-800">
                             {/* Header */}
                             <div className="p-4 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <img src={post.authorAvatar} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/20" />
+                                <div
+                                    className="flex items-center gap-3 cursor-pointer group"
+                                    onClick={() => handleProfileClick(post.userId)}
+                                >
+                                    <img
+                                        src={post.authorAvatar}
+                                        alt=""
+                                        className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/20 group-hover:border-indigo-500 transition-all"
+                                    />
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-bold text-slate-900 dark:text-white">{post.authorName}</span>
-                                        <span className="text-[10px] opacity-50 uppercase font-bold tracking-tighter">
-                                            {new Date(post.createdAt).toLocaleDateString()}
+                                        <span className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">{post.authorName}</span>
+                                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-tighter">
+                                            {formatDate(post.createdAt)}
                                         </span>
                                     </div>
                                 </div>
-                                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
-                                    <MoreHorizontal className="w-5 h-5 text-slate-400" />
+                                <button className="p-2 hover:bg-slate-800 rounded-full">
+                                    <MoreHorizontal className="w-5 h-5 text-slate-500" />
                                 </button>
                             </div>
 
@@ -190,28 +217,33 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                             <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
                                 <div className="mb-8">
                                     <p className="post-content-text whitespace-pre-wrap">
-                                        {post.content}
+                                        <span className="font-bold text-white mr-1">{post.authorName}</span>
+                                        - {post.content}
                                     </p>
                                 </div>
 
                                 <div className="mt-8">
-                                    <CommentSection postId={post.id} />
+                                    <CommentSection
+                                        postId={post.id}
+                                        totalComments={post.commentCount}
+                                        onCommentAdded={handleCommentAdded}
+                                    />
                                 </div>
                             </div>
 
                             {/* Footer Actions */}
-                            <div className="p-4 border-t border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                            <div className="p-4 border-t border-slate-900 bg-slate-950">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-4">
                                         <Heart
                                             onClick={handleToggleLike}
-                                            className={`w-7 h-7 cursor-pointer transition-all hover:scale-110 active:scale-90 ${post.liked ? 'fill-red-500 text-red-500' : 'text-slate-400 hover:text-red-500'}`}
+                                            className={`w-7 h-7 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 ${post.liked ? 'fill-rose-500 text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]' : 'text-slate-500 hover:text-rose-500'}`}
                                         />
-                                        <MessageCircle className="w-7 h-7 text-slate-400 cursor-pointer hover:text-indigo-500 transition-colors" />
-                                        <Share2 className="w-7 h-7 text-slate-400 cursor-pointer hover:text-indigo-500 transition-colors" />
+                                        <MessageCircle className="w-7 h-7 text-slate-500 cursor-pointer hover:text-indigo-500 transition-colors" />
+                                        <Share2 className="w-7 h-7 text-slate-500 cursor-pointer hover:text-indigo-500 transition-colors" />
                                     </div>
                                 </div>
-                                <div className="text-sm font-bold text-slate-900 dark:text-white">
+                                <div className="text-sm font-bold text-white">
                                     {post.likeCount.toLocaleString()} likes
                                 </div>
                             </div>

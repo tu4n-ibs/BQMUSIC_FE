@@ -12,32 +12,32 @@ const OAuth2RedirectHandler = () => {
 
   useEffect(() => {
     const processLogin = async () => {
-      // 1. Phân tích tham số URL
+      // 1. Parse URL parameters
       const params = new URLSearchParams(location.search);
       const token = params.get("token");
       const refreshToken = params.get("refreshToken");
       const error = params.get("error");
       const emailParam = params.get("email");
 
-      // 2. Xử lý lỗi từ Backend trả về (nếu có)
+      // 2. Handle errors from Backend (if any)
       if (error) {
-        console.error("Lỗi OAuth2:", error);
-        alert("Đăng nhập Google thất bại: " + error);
+        console.error("OAuth2 Error:", error);
+        alert("Google Login failed: " + error);
         navigate("/login");
         return;
       }
 
-      // 3. Kiểm tra token
+      // 3. Check token
       if (token && refreshToken) {
         try {
           // Extract numeric ID from JWT token
           const userId = getUserIdFromToken(token);
 
           if (!userId) {
-            throw new Error("Không thể giải mã ID người dùng từ Token");
+            throw new Error("Unable to decode user ID from Token");
           }
 
-          // 5. Login qua Context với thông tin từ token/params
+          // 5. Login via Context with info from token/params
           // Roles will be determined by the backend or default to USER
           login({
             token,
@@ -49,14 +49,14 @@ const OAuth2RedirectHandler = () => {
             role: ["USER"] // Default role, actual roles might be fetched later or embedded in token
           });
 
-          // 6. Chuyển hướng
+          // 6. Redirect
           navigate("/newF");
         } catch (err) {
-          console.error("Lỗi xác thực người dùng sau khi OAuth2:", err);
+          console.error("User authentication error after OAuth2:", err);
           navigate("/login");
         }
       } else {
-        console.error("Thiếu token từ Google");
+        console.error("Missing token from Google");
         navigate("/login");
       }
     };
@@ -85,7 +85,7 @@ const OAuth2RedirectHandler = () => {
       <style>
         {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}
       </style>
-      <h3 style={{ color: '#262626', fontWeight: '600' }}>Đang xử lý đăng nhập...</h3>
+      <h3 style={{ color: '#262626', fontWeight: '600' }}>Processing login...</h3>
     </div>
   );
 };

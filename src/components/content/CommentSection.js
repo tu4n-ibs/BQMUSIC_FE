@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Send, Reply, Edit2, Trash2, ChevronDown, ChevronUp, MoreVertical, X } from 'lucide-react';
 import commentService from '../../services/commentService';
 import { getUserAvatar } from '../../utils/userUtils';
+import { formatDate } from '../../utils/dateUtils';
 import { useAuth } from '../../context/AuthContext';
 import './CommentSection.css';
 
@@ -9,8 +11,9 @@ import './CommentSection.css';
  * CommentSection Component
  * Handles displaying, creating, editing, and deleting comments for a post.
  */
-const CommentSection = ({ postId, onClose }) => {
+const CommentSection = ({ postId, onClose, totalComments, onCommentAdded }) => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
@@ -29,8 +32,8 @@ const CommentSection = ({ postId, onClose }) => {
             const response = await commentService.getPostComments(postId, 0, 50);
             console.log("CommentSection: API Response ->", response);
 
-            const data = response.data?.data || response.data;
-            const content = data.content || data || [];
+            const data = response.data?.data;
+            const content = data?.content || [];
 
             if (Array.isArray(content)) {
                 setComments(content);
@@ -62,10 +65,28 @@ const CommentSection = ({ postId, onClose }) => {
                 parentCommentId: replyTo ? replyTo.id : null
             };
 
-            await commentService.createComment(commentData);
+            const response = await commentService.createComment(commentData);
             setContent('');
+
+            if (replyTo) {
+                const parentId = replyTo.id;
+                // Auto expand parent
+                setExpandedReplies(prev => ({ ...prev, [parentId]: true }));
+                // Fetch replies for this parent immediately
+                try {
+                    const repliesResponse = await commentService.getReplies(parentId);
+                    const repliesData = repliesResponse.data?.data;
+                    const replies = repliesData?.content || [];
+                    setComments(prev => updateRepliesInList(prev, parentId, replies));
+                } catch (err) {
+                    console.error("Error refreshing replies after post:", err);
+                }
+            } else {
+                fetchRootComments(); // Refresh root list if not a reply
+            }
+
             setReplyTo(null);
-            fetchRootComments(); // Refresh list
+            if (onCommentAdded) onCommentAdded();
         } catch (error) {
             console.error("Error sending comment:", error);
             alert("Failed to send comment. Please try again.");
@@ -110,7 +131,8 @@ const CommentSection = ({ postId, onClose }) => {
             if (comment && (!comment.replies || comment.replies.length === 0) && comment.replyCount > 0) {
                 try {
                     const response = await commentService.getReplies(commentId);
-                    const replies = response.data?.content || response.data || [];
+                    const data = response.data?.data;
+                    const replies = data?.content || [];
 
                     setComments(prev => updateRepliesInList(prev, commentId, replies));
                 } catch (error) {
@@ -146,18 +168,29 @@ const CommentSection = ({ postId, onClose }) => {
         });
     };
 
+    const handleProfileClick = (userId) => {
+        if (userId) {
+            onClose && onClose();
+            navigate(`/user/${userId}`);
+        }
+    };
+
     const CommentItem = ({ comment, depth = 1, parentDepth = 0 }) => (
-        <div className={`comment-item h-auto ${(depth > 1 && depth > parentDepth) ? 'ml-6 border-l-2 border-slate-200 dark:border-slate-700 pl-4 mt-3' : 'mt-5'}`}>
+        <div className={`comment-item h-auto ${(depth > 1 && depth > parentDepth) ? 'ml-6 border-l-2 border-slate-800 pl-4 mt-3' : 'mt-5'}`}>
             <div className="flex gap-2">
                 <img
                     src={getUserAvatar(comment.userImageUrl)}
                     alt={comment.userName}
-                    className="w-8 h-8 rounded-full object-cover shrink-0"
+                    className="w-8 h-8 rounded-full object-cover shrink-0 cursor-pointer hover:ring-2 hover:ring-indigo-500 transition-all"
+                    onClick={() => handleProfileClick(comment.userId)}
                 />
                 <div className="flex-1">
-                    <div className="bg-slate-100 dark:bg-slate-800/50 p-3 rounded-2xl relative">
+                    <div className="bg-slate-900/50 p-3 rounded-2xl relative border border-slate-800">
                         <div className="flex justify-between items-start">
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">
+                            <span
+                                className="text-xs font-bold text-white cursor-pointer hover:text-indigo-400 transition-colors"
+                                onClick={() => handleProfileClick(comment.userId)}
+                            >
                                 {comment.userName || 'Anonymous'}
                             </span>
                             {user?.id === comment.userId && (
@@ -165,16 +198,16 @@ const CommentSection = ({ postId, onClose }) => {
                                     <button className="p-1 hover:bg-black/5 rounded-full">
                                         <MoreVertical className="w-3 h-3 text-slate-400" />
                                     </button>
-                                    <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-white dark:bg-slate-800 shadow-xl rounded-lg border border-slate-100 dark:border-slate-700 z-10 py-1 min-w-[100px]">
+                                    <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-slate-900 shadow-xl rounded-lg border border-slate-800 z-10 py-1 min-w-[100px]">
                                         <button
                                             onClick={() => handleStartEdit(comment)}
-                                            className="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
+                                            className="w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center gap-2"
                                         >
                                             <Edit2 className="w-3 h-3" /> Edit
                                         </button>
                                         <button
                                             onClick={() => handleDeleteComment(comment.id)}
-                                            className="w-full text-left px-3 py-2 text-xs hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 flex items-center gap-2"
+                                            className="w-full text-left px-3 py-2 text-xs hover:bg-red-900/20 text-red-500 flex items-center gap-2"
                                         >
                                             <Trash2 className="w-3 h-3" /> Delete
                                         </button>
@@ -182,13 +215,13 @@ const CommentSection = ({ postId, onClose }) => {
                                 </div>
                             )}
                         </div>
-                        <p className="text-[13px] text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
+                        <p className="text-[13px] text-slate-300 mt-1 leading-relaxed">
                             {comment.content}
                         </p>
                     </div>
 
                     <div className="flex items-center gap-4 mt-1 ml-2 text-[11px] font-bold text-slate-500">
-                        <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                        <span>{formatDate(comment.createdAt)}</span>
                         <button
                             onClick={() => {
                                 setReplyTo({ id: comment.id, username: comment.userName });
@@ -211,7 +244,7 @@ const CommentSection = ({ postId, onClose }) => {
                     </div>
 
                     {/* Replies - Recursive rendering with depth logic */}
-                    {expandedReplies[comment.id] && comment.replies && comment.replies.map(reply => (
+                    {expandedReplies[comment.id] && Array.isArray(comment.replies) && comment.replies.map(reply => (
                         <CommentItem key={reply.id} comment={reply} depth={Math.min(depth + 1, 3)} parentDepth={depth} />
                     ))}
                 </div>
@@ -222,8 +255,8 @@ const CommentSection = ({ postId, onClose }) => {
     return (
         <div className="comment-section-container animate-fade-in">
             <div className="flex items-center justify-between mb-4 px-2">
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    Comments <span className="text-xs font-normal text-slate-400">({comments.length})</span>
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    Comments <span className="text-xs font-normal text-slate-500">({totalComments !== undefined ? totalComments : comments.length})</span>
                 </h4>
                 {onClose && (
                     <button onClick={onClose} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
@@ -242,33 +275,33 @@ const CommentSection = ({ postId, onClose }) => {
                 ))}
             </div>
 
-            <form onSubmit={editingComment ? handleUpdateComment : handleSendComment} className="comment-form">
+            <form onSubmit={editingComment ? handleUpdateComment : handleSendComment} className="comment-form-v2">
                 {replyTo && (
-                    <div className="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-t-xl border-b border-indigo-100 dark:border-indigo-900/30">
-                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400">
-                            Replying to <strong>@{replyTo.username}</strong>
+                    <div className="flex items-center justify-between bg-indigo-500/10 px-4 py-2 rounded-t-2xl border-b border-white/5">
+                        <span className="text-[10px] text-indigo-400">
+                            Replying to <span className="font-bold text-indigo-300">@{replyTo.username}</span>
                         </span>
-                        <button onClick={() => setReplyTo(null)} className="text-indigo-400 hover:text-indigo-600">
-                            <X className="w-3 h-3" />
+                        <button onClick={() => setReplyTo(null)} className="text-slate-500 hover:text-white transition-colors">
+                            <X className="w-3.5 h-3.5" />
                         </button>
                     </div>
                 )}
                 {editingComment && (
-                    <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-t-xl border-b border-amber-100 dark:border-amber-900/30">
-                        <span className="text-[10px] text-amber-600 dark:text-amber-400">
-                            Editing comment
+                    <div className="flex items-center justify-between bg-amber-500/10 px-4 py-2 rounded-t-2xl border-b border-white/5">
+                        <span className="text-[10px] text-amber-400">
+                            Editing your comment
                         </span>
-                        <button onClick={() => { setEditingComment(null); setContent(''); }} className="text-amber-400 hover:text-amber-600">
-                            <X className="w-3 h-3" />
+                        <button onClick={() => { setEditingComment(null); setContent(''); }} className="text-slate-500 hover:text-white transition-colors">
+                            <X className="w-3.5 h-3.5" />
                         </button>
                     </div>
                 )}
-                <div className="flex items-end gap-2 p-2 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div className="comment-input-wrapper">
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder={replyTo ? "Write a reply..." : "Write a comment..."}
-                        className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-1 resize-none max-h-32 min-h-[40px]"
+                        placeholder={replyTo ? "Share your thoughts..." : "Join the conversation..."}
+                        className="comment-textarea"
                         rows={1}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
@@ -280,9 +313,9 @@ const CommentSection = ({ postId, onClose }) => {
                     <button
                         type="submit"
                         disabled={!content.trim()}
-                        className={`p-2 rounded-xl transition-all ${content.trim() ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 hover:scale-105' : 'bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed'}`}
+                        className={`comment-send-btn ${content.trim() ? 'active' : ''}`}
                     >
-                        <Send className="w-4 h-4" />
+                        <Send className="w-3.5 h-3.5" />
                     </button>
                 </div>
             </form>

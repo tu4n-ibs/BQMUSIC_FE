@@ -4,41 +4,41 @@
  */
 export const ERROR_CODES = {
     // AUTH / USER
-    AUTH_INVALID_CREDENTIALS: "Mật khẩu không đúng. Vui lòng thử lại.",
-    AUTH_NF_001: "Tài khoản không tồn tại.",
-    USER_NF_001: "Không tìm thấy người dùng.",
-    USER_NF_002: "Người dùng đích không tồn tại.",
-    USER_NF_003: "Người dùng của token này không tồn tại.",
-    USER_NOT_EXIST: "Người dùng không tồn tại.",
-    USER_EXIST_001: "Tên đăng nhập hoặc Email đã tồn tại.",
-    ROLE_NF_001: "Lỗi hệ thống: Không tìm thấy quyền mặc định.",
-    REFRESH_TOKEN_NF: "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.",
-    REFRESH_TOKEN_EXPIRED: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
-    REGISTER_INVALID: "Email chưa được xác thực hoặc phiên đăng ký đã hết hạn.",
+    AUTH_INVALID_CREDENTIALS: "Incorrect password. Please try again.",
+    AUTH_NF_001: "Account does not exist.",
+    USER_NF_001: "User not found.",
+    USER_NF_002: "Target user does not exist.",
+    USER_NF_003: "User for this token does not exist.",
+    USER_NOT_EXIST: "User does not exist.",
+    USER_EXIST_001: "Username or Email already exists.",
+    ROLE_NF_001: "System error: Default role not found.",
+    REFRESH_TOKEN_NF: "Invalid login session. Please log in again.",
+    REFRESH_TOKEN_EXPIRED: "Login session expired. Please log in again.",
+    REGISTER_INVALID: "Email not verified or registration session expired.",
 
     // PASSWORD / OTP / EMAIL
-    PASSWORD_INVALID: "Mật khẩu không khớp.",
-    PASSWORD_NOT_MATCH: "Mật khẩu nhập lại không khớp.",
-    RESET_INVALID: "Phiên đổi mật khẩu không hợp lệ hoặc đã hết hạn.",
-    OTP_EXIST: "Vui lòng đợi 90 giây trước khi yêu cầu OTP mới.",
-    OTP_INVALID: "Mã xác thực không đúng.",
-    OTP_EXPIRED: "Mã xác thực đã hết hạn hoặc không tồn tại.",
-    SMS_EXIST: "Vui lòng đợi 90 giây trước khi gửi lại tin nhắn.",
-    EMAIL_SEND_FAILED: "Không thể gửi email xác thực. Vui lòng thử lại sau.",
+    PASSWORD_INVALID: "Passwords do not match.",
+    PASSWORD_NOT_MATCH: "Confirmation password does not match.",
+    RESET_INVALID: "Password reset session invalid or expired.",
+    OTP_EXIST: "Please wait 90 seconds before requesting a new OTP.",
+    OTP_INVALID: "Incorrect verification code.",
+    OTP_EXPIRED: "Verification code expired or does not exist.",
+    SMS_EXIST: "Please wait 90 seconds before resending the message.",
+    EMAIL_SEND_FAILED: "Failed to send verification email. Please try again later.",
 
     // SOCIAL
-    FOLLOW_SELF_ERR: "Bạn không thể tự theo dõi chính mình.",
-    FOLLOW_EXIST_ERR: "Bạn đã theo dõi người dùng này rồi.",
-    FOLLOW_RELATION_NF: "Bạn chưa theo dõi người dùng này.",
-    POST_NF_001: "Không tìm thấy bài viết.",
+    FOLLOW_SELF_ERR: "You cannot follow yourself.",
+    FOLLOW_EXIST_ERR: "You are already following this user.",
+    FOLLOW_RELATION_NF: "You are not following this user.",
+    POST_NF_001: "Post not found.",
 
     // FILE / SYSTEM
-    FILE_UPLOAD_ERR: "Lỗi khi lưu ảnh mới.",
-    FILE_UPLOAD_ERR_001: "Lỗi khi lưu ảnh.",
-    FILE_UPLOAD_ERR_002: "Lỗi khi lưu file nhạc.",
-    FILE_INTEGRITY_ERR: "Lỗi file: Kiểm tra toàn vẹn thất bại.",
-    FILE_HASH_ERR: "Lỗi hệ thống: Tính toán mã băm thất bại.",
-    FILE_NF_ERR: "Lỗi hệ thống: File ảnh bị thiếu trên server."
+    FILE_UPLOAD_ERR: "Error saving new image.",
+    FILE_UPLOAD_ERR_001: "Error saving image.",
+    FILE_UPLOAD_ERR_002: "Error saving music file.",
+    FILE_INTEGRITY_ERR: "File error: Integrity check failed.",
+    FILE_HASH_ERR: "System error: Hash computation failed.",
+    FILE_NF_ERR: "System error: Image file missing on server."
 };
 
 /**
@@ -47,7 +47,7 @@ export const ERROR_CODES = {
  * @param {string} defaultMessage - Fallback message if no specific code is found
  * @returns {string} The user-friendly error message
  */
-export const getErrorMessage = (error, defaultMessage = "Đã có lỗi xảy ra. Vui lòng thử lại.") => {
+export const getErrorMessage = (error, defaultMessage = "An error occurred. Please try again.") => {
     if (!error) return defaultMessage;
 
     let code = null;
@@ -94,10 +94,10 @@ export const getErrorMessage = (error, defaultMessage = "Đã có lỗi xảy ra
     }
 
     // Fallback to HTTP status codes
-    if (status === 401) return "Phiên đăng nhập hết hạn hoặc thông tin không đúng.";
-    if (status === 403) return "Bạn không có quyền thực hiện hành động này.";
-    if (status === 404) return "Không tìm thấy dữ liệu yêu cầu.";
-    if (status === 500) return "Lỗi hệ thống. Vui lòng thử lại sau.";
+    if (status === 401) return "Login session expired or incorrect credentials.";
+    if (status === 403) return "You do not have permission to perform this action.";
+    if (status === 404) return "Requested data not found.";
+    if (status === 500) return "System error. Please try again later.";
 
     return defaultMessage;
 };

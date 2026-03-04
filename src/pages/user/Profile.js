@@ -49,14 +49,6 @@ function Profile() {
     songName: ''
   });
 
-  // Change Password State
-  const [pwdForm, setPwdForm] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
-  const [pwdErrors, setPwdErrors] = useState({});
-
   // Stats State
   const [stats, setStats] = useState({
     postCount: 0,
@@ -160,6 +152,7 @@ function Profile() {
             authorName: authorName,
             authorAvatar: authorAvatar,
             likeCount: p.likeCount ?? p.likes ?? 0,
+            commentCount: p.commentCount ?? 0,
             liked: p.liked ?? p.isLiked ?? false,
             createdAt: p.createdAt || new Date().toISOString(),
             user: author
@@ -200,8 +193,8 @@ function Profile() {
         imagePreview: getUserAvatar(updatedUser.imageUrl)
       }));
     } catch (err) {
-      console.error("Lỗi cập nhật avatar:", err);
-      alert(err?.response?.data?.message || "Cập nhật avatar thất bại");
+      console.error("Avatar update error:", err);
+      alert(err?.response?.data?.message || "Avatar update failed");
     } finally {
       setLoading(false);
     }
@@ -233,60 +226,8 @@ function Profile() {
       }));
       setIsEditingName(false);
     } catch (err) {
-      console.error("Lỗi cập nhật tên:", err);
-      alert(err?.response?.data?.message || "Cập nhật tên thất bại");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    let errors = {};
-    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-    if (!pwdForm.oldPassword) errors.oldPassword = "Vui lòng nhập mật khẩu hiện tại";
-    if (!passRegex.test(pwdForm.newPassword)) {
-      errors.newPassword = "Mật khẩu phải ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số";
-    }
-    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
-      errors.confirmPassword = "Mật khẩu xác nhận không khớp";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setPwdErrors(errors);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await userService.changePassword({
-        email: user.email,
-        oldPassword: pwdForm.oldPassword,
-        newPassword: pwdForm.newPassword,
-        confirmPassword: pwdForm.confirmPassword
-      });
-
-      if (response && (response.success || response.status === 200)) {
-        alert("Đổi mật khẩu thành công!");
-        setIsChangePwdOpen(false);
-        setPwdForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
-        setPwdErrors({});
-      } else {
-        const msg = response?.message || "Đổi mật khẩu thất bại";
-        if (msg.toLowerCase().includes("current") || msg.toLowerCase().includes("mật khẩu cũ")) {
-          setPwdErrors({ oldPassword: "Mật khẩu hiện tại không chính xác" });
-        } else {
-          alert(msg);
-        }
-      }
-    } catch (err) {
-      const msg = err?.response?.data?.message || "Lỗi hệ thống khi đổi mật khẩu";
-      if (msg.toLowerCase().includes("current") || msg.toLowerCase().includes("mật khẩu cũ")) {
-        setPwdErrors({ oldPassword: "Mật khẩu hiện tại không chính xác" });
-      } else {
-        alert(msg);
-      }
+      console.error("Name update error:", err);
+      alert(err?.response?.data?.message || "Name update failed");
     } finally {
       setLoading(false);
     }
@@ -303,7 +244,7 @@ function Profile() {
         await userService.followUser(targetId);
       }
     } catch (err) {
-      console.error("Lỗi khi thay đổi trạng thái follow:", err);
+      console.error("Error changing follow status:", err);
       setIsFollowing(originalFollowState);
     }
   };
@@ -356,7 +297,7 @@ function Profile() {
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleNameUpdate()}
-                        className="ig-name-input"
+                        className="ig-name-input w-48 max-w-full bg-slate-800 text-white px-3 py-1 rounded-md outline-none border border-slate-600 focus:border-indigo-500 transition-colors"
                         autoFocus
                       />
                       <button onClick={handleNameUpdate} className="p-1 hover:text-green-500 transition-colors">
@@ -385,10 +326,7 @@ function Profile() {
                 </div>
                 <div className="ig-action-btns">
                   {isOwnProfile ? (
-                    <button className="ig-btn flex items-center gap-2" onClick={() => setIsChangePwdOpen(true)}>
-                      <Lock className="w-4 h-4" />
-                      Change Password
-                    </button>
+                    null
                   ) : (
                     <button
                       className={`ig-btn px-6 font-bold transition-all ${isFollowing ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white border-transparent' : 'bg-indigo-500 text-white border-transparent hover:bg-indigo-600'}`}
@@ -430,12 +368,16 @@ function Profile() {
             <div className={`ig-tab ${activeTab === 'posts' ? 'active' : ''}`} onClick={() => setActiveTab('posts')}>
               <Grid className="w-4 h-4" /> POSTS
             </div>
-            <div className={`ig-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
-              <Bookmark className="w-4 h-4" /> SAVED
-            </div>
-            <div className={`ig-tab ${activeTab === 'tagged' ? 'active' : ''}`} onClick={() => setActiveTab('tagged')}>
-              <UserIcon className="w-4 h-4" /> TAGGED
-            </div>
+            {isOwnProfile && (
+              <>
+                <div className={`ig-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
+                  <Bookmark className="w-4 h-4" /> SAVED
+                </div>
+                <div className={`ig-tab ${activeTab === 'tagged' ? 'active' : ''}`} onClick={() => setActiveTab('tagged')}>
+                  <UserIcon className="w-4 h-4" /> TAGGED
+                </div>
+              </>
+            )}
           </div>
 
           {activeTab === 'posts' && (
@@ -447,19 +389,23 @@ function Profile() {
                   {userPosts.map(post => (
                     <div
                       key={post.id}
-                      className="post-card bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all group overflow-hidden cursor-pointer"
+                      className="post-card bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all group overflow-hidden cursor-pointer flex flex-col"
                       onClick={() => { setSelectedPostIdDetail(post.id); setIsDetailModalOpen(true); }}
                     >
-                      {post.imageUrl && (
-                        <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-4">
-                          <img
-                            src={post.imageUrl}
-                            alt="Post Media"
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        </div>
-                      )}
-                      <p className="text-sm font-medium line-clamp-3 mb-2">{post.content}</p>
+                      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                        <img
+                          src={post.imageUrl || getUserAvatar(user.imageUrl)}
+                          alt="Post Media"
+                          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${!post.imageUrl ? 'opacity-40 blur-sm scale-110' : ''}`}
+                        />
+                        {!post.imageUrl && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <img src={getUserAvatar(user.imageUrl)} alt="" className="w-16 h-16 rounded-full border-4 border-white/20 shadow-2xl mb-3 backdrop-blur-md" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Thought Sharing</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm font-medium line-clamp-3 mb-2 flex-1">{post.content}</p>
                       {post.originalPostId && (
                         <div className="text-xs text-indigo-500 flex items-center gap-1 mt-2 font-bold bg-indigo-50 dark:bg-indigo-900/30 w-max px-2 py-1 rounded-md">
                           <LinkIcon className="w-3 h-3" /> Shared Post
@@ -505,62 +451,6 @@ function Profile() {
           )}
         </div>
       </main>
-
-      {isChangePwdOpen && (
-        <div className="ig-modal-overlay" onClick={() => setIsChangePwdOpen(false)}>
-          <div className="edit-profile-card" onClick={e => e.stopPropagation()}>
-            <h3 className="edit-profile-title">Change Password</h3>
-            <form onSubmit={handleChangePassword} className="edit-form-container">
-              <div className="edit-form-group">
-                <label className="edit-label">Current Password</label>
-                <input
-                  type="password"
-                  value={pwdForm.oldPassword}
-                  onChange={(e) => {
-                    setPwdForm({ ...pwdForm, oldPassword: e.target.value });
-                    if (pwdErrors.oldPassword) setPwdErrors({ ...pwdErrors, oldPassword: null });
-                  }}
-                  className={`edit-input ${pwdErrors.oldPassword ? 'border-red-500' : ''}`}
-                  placeholder="Enter current password"
-                />
-                {pwdErrors.oldPassword && <p className="text-[10px] text-red-500 font-bold mt-1 uppercase">{pwdErrors.oldPassword}</p>}
-              </div>
-              <div className="edit-form-group">
-                <label className="edit-label">New Password</label>
-                <input
-                  type="password"
-                  value={pwdForm.newPassword}
-                  onChange={(e) => {
-                    setPwdForm({ ...pwdForm, newPassword: e.target.value });
-                    if (pwdErrors.newPassword) setPwdErrors({ ...pwdErrors, newPassword: null });
-                  }}
-                  className={`edit-input ${pwdErrors.newPassword ? 'border-red-500' : ''}`}
-                  placeholder="Enter new password"
-                />
-                {pwdErrors.newPassword && <p className="text-[10px] text-red-500 font-bold mt-1 uppercase">{pwdErrors.newPassword}</p>}
-              </div>
-              <div className="edit-form-group">
-                <label className="edit-label">Confirm New Password</label>
-                <input
-                  type="password"
-                  value={pwdForm.confirmPassword}
-                  onChange={(e) => {
-                    setPwdForm({ ...pwdForm, confirmPassword: e.target.value });
-                    if (pwdErrors.confirmPassword) setPwdErrors({ ...pwdErrors, confirmPassword: null });
-                  }}
-                  className={`edit-input ${pwdErrors.confirmPassword ? 'border-red-500' : ''}`}
-                  placeholder="Confirm new password"
-                />
-                {pwdErrors.confirmPassword && <p className="text-[10px] text-red-500 font-bold mt-1 uppercase">{pwdErrors.confirmPassword}</p>}
-              </div>
-              <div className="edit-actions">
-                <button type="button" onClick={() => setIsChangePwdOpen(false)} className="btn-cancel">Cancel</button>
-                <button type="submit" disabled={loading} className="btn-save">{loading ? "Processing..." : "Update Password"}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       <AddToPlaylistModal
         isOpen={playlistModal.isOpen}

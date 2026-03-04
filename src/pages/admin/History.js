@@ -21,7 +21,7 @@ function History() {
         const res = await axiosClient.get("/auth");
         setLogs(res.data.content || []);
       } catch (error) {
-        console.error("Lỗi khi load history:", error);
+        console.error("Error loading history:", error);
       } finally {
         setLoading(false);
       }

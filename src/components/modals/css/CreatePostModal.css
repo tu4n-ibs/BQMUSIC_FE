@@ -165,8 +165,6 @@
     align-items: center;
     /* Căn giữa nút add so với row */
     width: 100%;
-    overflow: hidden;
-    /* Chặn việc row đẩy layout */
 }
 
 .selection-row {

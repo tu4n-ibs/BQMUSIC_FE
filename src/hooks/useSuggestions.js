@@ -16,15 +16,15 @@ export const useSuggestions = () => {
             const data = await userService.getSuggestions();
             const mappedSuggestions = data.map((user) => ({
                 id: user.userId || user.idUser || user.id,
-                username: user.name || "Người dùng ẩn danh",
+                username: user.name || "Anonymous User",
                 avatar: getUserAvatar(user.imageUrl),
-                mutual: 'Gợi ý cho bạn',
+                mutual: 'Suggested for you',
                 isFollowed: false // API suggestions are typically for users not yet followed
             }));
             setSuggestions(mappedSuggestions);
             setError(null);
         } catch (err) {
-            console.error("Lỗi khi tải gợi ý:", err);
+            console.error("Error loading suggestions:", err);
             setError(err);
         } finally {
             setLoading(false);
@@ -51,7 +51,7 @@ export const useSuggestions = () => {
                 await userService.followUser(targetId);
             }
         } catch (err) {
-            console.error("Lỗi follow:", err);
+            console.error("Follow error:", err);
             // Revert on error
             const revertedSuggestions = [...suggestions];
             revertedSuggestions[userIndex].isFollowed = isCurrentlyFollowed;
