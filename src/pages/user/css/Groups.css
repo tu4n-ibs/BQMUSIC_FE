@@ -422,14 +422,14 @@
     border-radius: 28px;
 }
 
-.post-header {
+.group-post-card .post-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
 }
 
-.post-author-img {
+.group-post-card .post-author-img {
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -437,18 +437,18 @@
     border: 2px solid rgba(99, 102, 241, 0.2);
 }
 
-.post-author-name {
+.group-post-card .post-author-name {
     font-weight: 800;
     font-size: 1rem;
 }
 
-.post-time {
+.group-post-card .post-time {
     font-size: 0.75rem;
     color: #64748b;
     font-weight: 600;
 }
 
-.post-music-player {
+.group-post-card .post-music-player {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -459,7 +459,7 @@
     margin-top: 1.5rem;
 }
 
-.music-cover {
+.group-post-card .music-cover {
     width: 60px;
     height: 60px;
     border-radius: 12px;
@@ -471,7 +471,7 @@
     overflow: hidden;
 }
 
-.play-overlay {
+.group-post-card .play-overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.2);
@@ -480,17 +480,17 @@
     justify-content: center;
 }
 
-.song-title {
+.group-post-card .song-title {
     font-weight: 800;
     font-size: 0.95rem;
 }
 
-.song-artist {
+.group-post-card .song-artist {
     font-size: 0.75rem;
     color: #64748b;
 }
 
-.visualizer {
+.group-post-card .visualizer {
     display: flex;
     align-items: center;
     gap: 2px;
@@ -498,25 +498,25 @@
     margin-left: auto;
 }
 
-.v-bar {
+.group-post-card .v-bar {
     width: 3px;
     background: #6366f1;
     border-radius: 50px;
 }
 
-.v-bar-1 {
+.group-post-card .v-bar-1 {
     height: 12px;
 }
 
-.v-bar-2 {
+.group-post-card .v-bar-2 {
     height: 18px;
 }
 
-.v-bar-3 {
+.group-post-card .v-bar-3 {
     height: 10px;
 }
 
-.post-footer {
+.group-post-card .post-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -525,19 +525,19 @@
     padding-top: 1.5rem;
 }
 
-.post-actions {
+.group-post-card .post-actions {
     display: flex;
     gap: 1.5rem;
 }
 
-.post-action-btn {
+.group-post-card .post-action-btn {
     font-weight: 800;
     font-size: 0.85rem;
     color: #64748b;
     transition: color 0.2s;
 }
 
-.post-action-btn:hover {
+.group-post-card .post-action-btn:hover {
     color: white;
 }
 

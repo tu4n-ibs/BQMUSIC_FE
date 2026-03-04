@@ -1,0 +1,1085 @@
+
+> security-app@0.1.0 test
+> react-scripts test --watchAll=false
+
+FAIL src/services/__test__/axiosClient.test.js
+  ● axiosClient interceptors › should add Authorization header if token exists
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Bearer mock-token"
+    Received: undefined
+
+      32 |         const result = requestInterceptor(config);
+      33 |
+    > 34 |         expect(result.headers['Authorization']).toBe('Bearer mock-token');
+         |                                                 ^
+      35 |     });
+      36 |
+      37 |     test('should not add Authorization header if no token', () => {
+
+      at Object.<anonymous> (src/services/__test__/axiosClient.test.js:34:49)
+
+PASS src/pages/user/__test__/Search.test.js
+  ● Console
+
+    console.error
+      Error: Not implemented: HTMLMediaElement.prototype.pause
+          at module.exports (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+          at HTMLAudioElementImpl.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+          at HTMLAudioElement.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+          at /Users/tuanvv/NAL/security_project_fe/src/context/PlayerContext.js:55:30
+          at Object.react_stack_bottom_frame (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+          at runWithFiberInDEV (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+          at commitHookEffectListMount (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+          at commitHookPassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+          at flushPassiveEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+          at flushActQueue (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:590:34)
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:884:10)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/act-compat.js:46:25
+          at renderRoot (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:189:26)
+          at render (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:291:10)
+          at renderWithProviders (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:18:18)
+          at Object.<anonymous> (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:37:9)
+          at Promise.then.completed (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:391:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:316:10)
+          at _callCircusTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:218:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at _runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:155:3)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:66:9)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:60:9)
+          at run (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:25:3)
+          at runAndTransformResultsToJestFormat (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+          at jestAdapter (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+          at runTestInternal (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:389:16)
+          at runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:475:34)
+          at Object.worker (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/testWorker.js:133:12) undefined
+
+      53 |             audioRef.current.play().catch(err => console.error("Error playing audio:", err));
+      54 |         } else {
+    > 55 |             audioRef.current.pause();
+         |                              ^
+      56 |         }
+      57 |     }, [isPlaying]);
+      58 |
+
+      at VirtualConsole.<anonymous> (node_modules/jsdom/lib/jsdom/virtual-console.js:29:45)
+      at module.exports (node_modules/jsdom/lib/jsdom/browser/not-implemented.js:12:26)
+      at HTMLAudioElementImpl.pause (node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+      at HTMLAudioElement.pause (node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+      at src/context/PlayerContext.js:55:30
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:18:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:37:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      16 |
+      17 | const renderWithProviders = (component) => {
+    > 18 |     return render(
+         |                  ^
+      19 |         <BrowserRouter>
+      20 |             <AuthProvider>
+      21 |                 <ThemeProvider>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:18:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:37:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      16 |
+      17 | const renderWithProviders = (component) => {
+    > 18 |     return render(
+         |                  ^
+      19 |         <BrowserRouter>
+      20 |             <AuthProvider>
+      21 |                 <ThemeProvider>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:18:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:37:9)
+
+    console.error
+      Error: Not implemented: HTMLMediaElement.prototype.pause
+          at module.exports (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+          at HTMLAudioElementImpl.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+          at HTMLAudioElement.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+          at /Users/tuanvv/NAL/security_project_fe/src/context/PlayerContext.js:55:30
+          at Object.react_stack_bottom_frame (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+          at runWithFiberInDEV (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+          at commitHookEffectListMount (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+          at commitHookPassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+          at flushPassiveEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+          at flushActQueue (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:590:34)
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:884:10)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/act-compat.js:46:25
+          at renderRoot (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:189:26)
+          at render (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:291:10)
+          at renderWithProviders (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:18:18)
+          at Object.<anonymous> (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:43:9)
+          at Promise.then.completed (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:391:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:316:10)
+          at _callCircusTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:218:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at _runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:155:3)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:66:9)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:60:9)
+          at run (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:25:3)
+          at runAndTransformResultsToJestFormat (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+          at jestAdapter (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+          at runTestInternal (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:389:16)
+          at runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:475:34)
+          at Object.worker (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/testWorker.js:133:12) undefined
+
+      53 |             audioRef.current.play().catch(err => console.error("Error playing audio:", err));
+      54 |         } else {
+    > 55 |             audioRef.current.pause();
+         |                              ^
+      56 |         }
+      57 |     }, [isPlaying]);
+      58 |
+
+      at VirtualConsole.<anonymous> (node_modules/jsdom/lib/jsdom/virtual-console.js:29:45)
+      at module.exports (node_modules/jsdom/lib/jsdom/browser/not-implemented.js:12:26)
+      at HTMLAudioElementImpl.pause (node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+      at HTMLAudioElement.pause (node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+      at src/context/PlayerContext.js:55:30
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:18:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:43:9)
+
+    console.error
+      Error: Not implemented: HTMLMediaElement.prototype.pause
+          at module.exports (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+          at HTMLAudioElementImpl.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+          at HTMLAudioElement.pause (/Users/tuanvv/NAL/security_project_fe/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+          at /Users/tuanvv/NAL/security_project_fe/src/context/PlayerContext.js:55:30
+          at Object.react_stack_bottom_frame (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+          at runWithFiberInDEV (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+          at commitHookEffectListMount (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+          at commitHookPassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+          at recursivelyTraversePassiveMountEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+          at commitPassiveMountOnFiber (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+          at flushPassiveEffects (/Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+          at flushActQueue (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:590:34)
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (/Users/tuanvv/NAL/security_project_fe/node_modules/react/cjs/react.development.js:884:10)
+          at /Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/act-compat.js:46:25
+          at renderRoot (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:189:26)
+          at render (/Users/tuanvv/NAL/security_project_fe/node_modules/@testing-library/react/dist/pure.js:291:10)
+          at renderWithProviders (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:18:18)
+          at Object.<anonymous> (/Users/tuanvv/NAL/security_project_fe/src/pages/user/__test__/Search.test.js:51:9)
+          at Promise.then.completed (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:391:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/utils.js:316:10)
+          at _callCircusTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:218:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at _runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:155:3)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:66:9)
+          at _runTestsForDescribeBlock (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:60:9)
+          at run (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/run.js:25:3)
+          at runAndTransformResultsToJestFormat (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+          at jestAdapter (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+          at runTestInternal (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:389:16)
+          at runTest (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/runTest.js:475:34)
+          at Object.worker (/Users/tuanvv/NAL/security_project_fe/node_modules/jest-runner/build/testWorker.js:133:12) undefined
+
+      53 |             audioRef.current.play().catch(err => console.error("Error playing audio:", err));
+      54 |         } else {
+    > 55 |             audioRef.current.pause();
+         |                              ^
+      56 |         }
+      57 |     }, [isPlaying]);
+      58 |
+
+      at VirtualConsole.<anonymous> (node_modules/jsdom/lib/jsdom/virtual-console.js:29:45)
+      at module.exports (node_modules/jsdom/lib/jsdom/browser/not-implemented.js:12:26)
+      at HTMLAudioElementImpl.pause (node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+      at HTMLAudioElement.pause (node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:157:34)
+      at src/context/PlayerContext.js:55:30
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15718:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15476:11)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:18:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:51:9)
+
+PASS src/components/modals/__test__/CreatePostModal.test.js
+  ● Console
+
+    console.error
+      An update to CreatePostModal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      56 |       const response = await genreService.getAllGenres();
+      57 |       if (response && response.success) {
+    > 58 |         setGenres(response.data || []);
+         |         ^
+      59 |       }
+      60 |     } catch (error) {
+      61 |       console.error("Failed to load genres:", error);
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at setGenres (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at fetchGenres (src/components/modals/CreatePostModal.js:58:9)
+
+PASS src/services/__test__/groupService.test.js
+PASS src/services/__test__/userService.test.js
+PASS src/services/__test__/postService.test.js
+PASS src/pages/admin/__test__/AlbumManagement.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      11 |
+      12 | const renderWithRouter = (ui) => {
+    > 13 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      14 | };
+      15 |
+      16 | describe('AlbumManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/AlbumManagement.test.js:13:18)
+      at Object.<anonymous> (src/pages/admin/__test__/AlbumManagement.test.js:38:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      11 |
+      12 | const renderWithRouter = (ui) => {
+    > 13 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      14 | };
+      15 |
+      16 | describe('AlbumManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/AlbumManagement.test.js:13:18)
+      at Object.<anonymous> (src/pages/admin/__test__/AlbumManagement.test.js:38:9)
+
+PASS src/services/__test__/albumService.test.js
+PASS src/services/__test__/songService.test.js
+PASS src/services/__test__/genreService.test.js
+PASS src/pages/admin/__test__/GenreManagement.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+       8 |
+       9 | const renderWithRouter = (ui) => {
+    > 10 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      11 | };
+      12 |
+      13 | describe('GenreManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/GenreManagement.test.js:10:18)
+      at Object.<anonymous> (src/pages/admin/__test__/GenreManagement.test.js:25:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+       8 |
+       9 | const renderWithRouter = (ui) => {
+    > 10 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      11 | };
+      12 |
+      13 | describe('GenreManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/GenreManagement.test.js:10:18)
+      at Object.<anonymous> (src/pages/admin/__test__/GenreManagement.test.js:25:9)
+
+PASS src/services/__test__/playlistService.test.js
+PASS src/pages/auth/__test__/Login.test.js
+  ● Console
+
+    console.error
+      Invalid DOM property `stroke-width`. Did you mean `strokeWidth`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-family`. Did you mean `fontFamily`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-size`. Did you mean `fontSize`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-weight`. Did you mean `fontWeight`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `letter-spacing`. Did you mean `letterSpacing`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.log
+      Decoded JWT Payload: { idUser: '123' }
+
+      at parseJwt (src/utils/jwtUtils.js:18:17)
+
+    console.log
+      Extracted User ID from Token: 123
+
+      at getUserIdFromToken (src/utils/jwtUtils.js:38:13)
+
+PASS src/pages/auth/__test__/ForgotPassword.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      10 |
+      11 | const renderWithRouter = (component) => {
+    > 12 |     return render(
+         |                  ^
+      13 |         <MemoryRouter>
+      14 |             {component}
+      15 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/ForgotPassword.test.js:12:18)
+      at Object.<anonymous> (src/pages/auth/__test__/ForgotPassword.test.js:25:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      10 |
+      11 | const renderWithRouter = (component) => {
+    > 12 |     return render(
+         |                  ^
+      13 |         <MemoryRouter>
+      14 |             {component}
+      15 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/ForgotPassword.test.js:12:18)
+      at Object.<anonymous> (src/pages/auth/__test__/ForgotPassword.test.js:25:9)
+
+PASS src/pages/auth/__test__/Register.test.js
+  ● Console
+
+    console.error
+      Invalid DOM property `stroke-width`. Did you mean `strokeWidth`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-family`. Did you mean `fontFamily`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-size`. Did you mean `fontSize`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-weight`. Did you mean `fontWeight`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `letter-spacing`. Did you mean `letterSpacing`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+
+Test Suites: 1 failed, 14 passed, 15 total
+Tests:       1 failed, 76 passed, 77 total
+Snapshots:   0 total
+Time:        3.368 s
+Ran all test suites.

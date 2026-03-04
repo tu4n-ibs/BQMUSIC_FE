@@ -38,8 +38,9 @@ describe('Login Component', () => {
     });
 
     test('valid login calls userService and login context', async () => {
+        const validJwtToken = 'header.eyJpZFVzZXIiOiIxMjMifQ.signature'; // {"idUser":"123"}
         const mockUserRes = {
-            token: 'token123',
+            token: validJwtToken,
             refreshToken: 'refresh123',
             role: ['USER'],
             idUser: '123',
@@ -70,11 +71,13 @@ describe('Login Component', () => {
 
         await waitFor(() => {
             expect(mockLogin).toHaveBeenCalledWith({
-                token: 'token123',
+                token: validJwtToken,
                 refreshToken: 'refresh123',
                 role: ['USER'],
                 idUser: '123',
-                email: 'test@example.com'
+                email: 'test@example.com',
+                name: undefined,
+                imageUrl: undefined
             });
         });
     });

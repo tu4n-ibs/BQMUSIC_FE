@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../../../context/AuthContext';
 import { ThemeProvider } from '../../../context/ThemeContext';
+import { PlayerProvider } from '../../../context/PlayerContext';
 import Search from '../Search';
 import axiosClient from '../../../services/axiosClient';
 
@@ -18,7 +19,9 @@ const renderWithProviders = (component) => {
         <BrowserRouter>
             <AuthProvider>
                 <ThemeProvider>
-                    {component}
+                    <PlayerProvider>
+                        {component}
+                    </PlayerProvider>
                 </ThemeProvider>
             </AuthProvider>
         </BrowserRouter>

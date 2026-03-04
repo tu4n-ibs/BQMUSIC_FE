@@ -31,6 +31,27 @@ const postService = {
     },
 
     /**
+     * Create a new post in a group
+     * @param {string} groupId 
+     * @param {Object} postData { content, visibility, targetType, targetId }
+     * @param {File} imageFile (Optional)
+     * @returns {Promise}
+     */
+    createGroupPost: async (groupId, postData, imageFile) => {
+        if (!imageFile) {
+            return axiosClient.post(`/posts/group/${groupId}`, postData);
+        }
+
+        const formData = new FormData();
+        formData.append('post', new Blob([JSON.stringify(postData)], { type: "application/json" }));
+        formData.append('image', imageFile);
+
+        return axiosClient.post(`/posts/group/${groupId}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
+
+    /**
      * Get all posts (Feed)
      * @param {number} page
      * @param {number} size
@@ -38,6 +59,17 @@ const postService = {
      */
     getAllPosts: async (page = 0, size = 20) => {
         return axiosClient.get(`/posts/test-find-all-post?page=${page}&size=${size}`);
+    },
+
+    /**
+     * Share an existing post
+     * @param {Object} shareData { originalPostId, content, visibility, contextType, contextId }
+     * @returns {Promise}
+     */
+    sharePost: async (shareData) => {
+        // According to user request:
+        // { "originalPostId": "string", "content": "string", "visibility": "FRIEND", "contextType": "PROFILE", "contextId": "string" }
+        return axiosClient.post('/posts/share', shareData);
     }
 };
 

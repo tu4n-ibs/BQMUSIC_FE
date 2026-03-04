@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Music, Volume2, VolumeX, Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Play, Pause, Music, Volume2, VolumeX, Heart, MessageCircle } from 'lucide-react';
 import axiosClient from '../../services/axiosClient';
 import CreatePostModal from '../../components/modals/CreatePostModal';
+import SharePostModal from '../../components/modals/SharePostModal';
 import Sidebar from '../../components/layout/Sidebar';
 import RightSidebar from '../../components/layout/RightSidebar';
 import { useAuth } from '../../context/AuthContext';
@@ -44,6 +45,8 @@ function NewFeed() {
 
   // State Modal
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [postToShare, setPostToShare] = useState(null);
 
   const audioRef = useRef(null);
 
@@ -129,6 +132,15 @@ function NewFeed() {
   return (
     <div className="flex min-h-screen feed-container">
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onPostCreated={fetchPosts} />
+      <SharePostModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        post={postToShare}
+        onShareSuccess={() => {
+          // Optionally, show a toast or refresh feed
+          fetchPosts();
+        }}
+      />
 
       {/* Left Sidebar */}
       <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
@@ -181,8 +193,8 @@ function NewFeed() {
                         )}
                       </div>
                     </div>
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
-                      <MoreHorizontal className="w-5 h-5" />
+                    <button className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors text-slate-500">
+                      <MoreHorizontalIcon />
                     </button>
                   </div>
 
@@ -212,21 +224,30 @@ function NewFeed() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                         <Heart
-                          className={`w-6 h-6 cursor-pointer hover:scale-110 transition-all duration-300 ${post.isLiked ? 'fill-red-500 text-red-500' : 'text-slate-400 hover:text-red-500'}`}
+                          className={`w-7 h-7 cursor-pointer hover:scale-125 transition-all duration-300 ${post.isLiked ? 'fill-red-500 text-red-500' : 'text-slate-500 hover:text-red-500'}`}
                           onClick={() => toggleLike(post.id)}
                         />
-                        <MessageCircle className="w-6 h-6 cursor-pointer text-slate-400 hover:text-indigo-400 transition-colors hover:scale-110" />
-                        <Share2 className="w-6 h-6 cursor-pointer text-slate-400 hover:text-emerald-400 transition-colors hover:scale-110" />
+                        <MessageCircle className="w-7 h-7 cursor-pointer text-slate-500 hover:text-indigo-500 transition-colors" />
+                        <svg
+                          onClick={() => {
+                            setPostToShare(post);
+                            setIsShareModalOpen(true);
+                          }}
+                          className="w-7 h-7 cursor-pointer text-slate-500 hover:text-indigo-500 transition-colors"
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
                       </div>
-                      <Bookmark className="w-6 h-6 cursor-pointer text-slate-400 hover:text-amber-400 transition-colors hover:scale-110" />
+                      <svg className="w-7 h-7 cursor-pointer text-slate-500 hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="likes-count">{post.likes.toLocaleString()} likes</div>
-                      <div className="caption">
-                        <span className="username font-bold mr-2 text-white">{post.username}</span>
-                        <span className="text-slate-300 leading-relaxed">{post.caption}</span>
-                      </div>
+                    <div className="likes-count mb-2">{post.likes.toLocaleString()} likes</div>
+                    <div className="caption">
+                      <span className="username">{post.username}</span>
+                      <span className="opacity-90">{post.caption}</span>
                     </div>
 
                     <div className="comment-input-container">

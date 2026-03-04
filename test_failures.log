@@ -1,0 +1,1542 @@
+
+> security-app@0.1.0 test
+> react-scripts test --watchAll=false
+
+FAIL src/services/__test__/axiosClient.test.js
+  ● axiosClient interceptors › should add Authorization header if token exists
+
+    TypeError: Cannot read properties of undefined (reading '0')
+
+      39 |     test('should add Authorization header if token exists', () => {
+      40 |         // extract the request interceptor
+    > 41 |         const requestInterceptor = axiosClient.interceptors.request.use.mock.calls[0][0];
+         |                                                                                      ^
+      42 |
+      43 |         mockStorage['token'] = 'mock-token';
+      44 |
+
+      at Object.<anonymous> (src/services/__test__/axiosClient.test.js:41:86)
+
+  ● axiosClient interceptors › should not add Authorization header if no token
+
+    TypeError: Cannot read properties of undefined (reading '0')
+
+      50 |
+      51 |     test('should not add Authorization header if no token', () => {
+    > 52 |         const requestInterceptor = axiosClient.interceptors.request.use.mock.calls[0][0];
+         |                                                                                      ^
+      53 |         const config = { headers: {} };
+      54 |         const result = requestInterceptor(config);
+      55 |
+
+      at Object.<anonymous> (src/services/__test__/axiosClient.test.js:52:86)
+
+  ● axiosClient interceptors › response success interceptor should just return response
+
+    TypeError: Cannot read properties of undefined (reading '0')
+
+      58 |
+      59 |     test('response success interceptor should just return response', () => {
+    > 60 |         const responseSuccessInterceptor = axiosClient.interceptors.response.use.mock.calls[0][0];
+         |                                                                                               ^
+      61 |         const mockResponse = { data: 'ok' };
+      62 |         expect(responseSuccessInterceptor(mockResponse)).toBe(mockResponse);
+      63 |     });
+
+      at Object.<anonymous> (src/services/__test__/axiosClient.test.js:60:95)
+
+  ● axiosClient interceptors › response error interceptor should reject on non-401 error
+
+    TypeError: Cannot read properties of undefined (reading '1')
+
+      66 |     // However, since we mock create(), we can access the mocked handles.
+      67 |     test('response error interceptor should reject on non-401 error', async () => {
+    > 68 |         const responseErrorInterceptor = axiosClient.interceptors.response.use.mock.calls[0][1];
+         |                                                                                             ^
+      69 |
+      70 |         const mockError = {
+      71 |             config: {},
+
+      at Object.<anonymous> (src/services/__test__/axiosClient.test.js:68:93)
+
+FAIL src/services/__test__/userService.test.js
+  ● userService › updateUser › should call axiosClient.put with correct email and formData
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+    - "/user/test@example.com",
+    + "/user/userId/test@example.com",
+      {},
+      {"headers": {"Content-Type": "multipart/form-data"}},
+
+    Number of calls: 1
+
+      115 |             const result = await userService.updateUser(email, formData);
+      116 |
+    > 117 |             expect(axiosClient.put).toHaveBeenCalledWith(`/user/${email}`, formData, expect.any(Object));
+          |                                     ^
+      118 |             expect(result).toEqual(mockResponse.data);
+      119 |         });
+      120 |     });
+
+      at Object.<anonymous> (src/services/__test__/userService.test.js:117:37)
+
+FAIL src/pages/user/__test__/Search.test.js
+  ● Search Component › renders search title and input
+
+    usePlayer must be used within a PlayerProvider
+
+       6 |     const context = useContext(PlayerContext);
+       7 |     if (!context) {
+    >  8 |         throw new Error('usePlayer must be used within a PlayerProvider');
+         |               ^
+       9 |     }
+      10 |     return context;
+      11 | };
+
+      at usePlayer (src/context/PlayerContext.js:8:15)
+      at Search (src/pages/user/Search.js:34:36)
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateFunctionComponent (node_modules/react-dom/cjs/react-dom-client.development.js:10166:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:11778:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16583:35)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:17:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:34:9)
+
+  ● Search Component › renders category tabs
+
+    usePlayer must be used within a PlayerProvider
+
+       6 |     const context = useContext(PlayerContext);
+       7 |     if (!context) {
+    >  8 |         throw new Error('usePlayer must be used within a PlayerProvider');
+         |               ^
+       9 |     }
+      10 |     return context;
+      11 | };
+
+      at usePlayer (src/context/PlayerContext.js:8:15)
+      at Search (src/pages/user/Search.js:34:36)
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateFunctionComponent (node_modules/react-dom/cjs/react-dom-client.development.js:10166:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:11778:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16583:35)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:17:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:40:9)
+
+  ● Search Component › renders recent searches section by default
+
+    usePlayer must be used within a PlayerProvider
+
+       6 |     const context = useContext(PlayerContext);
+       7 |     if (!context) {
+    >  8 |         throw new Error('usePlayer must be used within a PlayerProvider');
+         |               ^
+       9 |     }
+      10 |     return context;
+      11 | };
+
+      at usePlayer (src/context/PlayerContext.js:8:15)
+      at Search (src/pages/user/Search.js:34:36)
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateFunctionComponent (node_modules/react-dom/cjs/react-dom-client.development.js:10166:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:11778:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16583:35)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithProviders (src/pages/user/__test__/Search.test.js:17:18)
+      at Object.<anonymous> (src/pages/user/__test__/Search.test.js:48:9)
+
+PASS src/services/__test__/playlistService.test.js
+PASS src/services/__test__/albumService.test.js
+PASS src/pages/admin/__test__/AlbumManagement.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      11 |
+      12 | const renderWithRouter = (ui) => {
+    > 13 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      14 | };
+      15 |
+      16 | describe('AlbumManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/AlbumManagement.test.js:13:18)
+      at Object.<anonymous> (src/pages/admin/__test__/AlbumManagement.test.js:38:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      11 |
+      12 | const renderWithRouter = (ui) => {
+    > 13 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      14 | };
+      15 |
+      16 | describe('AlbumManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/AlbumManagement.test.js:13:18)
+      at Object.<anonymous> (src/pages/admin/__test__/AlbumManagement.test.js:38:9)
+
+PASS src/services/__test__/groupService.test.js
+PASS src/components/modals/__test__/CreatePostModal.test.js
+  ● Console
+
+    console.error
+      An update to CreatePostModal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      56 |       const response = await genreService.getAllGenres();
+      57 |       if (response && response.success) {
+    > 58 |         setGenres(response.data || []);
+         |         ^
+      59 |       }
+      60 |     } catch (error) {
+      61 |       console.error("Failed to load genres:", error);
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at setGenres (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at fetchGenres (src/components/modals/CreatePostModal.js:58:9)
+
+PASS src/services/__test__/genreService.test.js
+PASS src/services/__test__/songService.test.js
+PASS src/services/__test__/postService.test.js
+PASS src/pages/admin/__test__/GenreManagement.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+       8 |
+       9 | const renderWithRouter = (ui) => {
+    > 10 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      11 | };
+      12 |
+      13 | describe('GenreManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/GenreManagement.test.js:10:18)
+      at Object.<anonymous> (src/pages/admin/__test__/GenreManagement.test.js:25:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+       8 |
+       9 | const renderWithRouter = (ui) => {
+    > 10 |     return render(ui, { wrapper: BrowserRouter });
+         |                  ^
+      11 | };
+      12 |
+      13 | describe('GenreManagement Component', () => {
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at Object.logV6DeprecationWarnings [as UNSAFE_logV6DeprecationWarnings] (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router-dom/index.tsx:816:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/admin/__test__/GenreManagement.test.js:10:18)
+      at Object.<anonymous> (src/pages/admin/__test__/GenreManagement.test.js:25:9)
+
+PASS src/pages/auth/__test__/ForgotPassword.test.js
+  ● Console
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      10 |
+      11 | const renderWithRouter = (component) => {
+    > 12 |     return render(
+         |                  ^
+      13 |         <MemoryRouter>
+      14 |             {component}
+      15 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/ForgotPassword.test.js:12:18)
+      at Object.<anonymous> (src/pages/auth/__test__/ForgotPassword.test.js:25:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      10 |
+      11 | const renderWithRouter = (component) => {
+    > 12 |     return render(
+         |                  ^
+      13 |         <MemoryRouter>
+      14 |             {component}
+      15 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/ForgotPassword.test.js:12:18)
+      at Object.<anonymous> (src/pages/auth/__test__/ForgotPassword.test.js:25:9)
+
+PASS src/pages/auth/__test__/Register.test.js
+  ● Console
+
+    console.error
+      Invalid DOM property `stroke-width`. Did you mean `strokeWidth`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-family`. Did you mean `fontFamily`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-size`. Did you mean `fontSize`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `font-weight`. Did you mean `fontWeight`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.error
+      Invalid DOM property `letter-spacing`. Did you mean `letterSpacing`?
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      36 |
+      37 | const renderWithRouter = (component) => {
+    > 38 |     return render(
+         |                  ^
+      39 |         <MemoryRouter>
+      40 |             {component}
+      41 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Register.test.js:38:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Register.test.js:51:9)
+
+FAIL src/pages/auth/__test__/Login.test.js
+  ● Console
+
+    console.error
+      Invalid DOM property `stroke-width`. Did you mean `strokeWidth`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-family`. Did you mean `fontFamily`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-size`. Did you mean `fontSize`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `font-weight`. Did you mean `fontWeight`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Invalid DOM property `letter-spacing`. Did you mean `letterSpacing`?
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2992:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3146:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:19868:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20491:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      19 |
+      20 | const renderWithRouter = (component) => {
+    > 21 |     return render(
+         |                  ^
+      22 |         <MemoryRouter>
+      23 |             {component}
+      24 |         </MemoryRouter>
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+      at commitHookPassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+      at recursivelyTraversePassiveMountEffects (node_modules/react-dom/cjs/react-dom-client.development.js:15439:11)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:15519:11)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom-client.development.js:18432:9)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at renderWithRouter (src/pages/auth/__test__/Login.test.js:21:18)
+      at Object.<anonymous> (src/pages/auth/__test__/Login.test.js:34:9)
+
+    console.error
+      Error parsing JWT: TypeError: Cannot read properties of undefined (reading 'replace')
+          at parseJwt (/Users/tuanvv/NAL/security_project_fe/src/utils/jwtUtils.js:10:34)
+          at getUserIdFromToken (/Users/tuanvv/NAL/security_project_fe/src/utils/jwtUtils.js:32:21)
+          at handleSubmit (/Users/tuanvv/NAL/security_project_fe/src/pages/auth/Login.js:44:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+      19 |         return payload;
+      20 |     } catch (e) {
+    > 21 |         console.error("Error parsing JWT:", e);
+         |                 ^
+      22 |         return null;
+      23 |     }
+      24 | };
+
+      at parseJwt (src/utils/jwtUtils.js:21:17)
+      at getUserIdFromToken (src/utils/jwtUtils.js:32:21)
+      at handleSubmit (src/pages/auth/Login.js:44:40)
+
+  ● Login Component › valid login calls userService and login context
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+    @@ -1,8 +1,10 @@
+      Object {
+        "email": "test@example.com",
+    -   "idUser": "123",
+    +   "idUser": null,
+    +   "imageUrl": undefined,
+    +   "name": undefined,
+        "refreshToken": "refresh123",
+        "role": Array [
+          "USER",
+        ],
+        "token": "token123",,
+
+    Number of calls: 1
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"instagram-login-container"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"instagram-login-content"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"welcome-section"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"instagram-logo"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33mheight[39m=[32m"450"[39m
+                    [33mviewBox[39m=[32m"0 0 600 450"[39m
+                    [33mwidth[39m=[32m"600"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"30"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"110"[39m
+                      [33my[39m=[32m"100"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"40"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"120"[39m
+                      [33my[39m=[32m"90"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"55"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"130"[39m
+                      [33my[39m=[32m"75"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#3CB371"[39m
+                      [33mheight[39m=[32m"45"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"140"[39m
+                      [33my[39m=[32m"85"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"65"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"150"[39m
+                      [33my[39m=[32m"65"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"75"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"160"[39m
+                      [33my[39m=[32m"55"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"80"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"170"[39m
+                      [33my[39m=[32m"50"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#3CB371"[39m
+                      [33mheight[39m=[32m"85"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"180"[39m
+                      [33my[39m=[32m"45"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"75"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"190"[39m
+                      [33my[39m=[32m"55"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"65"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"200"[39m
+                      [33my[39m=[32m"65"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"70"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"210"[39m
+                      [33my[39m=[32m"60"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#3CB371"[39m
+                      [33mheight[39m=[32m"60"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"220"[39m
+                      [33my[39m=[32m"70"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"50"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"230"[39m
+                      [33my[39m=[32m"80"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"40"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"240"[39m
+                      [33my[39m=[32m"90"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"30"[39m
+                      [33mwidth[39m=[32m"8"[39m
+                      [33mx[39m=[32m"250"[39m
+                      [33my[39m=[32m"100"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"280"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"287"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"294"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"301"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"308"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"315"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"322"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"329"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"336"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"343"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"350"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"357"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"364"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"371"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"378"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"385"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"392"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"399"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"406"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"413"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"420"[39m
+                      [33my[39m=[32m"110"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"30"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"427"[39m
+                      [33my[39m=[32m"100"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"40"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"434"[39m
+                      [33my[39m=[32m"90"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#3CB371"[39m
+                      [33mheight[39m=[32m"45"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"441"[39m
+                      [33my[39m=[32m"85"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#32CD32"[39m
+                      [33mheight[39m=[32m"40"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"448"[39m
+                      [33my[39m=[32m"90"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"35"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"455"[39m
+                      [33my[39m=[32m"95"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"30"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"462"[39m
+                      [33my[39m=[32m"100"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#2E8B57"[39m
+                      [33mheight[39m=[32m"25"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"469"[39m
+                      [33my[39m=[32m"105"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mwidth[39m=[32m"5"[39m
+                      [33mx[39m=[32m"476"[39m
+                      [33my[39m=[32m"110"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"180"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#8B4513"[39m
+                      [33mr[39m=[32m"55"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"180"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#A0522D"[39m
+                      [33mr[39m=[32m"48"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"250"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#8B4513"[39m
+                      [33mr[39m=[32m"50"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"250"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#A0522D"[39m
+                      [33mr[39m=[32m"43"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"215"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"12"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"215"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#654321"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                    [36m<rect[39m
+                      [33mfill[39m=[32m"#8B4513"[39m
+                      [33mheight[39m=[32m"14"[39m
+                      [33mwidth[39m=[32m"220"[39m
+                      [33mx[39m=[32m"250"[39m
+                      [33my[39m=[32m"203"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"300"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#DEB887"[39m
+                      [33mr[39m=[32m"3"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"345"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#DEB887"[39m
+                      [33mr[39m=[32m"3"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"390"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#DEB887"[39m
+                      [33mr[39m=[32m"3"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"435"[39m
+                      [33mcy[39m=[32m"210"[39m
+                      [33mfill[39m=[32m"#DEB887"[39m
+                      [33mr[39m=[32m"3"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M 470 203 L 490 198 L 493 203 L 493 217 L 490 222 L 470 217 Z"[39m
+                      [33mfill[39m=[32m"#654321"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"475"[39m
+                      [33mcy[39m=[32m"201"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"481"[39m
+                      [33mcy[39m=[32m"201"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"487"[39m
+                      [33mcy[39m=[32m"201"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"475"[39m
+                      [33mcy[39m=[32m"219"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"481"[39m
+                      [33mcy[39m=[32m"219"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"487"[39m
+                      [33mcy[39m=[32m"219"[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mr[39m=[32m"4"[39m
+                    [36m/>[39m
+                    [36m<line[39m
+                      [33mopacity[39m=[32m"0.6"[39m
+                      [33mstroke[39m=[32m"#FFFFFF"[39m
+                      [33mstroke-width[39m=[32m"1"[39m
+                      [33mx1[39m=[32m"215"[39m
+                      [33mx2[39m=[32m"470"[39m
+                      [33my1[39m=[32m"205"[39m
+                      [33my2[39m=[32m"205"[39m
+                    [36m/>[39m
+                    [36m<line[39m
+                      [33mopacity[39m=[32m"0.6"[39m
+                      [33mstroke[39m=[32m"#FFFFFF"[39m
+                      [33mstroke-width[39m=[32m"1"[39m
+                      [33mx1[39m=[32m"215"[39m
+                      [33mx2[39m=[32m"470"[39m
+                      [33my1[39m=[32m"208"[39m
+                      [33my2[39m=[32m"208"[39m
+                    [36m/>[39m
+                    [36m<line[39m
+                      [33mopacity[39m=[32m"0.6"[39m
+                      [33mstroke[39m=[32m"#FFFFFF"[39m
+                      [33mstroke-width[39m=[32m"1"[39m
+                      [33mx1[39m=[32m"215"[39m
+                      [33mx2[39m=[32m"470"[39m
+                      [33my1[39m=[32m"212"[39m
+                      [33my2[39m=[32m"212"[39m
+                    [36m/>[39m
+                    [36m<line[39m
+                      [33mopacity[39m=[32m"0.6"[39m
+                      [33mstroke[39m=[32m"#FFFFFF"[39m
+                      [33mstroke-width[39m=[32m"1"[39m
+                      [33mx1[39m=[32m"215"[39m
+                      [33mx2[39m=[32m"470"[39m
+                      [33my1[39m=[32m"215"[39m
+                      [33my2[39m=[32m"215"[39m
+                    [36m/>[39m
+                    [36m<text[39m
+                      [33mfill[39m=[32m"#000000"[39m
+                      [33mfont-family[39m=[32m"Arial Black, Arial, sans-serif"[39m
+                      [33mfont-size[39m=[32m"65"[39m
+                      [33mfont-weight[39m=[32m"900"[39m
+                      [33mletter-spacing[39m=[32m"3"[39m
+                      [33mx[39m=[32m"150"[39m
+                      [33my[39m=[32m"320"[39m
+                    [36m>[39m
+                      [0mBQMUSIC[0m
+                    [36m</text>[39m
+                    [36m<text[39m
+                      [33mfill[39m=[32m"#228B22"[39m
+                      [33mfont-family[39m=[32m"Arial, sans-serif"[39m
+                      [33mfont-size[39m=[32m"14"[39m
+                      [33mletter-spacing[39m=[32m"5"[39m
+                      [33mx[39m=[32m"150"[39m
+                      [33my[39m=[32m"345"[39m
+                    [36m>[39m
+                      [0mMUSIC MADE SOCIAL[0m
+                    [36m</text>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+                [36m<h1[39m
+                  [33mclass[39m=[32m"welcome-title"[39m
+                [36m>[39m
+                  [0mWhere Listeners Become [0m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"highlight-text"[39m
+                  [36m>[39m
+                    [0ma Community[0m
+                  [36m</span>[39m
+                  [0m.[0m
+                [36m</h1>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"login-section"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"login-card"[39m
+                [36m>[39m
+                  [36m<h2[39m
+                    [33mclass[39m=[32m"login-title"[39m
+                  [36m>[39m
+                    [0mLog into BQMUSIC[0m
+                  [36m</h2>[39m
+                  [36m<form[39m
+                    [33mclass[39m=[32m"login-form"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"form-group"[39m
+                    [36m>[39m
+                      [36m<input[39m
+                        [33mclass[39m=[32m"form-input"[39m
+                        [33mplaceholder[39m=[32m"Email"[39m
+                        [33mrequired[39m=[32m""[39m
+                        [33mtype[39m=[32m"email"[39m
+                        [33mvalue[39m=[32m"test@example.com"[39m
+                      [36m/>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"form-group"[39m
+                    [36m>[39m
+                      [36m<input[39m
+                        [33mclass[39m=[32m"form-input"[39m
+                        [33mplaceholder[39m=[32m"Password"[39m
+                        [33mrequired[39m=[32m""[39m
+                        [33mtype[39m=[32m"password"[39m
+                        [33mvalue[39m=[32m"password123"[39m
+                      [36m/>[39m
+                    [36m</div>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"login-button"[39m
+                      [33mtype[39m=[32m"submit"[39m
+                    [36m>[39m
+                      [0mLog in[0m
+                    [36m</button>[39m
+                  [36m</form>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"divider-container"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"divider-line"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"divider-text"[39m
+                    [36m>[39m
+                      [0mOR[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"divider-line"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"google-login-button"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"[39m
+                        [33mfill[39m=[32m"#EA4335"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M23 12.27c0-.76-.07-1.49-.2-2.19H12v4.15h6.18c-.27 1.4-1.09 2.59-2.31 3.38l3.66 2.84C21.46 18.7 23 15.8 23 12.27z"[39m
+                        [33mfill[39m=[32m"#4285F4"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M5.84 14.09c-.22-.66-.35-1.36-.35-2.09 0-.73.13-1.43.35-2.09L2.18 7.07C1.43 8.55 1 10.22 1 12c0 1.78.43 3.45 1.18 4.93l3.66-2.84z"[39m
+                        [33mfill[39m=[32m"#FBBC05"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 23c2.97 0 5.45-.98 7.27-2.65l-3.66-2.84c-1.02.69-2.32 1.09-3.61 1.09-2.86 0-5.29-1.93-6.16-4.53l-3.66 2.84C3.99 20.53 7.7 23 12 23z"[39m
+                        [33mfill[39m=[32m"#34A853"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [0mLog in with Google[0m
+                  [36m</button>[39m
+                  [36m<a[39m
+                    [33mclass[39m=[32m"auth-link"[39m
+                    [33mhref[39m=[32m"/forgot-password"[39m
+                  [36m>[39m
+                    [0mForgot password?[0m
+                  [36m</a>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"signup-box"[39m
+                  [36m>[39m
+                    [0mDon't have an account? [0m
+                    [36m<button>[39m
+                      [0mRegister[0m
+                    [36m</button>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      70 |
+      71 |         await waitFor(() => {
+    > 72 |             expect(mockLogin).toHaveBeenCalledWith({
+         |                               ^
+      73 |                 token: 'token123',
+      74 |                 refreshToken: 'refresh123',
+      75 |                 role: ['USER'],
+
+      at src/pages/auth/__test__/Login.test.js:72:31
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at checkRealTimersCallback (node_modules/@testing-library/dom/dist/wait-for.js:118:16)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:516:19)
+
+Test Suites: 4 failed, 11 passed, 15 total
+Tests:       9 failed, 68 passed, 77 total
+Snapshots:   0 total
+Time:        4.284 s
+Ran all test suites.

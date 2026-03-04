@@ -106,15 +106,15 @@ describe("userService", () => {
     });
 
     describe("updateUser", () => {
-        it("should call axiosClient.put with correct email and formData", async () => {
-            const email = "test@example.com";
+        it("should call axiosClient.put with correct userId and formData", async () => {
+            const userId = "123";
             const formData = new FormData();
             const mockResponse = { data: { success: true } };
             axiosClient.put.mockResolvedValue(mockResponse);
 
-            const result = await userService.updateUser(email, formData);
+            const result = await userService.updateUser(userId, formData);
 
-            expect(axiosClient.put).toHaveBeenCalledWith(`/user/${email}`, formData, expect.any(Object));
+            expect(axiosClient.put).toHaveBeenCalledWith(`/user/userId/${userId}`, formData, expect.any(Object));
             expect(result).toEqual(mockResponse.data);
         });
     });

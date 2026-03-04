@@ -10,7 +10,7 @@ import './css/CreatePostModal.css';
 
 const DRAFTS_KEY = 'bq_music_song_drafts';
 
-const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
+const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId }) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1); // 1: Upload Music, 2: Post Details
   const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +171,11 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
         targetId: uploadedSong.id || uploadedSong.idSong // ID từ Step 1
       };
 
-      await postService.createPost(postData, selectedImage);
+      if (groupId) {
+        await postService.createGroupPost(groupId, postData, selectedImage);
+      } else {
+        await postService.createPost(postData, selectedImage);
+      }
 
       // Xóa draft này nếu đã post thành công (nếu draft có cùng song ID)
       const updatedDrafts = drafts.filter(d => (d.idSong || d.id) !== (uploadedSong.idSong || uploadedSong.id));
@@ -180,7 +184,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
 
       handleClose();
       onPostCreated();
-      alert("Đăng bài thành công! 🎵");
+      alert(`Đăng bài thành công ${groupId ? 'vào nhóm' : ''}! 🎵`);
     } catch (error) {
       console.error("Lỗi đăng bài:", error);
       alert("Đăng bài thất bại.");

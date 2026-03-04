@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import { Search, Plus, Users, ArrowRight, TrendingUp, Star } from 'lucide-react';
 import groupService from '../../services/groupService';
+import CreateGroupModal from '../../components/modals/CreateGroupModal';
 import './css/Groups.css';
 
 const Groups = () => {
@@ -10,18 +11,21 @@ const Groups = () => {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const fetchGroups = async () => {
+        setLoading(true);
+        try {
+            const data = await groupService.getGroups();
+            setGroups(data);
+        } catch (error) {
+            console.error("Error loading groups:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchGroups = async () => {
-            try {
-                const data = await groupService.getGroups();
-                setGroups(data);
-            } catch (error) {
-                console.error("Error loading groups:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchGroups();
     }, []);
 
@@ -41,7 +45,7 @@ const Groups = () => {
                             <h1 className="text-4xl font-black tracking-tight mb-2">Communities</h1>
                             <p className="text-slate-400 font-medium">Find your tribe, share your sound.</p>
                         </div>
-                        <button className="create-group-btn">
+                        <button className="create-group-btn" onClick={() => setIsCreateModalOpen(true)}>
                             <Plus className="w-5 h-5" />
                             <span>Create Group</span>
                         </button>
@@ -117,6 +121,15 @@ const Groups = () => {
                     </section>
                 </div>
             </main>
+
+            {/* Modals */}
+            <CreateGroupModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onGroupCreated={() => {
+                    fetchGroups();
+                }}
+            />
         </div>
     );
 };
