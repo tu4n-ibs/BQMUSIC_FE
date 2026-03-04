@@ -19,13 +19,27 @@ const CommentSection = ({ postId, onClose }) => {
     const [expandedReplies, setExpandedReplies] = useState({}); // { commentId: boolean }
 
     const fetchRootComments = useCallback(async () => {
+        if (!postId) {
+            console.warn("CommentSection: fetchRootComments called without postId");
+            return;
+        }
         setLoading(true);
         try {
+            console.log("CommentSection: Fetching comments for PostID ->", postId);
             const response = await commentService.getPostComments(postId, 0, 50);
-            const data = response.data?.content || response.data || [];
-            setComments(data);
+            console.log("CommentSection: API Response ->", response);
+
+            const data = response.data?.data || response.data;
+            const content = data.content || data || [];
+
+            if (Array.isArray(content)) {
+                setComments(content);
+            } else {
+                console.warn("CommentSection: Received non-array content", content);
+                setComments([]);
+            }
         } catch (error) {
-            console.error("Error fetching comments:", error);
+            console.error("CommentSection: Error fetching comments:", error);
         } finally {
             setLoading(false);
         }
@@ -133,20 +147,20 @@ const CommentSection = ({ postId, onClose }) => {
     };
 
     const CommentItem = ({ comment, depth = 1, parentDepth = 0 }) => (
-        <div className={`comment-item h-auto ${(depth > 1 && depth > parentDepth) ? 'ml-6 border-l-2 border-slate-100 dark:border-slate-800 pl-4 mt-3' : 'mt-5'}`}>
+        <div className={`comment-item h-auto ${(depth > 1 && depth > parentDepth) ? 'ml-6 border-l-2 border-slate-200 dark:border-slate-700 pl-4 mt-3' : 'mt-5'}`}>
             <div className="flex gap-2">
                 <img
-                    src={getUserAvatar(comment.user?.imageUrl)}
-                    alt={comment.user?.name}
+                    src={getUserAvatar(comment.userImageUrl)}
+                    alt={comment.userName}
                     className="w-8 h-8 rounded-full object-cover shrink-0"
                 />
                 <div className="flex-1">
                     <div className="bg-slate-100 dark:bg-slate-800/50 p-3 rounded-2xl relative">
                         <div className="flex justify-between items-start">
                             <span className="text-xs font-bold text-slate-900 dark:text-white">
-                                {comment.user?.name || 'Anonymous'}
+                                {comment.userName || 'Anonymous'}
                             </span>
-                            {user?.id === comment.user?.id && (
+                            {user?.id === comment.userId && (
                                 <div className="group relative">
                                     <button className="p-1 hover:bg-black/5 rounded-full">
                                         <MoreVertical className="w-3 h-3 text-slate-400" />
@@ -168,7 +182,7 @@ const CommentSection = ({ postId, onClose }) => {
                                 </div>
                             )}
                         </div>
-                        <p className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+                        <p className="text-[13px] text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
                             {comment.content}
                         </p>
                     </div>
@@ -177,7 +191,7 @@ const CommentSection = ({ postId, onClose }) => {
                         <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
                         <button
                             onClick={() => {
-                                setReplyTo({ id: comment.id, username: comment.user?.name });
+                                setReplyTo({ id: comment.id, username: comment.userName });
                                 setEditingComment(null);
                                 setContent('');
                             }}

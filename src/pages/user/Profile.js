@@ -143,8 +143,29 @@ function Profile() {
       try {
         setPostsLoading(true);
         const response = await postService.getUserPosts(id || targetId, 0, 10, 'createdAt,desc');
-        const postList = response.data?.data?.content || response.data?.content || response.data || [];
-        setUserPosts(Array.isArray(postList) ? postList : []);
+        const rawList = response.data?.data?.content || response.data?.content || response.data || [];
+        const mappedList = Array.isArray(rawList) ? rawList.map(p => {
+          const author = p.user || {};
+          const authorName = p.authorName || author.name || author.username || 'Unknown';
+          const authorAvatar = getUserAvatar(p.authorAvatar || author.imageUrl || author.avatar);
+
+          const musicUrl = p.musicLink || p.musicUrl;
+          const imgUrl = p.imageUrl || p.postImage;
+
+          return {
+            id: p.id || p.postId || p.idPost,
+            content: p.content || p.caption || "",
+            imageUrl: imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `http://localhost:8080${imgUrl}`) : null,
+            musicLink: musicUrl ? (musicUrl.startsWith('http') ? musicUrl : `http://localhost:8080${musicUrl}`) : null,
+            authorName: authorName,
+            authorAvatar: authorAvatar,
+            likeCount: p.likeCount ?? p.likes ?? 0,
+            liked: p.liked ?? p.isLiked ?? false,
+            createdAt: p.createdAt || new Date().toISOString(),
+            user: author
+          };
+        }) : [];
+        setUserPosts(mappedList);
       } catch (err) {
         console.error("Error fetching user posts:", err);
       } finally {
@@ -153,7 +174,8 @@ function Profile() {
     };
 
     fetchUser();
-  }, [targetId, navigate, storedIdUser, currentUserData?.email, updateUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetId, navigate]);
 
   const handleAvatarUpdate = async (e) => {
     const file = e.target.files[0];

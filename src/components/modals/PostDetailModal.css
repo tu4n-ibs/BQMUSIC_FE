@@ -92,3 +92,32 @@
         border-radius: 0;
     }
 }
+
+/* New UI refinements */
+.audio-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px border rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+.audio-icon-glow {
+    filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4));
+    color: #6366f1;
+}
+
+.post-content-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.dark .post-content-text {
+    color: #f1f5f9;
+}

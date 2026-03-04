@@ -81,10 +81,13 @@ function NewFeed() {
           postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : DEFAULT_COVER_URL,
           musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
           likes: post.likeCount || post.likes || 0,
+          likeCount: post.likeCount || post.likes || 0,
           caption: post.content,
+          content: post.content,
           comments: 0,
           timeAgo: 'Vừa xong',
           isLiked: post.liked || post.isLiked || false,
+          liked: post.liked || post.isLiked || false,
         };
       });
 
@@ -125,7 +128,7 @@ function NewFeed() {
       setPosts(prevPosts =>
         prevPosts.map(post =>
           post.id === postId
-            ? { ...post, isLiked: isLiked, likes: likeCount }
+            ? { ...post, isLiked: isLiked, liked: isLiked, likes: likeCount, likeCount: likeCount }
             : post
         )
       );

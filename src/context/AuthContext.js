@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 
 
 const AuthContext = createContext();
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         initializeAuth();
     }, []);
 
-    const login = (data) => {
+    const login = useCallback((data) => {
         // data: { token, refreshToken, role, idUser, email, name, imageUrl... }
         localStorage.setItem("token", data.token);
         localStorage.setItem("refreshToken", data.refreshToken);
@@ -62,10 +62,14 @@ export const AuthProvider = ({ children }) => {
             imageUrl: data.imageUrl,
             roles: data.role
         });
-    };
+    }, []);
 
-    const updateUser = (data) => {
+    const updateUser = useCallback((data) => {
         setUser(prev => {
+            // Only update if there's an actual change to avoid unnecessary state updates
+            const isDifferent = Object.keys(data).some(key => prev?.[key] !== data[key]);
+            if (!isDifferent) return prev;
+
             const newUser = { ...prev, ...data };
 
             // Update localStorage
@@ -77,17 +81,26 @@ export const AuthProvider = ({ children }) => {
 
             return newUser;
         });
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         localStorage.clear();
         setIsAuthenticated(false);
         setUser(null);
         // Optional: Call API to revoke token
-    };
+    }, []);
+
+    const contextValue = useMemo(() => ({
+        user,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        updateUser
+    }), [user, isAuthenticated, isLoading, login, logout, updateUser]);
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout, updateUser }}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );

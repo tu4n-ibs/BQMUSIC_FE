@@ -21,28 +21,62 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
     }, [isOpen, postId]);
 
     const fetchPostDetails = async () => {
+        if (postId === null || postId === undefined) {
+            console.warn("PostDetailModal: fetchPostDetails called without postId");
+            return;
+        }
         setLoading(true);
         try {
+            console.log("PostDetailModal: Fetching ID ->", postId);
             const response = await postService.getPostById(postId);
-            const data = response.data?.data || response.data;
+            console.log("PostDetailModal: API Response ->", response);
 
-            // Format data to match UI needs
+            const rawData = response.data?.data || response.data;
+
+            if (!rawData || (typeof rawData === 'object' && Object.keys(rawData).length === 0)) {
+                console.error("PostDetailModal: No data found for post:", postId);
+                setPost(null);
+                return;
+            }
+
+            // Standardize fields and handle variations (support nested song/target)
+            // Use the ID from rawData if available, otherwise fallback to the postId prop
+            const realId = rawData.id || rawData.postId || rawData.idPost || postId;
+            const content = rawData.content || rawData.caption || "";
+
+            // Try to find music and image from various possible paths (nested or flat)
+            const songObj = rawData.song || rawData.target || {};
+            const rawMusic = rawData.musicLink || rawData.musicUrl || rawData.songUrl || songObj.musicLink || songObj.musicUrl || songObj.targetUrl;
+            const rawImage = rawData.imageUrl || rawData.postImage || rawData.songImgUrl || songObj.imageUrl || songObj.postImage;
+            const songName = rawData.songName || songObj.name || songObj.title || "Original Audio";
+
+            const imageUrl = rawImage ? (rawImage.startsWith('http') ? rawImage : `http://localhost:8080${rawImage}`) : null;
+            const musicLink = rawMusic ? (rawMusic.startsWith('http') ? rawMusic : `http://localhost:8080${rawMusic}`) : null;
+
+            // Handle author/user object nested or flat
+            const author = rawData.user || {};
+            const authorName = rawData.authorName || author.name || author.username || 'Unknown';
+            const authorAvatar = getUserAvatar(rawData.authorAvatar || author.imageUrl || author.avatar);
+
             const formattedPost = {
-                id: data.id,
-                content: data.content,
-                imageUrl: data.imageUrl,
-                musicLink: data.musicLink,
-                authorName: data.authorName || data.user?.name || 'Unknown',
-                authorAvatar: getUserAvatar(data.authorAvatar || data.user?.imageUrl),
-                likeCount: data.likeCount || 0,
-                liked: data.liked || false,
-                createdAt: data.createdAt,
-                user: data.user
+                id: realId,
+                content: content,
+                imageUrl: imageUrl,
+                musicLink: musicLink,
+                songName: songName,
+                authorName: authorName,
+                authorAvatar: authorAvatar,
+                likeCount: rawData.likeCount ?? rawData.likes ?? 0,
+                liked: rawData.liked ?? rawData.isLiked ?? false,
+                createdAt: rawData.createdAt || new Date().toISOString(),
+                user: author
             };
 
+            console.log("PostDetailModal: Formatted Post ->", formattedPost);
             setPost(formattedPost);
         } catch (error) {
-            console.error("Error fetching post details:", error);
+            console.error("PostDetailModal: Error loading post details ->", error);
+            setPost(null);
         } finally {
             setLoading(false);
         }
@@ -51,12 +85,26 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
     const handleToggleLike = async () => {
         if (!post) return;
         try {
+            console.log("PostDetailModal: Toggling like for ID ->", post.id);
             const response = await likeService.toggleLike(post.id);
-            const { isLiked, likeCount } = response.data || response;
-            setPost(prev => ({ ...prev, liked: isLiked, likeCount: likeCount }));
-            if (onUpdate) onUpdate(post.id, { isLiked, likeCount });
+            console.log("PostDetailModal: Like Response ->", response);
+
+            // Standarize response to isLiked/likeCount
+            const isLikedResult = response.isLiked ?? response.liked;
+            const likeCountResult = response.likeCount ?? response.likes ?? 0;
+
+            setPost(prev => ({ ...prev, liked: isLikedResult, likeCount: likeCountResult }));
+
+            // Pass the standardized state BACK to parent (Profile/Feed)
+            if (onUpdate) onUpdate(post.id, {
+                liked: isLikedResult,
+                isLiked: isLikedResult,
+                likeCount: likeCountResult,
+                likes: likeCountResult
+            });
         } catch (error) {
-            console.error("Error toggling like:", error);
+            console.error("PostDetailModal: Error toggling like ->", error);
+            alert(`Lỗi khi tương tác (Like). ID sử dụng: ${post.id}. Vui lòng kiểm tra console.`);
         }
     };
 
@@ -64,7 +112,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
         if (!post || !post.musicLink) return;
         playTrack({
             id: post.id,
-            title: "Original Audio",
+            title: post.songName,
             artist: post.authorName,
             avatar: post.imageUrl || post.authorAvatar,
             url: post.musicLink
@@ -90,28 +138,33 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                         <div className="lg:w-[60%] bg-black flex items-center justify-center relative group overflow-hidden">
                             {post.imageUrl ? (
                                 <img
-                                    src={post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`}
+                                    src={post.imageUrl.toString().startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`}
                                     alt="Post Content"
                                     className="max-h-full max-w-full object-contain"
                                 />
                             ) : (
-                                <div className="flex flex-col items-center gap-4 opacity-30">
-                                    <Music className="w-20 h-20" />
-                                    <span className="font-bold uppercase tracking-widest text-sm">Audio Content</span>
+                                <div className="audio-placeholder animate-pulse-slow">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full"></div>
+                                        <Music className="w-24 h-24 audio-icon-glow relative z-10" />
+                                    </div>
+                                    <span className="font-bold uppercase tracking-[0.3em] text-[10px] text-indigo-400/80">Premium Audio Experience</span>
                                 </div>
                             )}
 
                             {post.musicLink && (
-                                <button
-                                    onClick={handlePlayMusic}
-                                    className={`absolute bottom-6 right-6 p-4 rounded-full backdrop-blur-md border border-white/20 transition-all ${currentTrack?.id === post.id && isPlaying ? 'bg-indigo-500 scale-110 shadow-xl shadow-indigo-500/40' : 'bg-white/10 hover:bg-white/20 hover:scale-105'}`}
-                                >
-                                    {currentTrack?.id === post.id && isPlaying ? (
-                                        <Pause className="w-8 h-8 fill-white text-white" />
-                                    ) : (
-                                        <Play className="w-8 h-8 fill-white text-white ml-1" />
-                                    )}
-                                </button>
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 pointer-events-none group-hover:bg-black/20 transition-all">
+                                    <button
+                                        onClick={handlePlayMusic}
+                                        className={`pointer-events-auto p-6 rounded-full backdrop-blur-xl border border-white/30 transition-all transform shadow-2xl ${currentTrack?.id === post.id && isPlaying ? 'bg-indigo-500 scale-110' : 'bg-white/10 hover:bg-white/20 hover:scale-110'}`}
+                                    >
+                                        {currentTrack?.id === post.id && isPlaying ? (
+                                            <Pause className="w-10 h-10 fill-white text-white" />
+                                        ) : (
+                                            <Play className="w-10 h-10 fill-white text-white ml-1" />
+                                        )}
+                                    </button>
+                                </div>
                             )}
                         </div>
 
@@ -136,7 +189,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                             {/* Content & Comments */}
                             <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
                                 <div className="mb-8">
-                                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                    <p className="post-content-text whitespace-pre-wrap">
                                         {post.content}
                                     </p>
                                 </div>
