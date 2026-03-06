@@ -407,13 +407,6 @@ function Profile() {
             <div className={`ig-tab ${activeTab === 'albums' ? 'active' : ''}`} onClick={() => setActiveTab('albums')}>
               <Disc className="w-4 h-4" /> ALBUMS
             </div>
-            {isOwnProfile && (
-              <>
-                <div className={`ig-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
-                  <Bookmark className="w-4 h-4" /> SAVED
-                </div>
-              </>
-            )}
           </div>
 
           {(activeTab === 'posts' || activeTab === 'shares' || activeTab === 'albums') && (
@@ -432,14 +425,8 @@ function Profile() {
                         <img
                           src={post.imageUrl || getUserAvatar(user?.imageUrl)}
                           alt="Post Media"
-                          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${!post.imageUrl ? 'opacity-40 blur-sm scale-110' : ''}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        {!post.imageUrl && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                            <img src={getUserAvatar(user?.imageUrl)} alt="" className="w-16 h-16 rounded-full border-4 border-white/20 shadow-2xl mb-3 backdrop-blur-md" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Thought Sharing</span>
-                          </div>
-                        )}
                       </div>
                       <p className="text-sm font-medium line-clamp-3 mb-2 flex-1 leading-relaxed opacity-90">{post.content}</p>
                       {post.postType === 'SHARE' && (

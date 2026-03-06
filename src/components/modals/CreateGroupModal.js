@@ -80,7 +80,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                 <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                         <Users className="w-5 h-5 text-indigo-400" />
-                        Create New Community
+                        Create New Group
                     </h2>
                     <button
                         onClick={handleClose}
@@ -122,7 +122,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                         <div className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-semibold text-slate-300 mb-2">
-                                    Community Name <span className="text-red-400">*</span>
+                                    Group Name <span className="text-red-400">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -139,14 +139,14 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
 
                             <div>
                                 <label htmlFor="description" className="block text-sm font-semibold text-slate-300 mb-2">
-                                    About Community
+                                    About Group
                                 </label>
                                 <textarea
                                     id="description"
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
-                                    placeholder="What is this community about?"
+                                    placeholder="What is this group about?"
                                     rows={3}
                                     className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm resize-none custom-scrollbar"
                                 />
@@ -164,7 +164,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between mb-1">
-                                        <span className="font-semibold text-white">Private Community</span>
+                                        <span className="font-semibold text-white">Private Group</span>
                                         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                                             <input type="checkbox" name="isPrivate" id="isPrivate" checked={formData.isPrivate} onChange={handleChange} className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-600 checked:bg-indigo-500 checked:border-indigo-500 checked:right-0 right-5 transition-all outline-none z-10" />
                                             <label htmlFor="isPrivate" className="toggle-label block overflow-hidden h-5 rounded-full bg-slate-800 cursor-pointer"></label>
@@ -192,7 +192,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                                         </div>
                                     </div>
                                     <p className="text-xs text-slate-400 leading-relaxed">
-                                        Members' posts must be approved by an Admin or Moderator before they become visible to the community.
+                                        Members' posts must be approved by an Admin or Moderator before they become visible to the group.
                                     </p>
                                 </div>
                             </div>
@@ -219,7 +219,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
                         {loading ? (
                             <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
                         ) : (
-                            'Create Community'
+                            'Create Group'
                         )}
                     </button>
                 </div>

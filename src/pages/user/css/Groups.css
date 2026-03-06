@@ -48,6 +48,40 @@
 }
 
 /* Tools Bar */
+.group-tabs-navigation {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 2rem;
+    width: fit-content;
+}
+
+.group-nav-tab {
+    padding: 0.75rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s;
+}
+
+.group-nav-tab:hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: #94a3b8;
+}
+
+.group-nav-tab.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 .groups-tools-bar {
     display: flex;
     gap: 1.5rem;
@@ -238,8 +272,10 @@
 }
 
 .member-avatars img {
-    width: 32px;
+    width: 42px;
     height: 32px;
+    aspect-ratio: 1/1;
+    flex-shrink: 0;
     border-radius: 50%;
     border: 2px solid #0f172a;
     margin-right: -10px;

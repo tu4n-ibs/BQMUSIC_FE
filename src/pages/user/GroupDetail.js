@@ -71,12 +71,12 @@ const GroupDetail = () => {
                 setJoinMessage('Join request sent successfully.');
                 setGroup(prev => ({ ...prev, hasPendingRequest: true }));
             } else {
-                setJoinMessage('Successfully joined the community!');
+                setJoinMessage('Successfully joined the group!');
                 setGroup(prev => ({ ...prev, isMember: true, memberCount: (prev.memberCount || 0) + 1 }));
                 fetchGroupData(); // Refresh to get posts
             }
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message || "Failed to join community.";
+            const errorMsg = error.response?.data?.message || error.message || "Failed to join group.";
             setJoinError(errorMsg);
         } finally {
             setIsJoining(false);
@@ -96,11 +96,11 @@ const GroupDetail = () => {
         setJoinError('');
         try {
             await groupService.leaveGroup(groupId);
-            setLeaveMessage('Successfully left the community.');
+            setLeaveMessage('Successfully left the group.');
             setGroup(prev => ({ ...prev, isMember: false, memberCount: Math.max(0, (prev.memberCount || 1) - 1) }));
             fetchGroupData(); // Refresh to hide private posts or update state
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message || "Failed to leave community. You might be the only admin.";
+            const errorMsg = error.response?.data?.message || error.message || "Failed to leave group. You might be the only admin.";
             setLeaveError(errorMsg);
         } finally {
             setIsLeaving(false);
@@ -282,8 +282,8 @@ const GroupDetail = () => {
         });
     };
 
-    if (loading) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Loading community...</div>;
-    if (!group) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Community not found</div>;
+    if (loading) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Loading group...</div>;
+    if (!group) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Group not found</div>;
 
     return (
         <div className="groups-container">
@@ -311,9 +311,9 @@ const GroupDetail = () => {
                 isOpen={isLeaveConfirmOpen}
                 onClose={() => setIsLeaveConfirmOpen(false)}
                 onConfirm={confirmLeaveGroup}
-                title="Leave Community"
-                message="Are you sure you want to leave this community? You will lose access to member-only content."
-                confirmText="Leave Community"
+                title="Leave Group"
+                message="Are you sure you want to leave this group? You will lose access to member-only content."
+                confirmText="Leave Group"
                 cancelText="Stay"
                 type="danger"
             />
@@ -328,10 +328,7 @@ const GroupDetail = () => {
                     <div className="group-header-overlay">
                         <div className="group-meta-card">
                             <div className="flex justify-between items-start mb-6">
-                                <div className="group-badge">Verified Community</div>
-                                <button className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all">
-                                    <Share2 className="w-5 h-5" />
-                                </button>
+                                <div className="group-badge">Verified Group</div>
                             </div>
                             <h1 className="text-5xl font-black mb-4 tracking-tighter">{group.name}</h1>
                             <div className="flex items-center gap-6 text-sm font-bold opacity-80">
@@ -349,7 +346,7 @@ const GroupDetail = () => {
                                             onClick={handleJoinGroup}
                                             disabled={isJoining}
                                         >
-                                            {isJoining ? 'Processing...' : 'Join Community'}
+                                            {isJoining ? 'Processing...' : 'Join Group'}
                                         </button>
                                     )}
                                     {group.hasPendingRequest && (
@@ -369,7 +366,6 @@ const GroupDetail = () => {
                                             >
                                                 {isLeaving ? 'Leaving...' : 'Leave'}
                                             </button>
-                                            <button className="invite-btn">Invite Members</button>
                                         </>
                                     )}
                                 </div>
@@ -391,13 +387,6 @@ const GroupDetail = () => {
                                 onClick={() => setActiveTab('discussion')}
                             >
                                 <MessageSquare className="w-4 h-4" /> Discussion
-                            </button>
-
-                            <button
-                                className={`detail-tab ${activeTab === 'about' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('about')}
-                            >
-                                <Info className="w-4 h-4" /> About
                             </button>
                             {group.role?.toUpperCase() === 'ADMIN' && (
                                 <button
@@ -519,7 +508,7 @@ const GroupDetail = () => {
                                             return (
                                                 <div key={reqId} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 transition-colors">
                                                     <div className="flex items-center gap-4">
-                                                        <img src={getUserAvatar(request.imageUrl)} alt={request.name || "User"} className="w-12 h-12 rounded-full" />
+                                                        <img src={getUserAvatar(request.imageUrl)} alt={request.name || "User"} className="w-12 h-12 rounded-full object-cover" />
                                                         <div>
                                                             <div className="font-bold">{request.name || `User ID: ${request.userId}`}</div>
                                                             <div className="text-xs text-slate-500">Requested {formatDate(request.joinDate)}</div>
@@ -570,9 +559,9 @@ const GroupDetail = () => {
                                         <div className="w-24 h-24 bg-rose-500/10 rounded-full flex items-center justify-center mb-6">
                                             <Lock className="w-12 h-12 text-rose-400" />
                                         </div>
-                                        <h2 className="text-3xl font-bold mb-4">This Community is Private</h2>
+                                        <h2 className="text-3xl font-bold mb-4">This Group is Private</h2>
                                         <p className="text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
-                                            You must be a member of this community to view its posts and participate in discussions. Send a request to join us!
+                                            You must be a member of this group to view its posts and participate in discussions. Send a request to join us!
                                         </p>
                                         {!group.hasPendingRequest ? (
                                             <button
@@ -616,7 +605,7 @@ const GroupDetail = () => {
                                                     <MessageSquare className="w-8 h-8 text-slate-500" />
                                                 </div>
                                                 <h3 className="text-xl font-bold mb-2">No posts yet</h3>
-                                                <p className="text-slate-500">Be the first to share something with this community!</p>
+                                                <p className="text-slate-500">Be the first to share something with this group!</p>
                                             </div>
                                         ) : (
                                             posts.map(post => (
@@ -648,7 +637,7 @@ const GroupDetail = () => {
                                                             <div className="post-music-player">
                                                                 <div className="music-cover cursor-pointer relative z-10" onClick={(e) => { e.stopPropagation(); handlePlayMusic(post); }}>
                                                                     <img
-                                                                        src={post.imageUrlSong || post.imageUrlAlbum || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
+                                                                        src={post.imageUrlSong || post.imageUrlAlbum || getUserAvatar(post.userImage)}
                                                                         alt="Cover"
                                                                         className={`w-full h-full object-cover ${(currentTrack?.id === post.idPost && isPlaying) ? 'opacity-90' : ''}`}
                                                                     />
@@ -719,7 +708,7 @@ const GroupDetail = () => {
                         <div className="group-info-card">
                             <h3 className="flex items-center gap-2 text-lg font-bold mb-6">
                                 <Info className="w-5 h-5 text-indigo-400" />
-                                About this Community
+                                About this Group
                             </h3>
                             <p className="text-slate-400 text-sm leading-relaxed mb-8">
                                 {group.description || group.about}

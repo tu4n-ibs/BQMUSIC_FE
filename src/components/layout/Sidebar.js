@@ -104,15 +104,9 @@ const Sidebar = () => {
                     />
                     <NavItem
                         icon={<Users className="w-6 h-6" />}
-                        label="Explore Groups"
+                        label="Groups"
                         active={isActive('/groups')}
                         onClick={() => handleNavigation('/groups')}
-                    />
-                    <NavItem
-                        icon={<Bookmark className="w-6 h-6" />}
-                        label="My Groups"
-                        active={isActive('/my-groups')}
-                        onClick={() => handleNavigation('/my-groups')}
                     />
                     <div
                         onMouseEnter={handleNotifMouseEnter}

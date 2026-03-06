@@ -77,7 +77,7 @@ function NewFeed() {
           authorId: authorId,
           username: post.authorName || (post.user?.name) || 'Unknown',
           userAvatar: getUserAvatar(post.authorAvatar || post.user?.imageUrl),
-          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : DEFAULT_COVER_URL,
+          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : post.userAvatar,
           musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
           caption: post.content,
           content: post.content,

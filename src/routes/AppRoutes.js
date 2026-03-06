@@ -15,7 +15,6 @@ import Search from "../pages/user/Search";
 import Explore from "../pages/user/Explore";
 import Playlists from "../pages/user/Playlists";
 import Groups from "../pages/user/Groups";
-import MyGroups from "../pages/user/MyGroups";
 import GroupDetail from "../pages/user/GroupDetail";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
@@ -53,7 +52,6 @@ function AppRoutes() {
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/playlists" element={<Playlists />} />
                 <Route path="/groups" element={<Groups />} />
-                <Route path="/my-groups" element={<MyGroups />} />
                 <Route path="/groups/:groupId" element={<GroupDetail />} />
             </Route>
         </Routes>

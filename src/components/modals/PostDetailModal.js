@@ -166,13 +166,11 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                     className="max-h-full max-w-full object-contain"
                                 />
                             ) : (
-                                <div className="audio-placeholder animate-pulse-slow">
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full"></div>
-                                        <Music className="w-24 h-24 audio-icon-glow relative z-10" />
-                                    </div>
-                                    <span className="font-bold uppercase tracking-[0.3em] text-[10px] text-indigo-400/80">Premium Audio Experience</span>
-                                </div>
+                                <img
+                                    src={post.authorAvatar}
+                                    alt="Post Author"
+                                    className="max-h-full max-w-full object-contain opacity-50 blur-[2px]"
+                                />
                             )}
 
                             {post.musicLink && (
@@ -231,42 +229,60 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                             <Music className="w-3 h-3" /> TRACKLIST
                                         </h3>
                                         <div className="flex flex-col gap-2">
-                                            {post.albumData.songs.map((song, index) => (
-                                                <div
-                                                    key={song.songId}
-                                                    className={`track-item group flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${currentTrack?.url?.includes(song.songId) ? 'bg-indigo-500/10 border border-indigo-500/30' : 'hover:bg-white/5 border border-transparent'}`}
-                                                    onClick={() => {
-                                                        const mUrl = song.musicUrl;
-                                                        const musicLink = mUrl ? (mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`) : null;
-                                                        if (!musicLink) return;
-                                                        playTrack({
-                                                            id: song.songId,
-                                                            title: song.name,
-                                                            artist: post.authorName,
-                                                            avatar: post.imageUrl || post.authorAvatar,
-                                                            url: musicLink
-                                                        });
-                                                    }}
-                                                >
-                                                    <span className="text-[10px] font-bold opacity-30 w-4">{index + 1}</span>
-                                                    <div className="w-8 h-8 rounded bg-slate-800 flex items-center justify-center relative overflow-hidden shrink-0">
-                                                        {currentTrack?.url?.includes(song.songId) && isPlaying ? (
-                                                            <div className="flex items-end gap-0.5 h-3">
-                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.6s_ease-in-out_infinite] h-full"></div>
-                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.8s_ease-in-out_infinite] h-2/3"></div>
-                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.7s_ease-in-out_infinite] h-5/6"></div>
+                                            {post.albumData.songs.map((song, index) => {
+                                                const isActive = currentTrack?.url?.includes(song.musicUrl);
+                                                const trackImage = song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `http://localhost:8080${song.imageUrl}`) : (post.imageUrl || post.authorAvatar);
+
+                                                return (
+                                                    <div
+                                                        key={song.songId}
+                                                        className={`track-item group flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${isActive ? 'bg-indigo-500/10 border border-indigo-500/30' : 'hover:bg-white/5 border border-transparent'}`}
+                                                        onClick={() => {
+                                                            const mUrl = song.musicUrl;
+                                                            const musicLink = mUrl ? (mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`) : null;
+                                                            if (!musicLink) return;
+                                                            playTrack({
+                                                                id: song.songId,
+                                                                title: song.name,
+                                                                artist: post.authorName,
+                                                                avatar: trackImage,
+                                                                url: musicLink
+                                                            });
+                                                        }}
+                                                    >
+                                                        <span className="text-[10px] font-bold opacity-30 w-4">{index + 1}</span>
+                                                        <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center relative overflow-hidden shrink-0 shadow-lg border border-white/5">
+                                                            <img
+                                                                src={trackImage}
+                                                                alt={song.name}
+                                                                className={`w-full h-full object-cover transition-all duration-300 ${isActive && isPlaying ? 'opacity-40 scale-110 blur-[1px]' : 'group-hover:opacity-40'}`}
+                                                            />
+                                                            <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isActive && isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                                                {isActive && isPlaying ? (
+                                                                    <div className="flex items-end gap-0.5 h-4 mb-1">
+                                                                        <div className="w-0.5 bg-indigo-400 animate-[music-bar_0.6s_ease-in-out_infinite] h-full"></div>
+                                                                        <div className="w-0.5 bg-indigo-400 animate-[music-bar_0.8s_ease-in-out_infinite] h-2/3"></div>
+                                                                        <div className="w-0.5 bg-indigo-400 animate-[music-bar_0.7s_ease-in-out_infinite] h-5/6"></div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <Play className="w-4 h-4 fill-white text-white drop-shadow-md" />
+                                                                )}
                                                             </div>
-                                                        ) : (
-                                                            <Play className="w-3 h-3 fill-white text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className={`text-xs font-bold truncate ${isActive ? 'text-indigo-400' : 'text-slate-200'}`}>
+                                                                {song.name}
+                                                            </p>
+                                                            <p className="text-[10px] text-slate-500 truncate mt-0.5">{post.authorName}</p>
+                                                        </div>
+                                                        {isActive && isPlaying && (
+                                                            <div className="pr-2">
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_#6366f1] animate-pulse"></div>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className={`text-xs font-bold truncate ${currentTrack?.url?.includes(song.songId) ? 'text-indigo-400' : 'text-slate-200'}`}>
-                                                            {song.name}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}

@@ -4,35 +4,61 @@ import Sidebar from '../../components/layout/Sidebar';
 import { Search, Plus, Users, ArrowRight, TrendingUp, Star } from 'lucide-react';
 import groupService from '../../services/groupService';
 import CreateGroupModal from '../../components/modals/CreateGroupModal';
+import { useAuth } from '../../context/AuthContext';
 import { getUserAvatar } from '../../utils/userUtils';
 import './css/Groups.css';
 
 const Groups = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [groups, setGroups] = useState([]);
+    const [myGroups, setMyGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('explore'); // 'explore' or 'my-groups'
 
-    const fetchGroups = async () => {
-        setLoading(true);
+    const fetchAllGroups = async () => {
         try {
             const data = await groupService.getGroups();
             setGroups(data);
         } catch (error) {
             console.error("Error loading groups:", error);
-        } finally {
-            setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchGroups();
-    }, []);
+    const fetchMyGroups = async () => {
+        if (!user?.idUser) return;
+        try {
+            const data = await groupService.getUserGroups(user.idUser);
+            let groupList = [];
+            if (Array.isArray(data)) {
+                groupList = data;
+            } else if (data && typeof data === 'object') {
+                const potentialArray = data.result || data.data || data.content || data.items;
+                if (Array.isArray(potentialArray)) {
+                    groupList = potentialArray;
+                }
+            }
+            setMyGroups(groupList);
+        } catch (error) {
+            console.error("Error fetching my groups:", error);
+        }
+    };
 
-    const filteredGroups = groups.filter(group =>
-        group.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const loadData = async () => {
+        setLoading(true);
+        await Promise.all([fetchAllGroups(), fetchMyGroups()]);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        loadData();
+    }, [user?.idUser]);
+
+    const displayedGroups = activeTab === 'explore'
+        ? groups.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : myGroups.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return (
         <div className="groups-container">
@@ -43,7 +69,7 @@ const Groups = () => {
                     {/* Header Section */}
                     <header className="groups-header">
                         <div className="header-text">
-                            <h1 className="text-4xl font-black tracking-tight mb-2">Communities</h1>
+                            <h1 className="text-4xl font-black tracking-tight mb-2">Groups</h1>
                             <p className="text-slate-400 font-medium">Find your tribe, share your sound.</p>
                         </div>
                         <button className="create-group-btn" onClick={() => setIsCreateModalOpen(true)}>
@@ -52,66 +78,96 @@ const Groups = () => {
                         </button>
                     </header>
 
+                    {/* Tab Switcher */}
+                    <div className="group-tabs-navigation">
+                        <button
+                            className={`group-nav-tab ${activeTab === 'explore' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('explore')}
+                        >
+                            <Users className="w-4 h-4" />
+                            Explore
+                        </button>
+                        <button
+                            className={`group-nav-tab ${activeTab === 'my-groups' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('my-groups')}
+                        >
+                            <Star className="w-4 h-4" />
+                            My Groups
+                        </button>
+                    </div>
+
                     {/* Search & Stats Bar */}
                     <div className="groups-tools-bar">
                         <div className="search-box">
                             <Search className="w-5 h-5 text-slate-500" />
                             <input
                                 type="text"
-                                placeholder="Search communities..."
+                                placeholder={`Search ${activeTab === 'explore' ? 'all' : 'your'} groups...`}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                        </div>
-                        <div className="quick-stats">
-                            <div className="stat-pill">
-                                <TrendingUp className="w-4 h-4 text-indigo-400" />
-                                <span>12 Trending Today</span>
-                            </div>
-                            <div className="stat-pill">
-                                <Star className="w-4 h-4 text-yellow-400" />
-                                <span>Top Rated Communities</span>
-                            </div>
                         </div>
                     </div>
 
                     {/* Groups Grid */}
                     <section className="groups-section">
-                        <div className="section-header">
-                            <h2 className="flex items-center gap-2 text-xl font-bold">
-                                <Users className="w-6 h-6 text-indigo-500" />
-                                Suggested for you
-                            </h2>
-                            <button className="text-indigo-400 text-sm font-bold hover:underlineTransition">See All</button>
-                        </div>
-
                         {loading ? (
-                            <div className="py-20 text-center opacity-50">Discoverying communities...</div>
+                            <div className="py-20 text-center flex flex-col items-center gap-4 opacity-50">
+                                <TrendingUp className="w-8 h-8 animate-spin text-indigo-500" />
+                                <p className="font-bold">Syncing groups...</p>
+                            </div>
+                        ) : displayedGroups.length === 0 ? (
+                            <div className="py-20 text-center flex flex-col items-center justify-center border border-white/5 rounded-3xl bg-white/[0.02] backdrop-blur-xl">
+                                <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mb-6">
+                                    <Users className="w-10 h-10 text-indigo-400/50" />
+                                </div>
+                                <h3 className="text-2xl font-bold mb-2">
+                                    {activeTab === 'explore' ? 'No Groups Found' : 'No Groups Joined'}
+                                </h3>
+                                <p className="text-slate-500 max-w-sm mx-auto">
+                                    {activeTab === 'explore'
+                                        ? "We couldn't find any groups matching your search."
+                                        : "You haven't joined any groups yet. Start exploring to find your group!"}
+                                </p>
+                                {activeTab === 'my-groups' && (
+                                    <button
+                                        className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-bold transition-all"
+                                        onClick={() => setActiveTab('explore')}
+                                    >
+                                        Explore Now
+                                    </button>
+                                )}
+                            </div>
                         ) : (
                             <div className="groups-grid">
-                                {filteredGroups.map(group => (
+                                {displayedGroups.map(group => (
                                     <div
                                         key={group.id}
                                         className="group-card group"
                                         onClick={() => navigate(`/groups/${group.id}`)}
                                     >
                                         <div className="card-image">
-                                            <img src={group.imageUrl} alt={group.name} />
+                                            <img src={group.imageUrl || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=500&auto=format&fit=crop"} alt={group.name} />
                                             <div className="card-overlay">
-                                                <button className="join-btn-overlay">Join Community</button>
+                                                <button className="join-btn-overlay">
+                                                    {activeTab === 'my-groups' ? 'View Group' : 'Join Group'}
+                                                </button>
                                             </div>
                                         </div>
                                         <div className="card-info">
-                                            <div className="member-count">{group.members || 0} {group.members === 1 ? 'member' : 'members'}</div>
+                                            <div className="member-count">
+                                                {activeTab === 'my-groups' && <span className="bg-green-500/10 text-green-400 px-2 py-0.5 rounded mr-2">JOINED</span>}
+                                                {group.members || 0} {group.members === 1 ? 'member' : 'members'}
+                                            </div>
                                             <h3 className="group-name">{group.name}</h3>
-                                            <p className="group-desc">{group.description}</p>
+                                            <p className="group-desc">{group.description || group.about}</p>
                                             <div className="group-card-footer">
                                                 <div className="member-avatars">
-                                                    {(group.memberAvatars || []).map((avatar, idx) => (
+                                                    {(group.memberAvatars || []).slice(0, 3).map((avatar, idx) => (
                                                         <img key={idx} src={getUserAvatar(avatar)} alt={`m${idx}`} />
                                                     ))}
-                                                    {group.members > (group.memberAvatars?.length || 0) && (
-                                                        <div className="more-members">+{group.members - (group.memberAvatars?.length || 0)}</div>
+                                                    {group.members > 3 && (
+                                                        <div className="more-members">+{group.members - 3}</div>
                                                     )}
                                                 </div>
                                                 <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -130,7 +186,7 @@ const Groups = () => {
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onGroupCreated={() => {
-                    fetchGroups();
+                    loadData();
                 }}
             />
         </div>
