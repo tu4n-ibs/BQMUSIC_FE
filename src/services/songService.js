@@ -75,6 +75,16 @@ const songService = {
         const songs = response.data?.data || response.data || [];
         const filtered = songs.filter(s => s.name?.toLowerCase().includes(query.toLowerCase()));
         return { data: { data: filtered } };
+    },
+
+    /**
+     * Record a play for a song
+     * @param {string|number} songId 
+     * @param {number} durationPlayed 
+     * @returns {Promise}
+     */
+    recordPlay: async (songId, durationPlayed = 0) => {
+        return axiosClient.post(`/song/${songId}/play?durationPlayed=${durationPlayed}`);
     }
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
 import { useModal } from "../../context/ModalContext";
-import { Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Lock, Edit2, Check, X, Heart, Share2, Disc, MoreHorizontal, ListMusic } from 'lucide-react';
+import { Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Lock, Edit2, Check, X, Heart, Share2, Disc, MoreHorizontal, ListMusic, Play } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
 import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
@@ -170,12 +170,13 @@ function Profile() {
         const authorAvatar = getUserAvatar(p.authorAvatar || author.imageUrl || author.avatar);
 
         const musicUrl = p.musicLink || p.musicUrl;
-        const imgUrl = p.imageUrl || p.postImage;
+        const imgUrl = p.imageUrlSong || p.imageUrlAlbum || p.imageUrl || p.postImage;
+        let finalImageUrl = imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `http://localhost:8080${imgUrl}`) : authorAvatar;
 
         return {
-          id: p.id || p.idPost || p.postId,
+          id: p.idPost || p.id || p.postId,
           content: p.content || p.caption || "",
-          imageUrl: imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `http://localhost:8080${imgUrl}`) : null,
+          imageUrl: finalImageUrl,
           musicLink: musicUrl ? (musicUrl.startsWith('http') ? musicUrl : `http://localhost:8080${musicUrl}`) : null,
           authorName: authorName,
           authorAvatar: authorAvatar,
@@ -196,6 +197,7 @@ function Profile() {
           songName: p.songName || p.title || p.name,
           idSong: p.idSong || (p.targetType === 'SONG' ? p.targetId : null),
           idAlbum: p.idAlbum || (p.targetType === 'ALBUM' ? p.targetId : null),
+          playCount: p.playCount || 0,
         };
       }) : [];
       setUserPosts(mappedList);
@@ -460,9 +462,19 @@ function Profile() {
                           <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between text-[10px] text-slate-400 uppercase tracking-wider font-bold opacity-70">
                               <span>{new Date(post.createdAt || Date.now()).toLocaleDateString()} • {post.visibility || 'PUBLIC'}</span>
-                              <div className="flex items-center gap-1 text-red-500/80">
-                                <Heart className={`w-3 h-3 ${post.liked ? 'fill-red-500' : ''}`} />
-                                <span>{post.likeCount || 0}</span>
+                              <div className="flex items-center gap-3">
+                                {(post.idSong || post.idAlbum) && (
+                                  <div className="flex items-center gap-1">
+                                    <Play className="w-3 h-3 fill-current opacity-70" />
+                                    <span>{(post.playCount || 0).toLocaleString()}</span>
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <Heart className={`w-3 h-3 ${(post.liked || post.isLiked) ? 'fill-rose-500 text-rose-500' : 'text-slate-500'}`} />
+                                  <span className="text-[10px] font-bold text-slate-400">
+                                    {(post.likeCount !== undefined ? post.likeCount : post.likes) || 0}
+                                  </span>
+                                </div>
                               </div>
                             </div>
 

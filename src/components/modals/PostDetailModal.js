@@ -83,10 +83,11 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 authorAvatar: getUserAvatar(rawData.userImage),
                 likeCount: rawData.likeCount || 0,
                 commentCount: rawData.commentCount || 0,
-                liked: rawData.isLiked || false,
                 createdAt: rawData.timeCreated || new Date().toISOString(),
                 targetType: rawData.targetType,
                 targetId: targetId,
+                liked: rawData.isLiked !== undefined ? rawData.isLiked : rawData.liked,
+                playCount: rawData.playCount || 0,
                 albumData: rawData.postResponse // This contains the songs list from backend
             };
 
@@ -102,19 +103,33 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
 
     const handleToggleLike = async () => {
         if (!post) return;
+
+        // Optimistic UI update
+        const oldState = { ...post };
+        const newIsLiked = !(post.liked || post.isLiked);
+        const newLikeCount = (post.likeCount || 0) + (newIsLiked ? 1 : -1);
+
+        setPost(prev => ({
+            ...prev,
+            liked: newIsLiked,
+            isLiked: newIsLiked,
+            likeCount: newLikeCount
+        }));
+
         try {
-            console.log("PostDetailModal: Toggling like for ID ->", post.id);
             const response = await likeService.toggleLike(post.id);
-            console.log("PostDetailModal: Like Response ->", response);
 
-            // Standarize response to isLiked/likeCount
-            const resultData = response.data?.data || response.data || {};
-            const isLikedResult = resultData.isLiked;
-            const likeCountResult = resultData.likeCount || 0;
+            // Standardize response extraction
+            const apiData = response.data || response;
+            const resultData = apiData.data || apiData;
 
-            setPost(prev => ({ ...prev, liked: isLikedResult, likeCount: likeCountResult }));
+            const isLikedResult = resultData.liked !== undefined ? resultData.liked : resultData.isLiked;
+            const likeCountResult = resultData.likeCount !== undefined ? resultData.likeCount : (resultData.likes || 0);
 
-            // Pass the standardized state BACK to parent (Profile/Feed)
+            // Update with real server data
+            setPost(prev => ({ ...prev, liked: isLikedResult, isLiked: isLikedResult, likeCount: likeCountResult }));
+
+            // Sync with parent
             if (onUpdate) onUpdate(post.id, {
                 liked: isLikedResult,
                 isLiked: isLikedResult,
@@ -123,7 +138,9 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             });
         } catch (error) {
             console.error("PostDetailModal: Error toggling like ->", error);
-            toast.error(`Error during interaction (Like). ID used: ${post.id}. Please check console.`);
+            // Revert on error
+            setPost(oldState);
+            toast.error("Failed to update like status");
         }
     };
 
@@ -302,7 +319,13 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                                             <div className={`text-sm font-bold truncate transition-colors ${isActive ? 'text-indigo-400' : 'text-slate-200 group-hover:text-white'}`}>
                                                                 {song.name}
                                                             </div>
-                                                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Track {index + 1}</div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Track {index + 1}</span>
+                                                                <span className="flex items-center gap-1 text-[9px] text-indigo-400/70 font-bold">
+                                                                    <Play className="w-2 h-2 fill-current" />
+                                                                    {(song.playCount || 0).toLocaleString()}
+                                                                </span>
+                                                            </div>
                                                         </div>
 
                                                         {/* Action Menu Button */}
@@ -413,8 +436,14 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-sm font-bold text-white">
-                                    {post.likeCount.toLocaleString()} likes
+                                <div className="flex items-center justify-between text-sm font-bold text-white">
+                                    <span>{post.likeCount.toLocaleString()} likes</span>
+                                    {post.targetType === 'SONG' && (
+                                        <span className="flex items-center gap-1 text-slate-400 text-xs font-medium">
+                                            <Play className="w-3 h-3 fill-current" />
+                                            {(post.playCount || 0).toLocaleString()} plays
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -3,17 +3,35 @@ import axiosClient from "./axiosClient";
 const albumService = {
     /**
      * Create a new album
-     * @param {Object} albumData { name, description, userId }
+     * @param {{ name: string, description: string, imageUrl: string }} albumData
      * @returns {Promise<Object>} Response data
      */
     createAlbum: async (albumData) => {
-        // API endpoint: /album
         const response = await axiosClient.post("/album", albumData);
         return response.data;
     },
 
     /**
-     * Update an album
+     * Update album image via multipart upload
+     * @param {string} albumId
+     * @param {File} imageFile
+     * @returns {Promise<Object>} Response data
+     */
+    uploadAlbumImage: async (albumId, imageFile) => {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('albumId', albumId);
+        const response = await axiosClient.post("/album/update-image", formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    },
+
+    /**
+     * Update album metadata
+     * @param {string} albumId
+     * @param {{ name: string, description: string, imageUrl: string }} albumData
+     * @returns {Promise<Object>} Response data
      */
     updateAlbum: async (albumId, albumData) => {
         const response = await axiosClient.put(`/album/${albumId}`, albumData);
@@ -37,12 +55,11 @@ const albumService = {
 
     /**
      * Get albums for a specific user
-     * @param {string} userId 
+     * @param {string|number} userId 
      * @returns {Promise<Object>} Response data
      */
-    getUserAlbums: async (userId) => {
-        // Assuming there's an endpoint to get user albums
-        const response = await axiosClient.get(`/album?userId=${userId}`);
+    getAlbumsByUserId: async (userId) => {
+        const response = await axiosClient.get(`/album/user/${userId}`);
         return response.data;
     },
 

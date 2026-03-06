@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, X } from 'lucide-react';
+import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, X, Disc } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
 import CommentSection from '../../components/content/CommentSection';
 import PostDetailModal from '../../components/modals/PostDetailModal';
@@ -13,7 +13,7 @@ import { usePlayer } from '../../context/PlayerContext';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
 import songService from '../../services/songService';
-import { useModal } from '../../context/ModalContext';
+import { toast } from 'react-hot-toast';
 import './css/Feed.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
@@ -67,7 +67,7 @@ function NewFeed() {
   // --- 2. Fetch Posts ---
   const fetchPosts = useCallback(async () => {
     try {
-      const response = await postService.getAllPosts(0, 20);
+      const response = await postService.getNewFeedPosts(0, 20);
       const data = response.data;
 
       // Standarizing response format (handling data.data or data directly)
@@ -75,14 +75,18 @@ function NewFeed() {
 
       const mappedPosts = content.map(post => {
         // Use numeric ID for profile navigation
-        const authorId = post.user?.idUser || post.user?.userId || post.user?.id || post.authorId;
+        const authorId = post.idUser || post.user?.userId || post.user?.id || post.authorId;
+        const fallbackAvatar = getUserAvatar(post.imageUrlUser || post.authorAvatar || post.user?.imageUrl);
+
+        let imageToUse = post.imageUrlSong || post.imageUrlAlbum;
+        imageToUse = imageToUse ? (imageToUse.startsWith('http') ? imageToUse : `http://localhost:8080${imageToUse}`) : fallbackAvatar;
 
         return {
-          id: post.id,
+          id: post.idPost || post.id,
           authorId: authorId,
-          username: post.authorName || (post.user?.name) || 'Unknown',
-          userAvatar: getUserAvatar(post.authorAvatar || post.user?.imageUrl),
-          postImage: post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) : post.userAvatar,
+          username: post.username || post.authorName || (post.user?.name) || 'Unknown',
+          userAvatar: fallbackAvatar,
+          postImage: imageToUse,
           musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
           caption: post.content,
           content: post.content,
@@ -92,6 +96,17 @@ function NewFeed() {
           timeAgo: 'Just now',
           isLiked: post.liked || post.isLiked || false,
           liked: post.liked || post.isLiked || false,
+          idSong: post.idSong,
+          idAlbum: post.idAlbum,
+          nameSong: post.nameSong,
+          nameAlbum: post.nameAlbum,
+          imageUrlSong: post.imageUrlSong,
+          imageUrlAlbum: post.imageUrlAlbum,
+          playCount: post.playCount || 0,
+          // Group info
+          groupId: post.groupId,
+          groupName: post.groupName,
+          groupImage: post.groupImage ? (post.groupImage.startsWith('http') ? post.groupImage : `http://localhost:8080${post.groupImage}`) : null,
           // Share details
           postType: post.postType,
           idPostShare: post.idPostShare,
@@ -152,20 +167,45 @@ function NewFeed() {
   };
 
   const toggleLike = async (postId) => {
+    // Optimistic update
+    let oldPostData = null;
+    setPosts(prevPosts =>
+      prevPosts.map(post => {
+        if (post.id === postId) {
+          oldPostData = { ...post };
+          const isLiked = !(post.isLiked || post.liked);
+          const count = (post.likeCount || post.likes || 0) + (isLiked ? 1 : -1);
+          return { ...post, isLiked: isLiked, liked: isLiked, likes: count, likeCount: count };
+        }
+        return post;
+      })
+    );
+
     try {
       const response = await likeService.toggleLike(postId);
-      // Backend returns { isLiked, likeCount }
-      const { isLiked, likeCount } = response.data || response;
 
+      // Standardize response extraction
+      const apiData = response.data || response;
+      const resultData = apiData.data || apiData;
+
+      const isLikedResult = resultData.liked !== undefined ? resultData.liked : resultData.isLiked;
+      const likeCountResult = resultData.likeCount !== undefined ? resultData.likeCount : (resultData.likes || 0);
+
+      // Sync with real data from server
       setPosts(prevPosts =>
         prevPosts.map(post =>
           post.id === postId
-            ? { ...post, isLiked: isLiked, liked: isLiked, likes: likeCount, likeCount: likeCount }
+            ? { ...post, isLiked: isLikedResult, liked: isLikedResult, likes: likeCountResult, likeCount: likeCountResult }
             : post
         )
       );
     } catch (error) {
       console.error("Error toggling like:", error);
+      // Revert on error
+      if (oldPostData) {
+        setPosts(prevPosts => prevPosts.map(p => p.id === postId ? oldPostData : p));
+      }
+      toast.error("Failed to update like status");
     }
   };
 
@@ -240,22 +280,54 @@ function NewFeed() {
                     <div className="flex flex-col w-full">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="relative cursor-pointer" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
-                            <img
-                              src={post.userAvatar}
-                              alt={post.username}
-                              className="w-10 h-10 rounded-full object-cover border-2 border-white/10"
-                              onError={(e) => { e.target.src = 'https://i.pravatar.cc/150' }}
-                            />
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
-                          </div>
-                          <div className="flex flex-col cursor-pointer" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
-                            <span className="username font-bold text-white hover:text-indigo-400 transition-colors">{post.username}</span>
-                            {post.musicLink && (
-                              <div className="flex items-center music-info text-[10px] text-slate-400">
-                                <Music className="w-3 h-3 mr-1" />
-                                <span>Original Audio</span>
-                              </div>
+                          {post.groupId ? (
+                            <div className="relative cursor-pointer group-avatar-container" onClick={(e) => { e.stopPropagation(); navigate(`/groups/${post.groupId}`); }}>
+                              <img
+                                src={post.groupImage || 'https://via.placeholder.com/40?text=G'}
+                                alt={post.groupName}
+                                className="w-10 h-10 rounded-xl object-cover border-2 border-white/10"
+                                onError={(e) => { e.target.src = 'https://via.placeholder.com/40?text=G' }}
+                              />
+                            </div>
+                          ) : (
+                            <div className="relative cursor-pointer" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
+                              <img
+                                src={post.userAvatar}
+                                alt={post.username}
+                                className="w-10 h-10 rounded-full object-cover border-2 border-white/10"
+                                onError={(e) => { e.target.src = 'https://i.pravatar.cc/150' }}
+                              />
+                              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                            </div>
+                          )}
+                          <div className="flex flex-col cursor-pointer" onClick={(e) => {
+                            e.stopPropagation();
+                            if (post.groupId) navigate(`/groups/${post.groupId}`);
+                            else handleProfileClick(post.authorId);
+                          }}>
+                            {post.groupId ? (
+                              <>
+                                <span className="username font-bold text-white hover:text-indigo-400 transition-colors">{post.groupName}</span>
+                                <span className="text-[11px] text-slate-400 font-medium hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
+                                  {post.username}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="username font-bold text-white hover:text-indigo-400 transition-colors">{post.username}</span>
+                                {(post.idSong || post.idAlbum) && (
+                                  <div className="flex items-center music-info text-[10px] text-slate-400">
+                                    {post.idAlbum ? <Disc className="w-3 h-3 mr-1" /> : <Music className="w-3 h-3 mr-1" />}
+                                    <span>{post.idAlbum ? 'Album' : 'Song'}</span>
+                                    {(post.idSong || post.idAlbum) && (
+                                      <>
+                                        <span className="mx-1">•</span>
+                                        <span>{(post.playCount || 0).toLocaleString()} plays</span>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
@@ -326,16 +398,16 @@ function NewFeed() {
                     <img
                       src={post.postImage}
                       alt="Post"
-                      className={`post-image ${(currentTrack?.id === post.id && isPlaying) ? 'opacity-90 transition-all' : ''}`}
-                      onDoubleClick={() => toggleLike(post.id)}
+                      className={`post-image ${(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? 'opacity-90 transition-all' : ''}`}
+                      onDoubleClick={(e) => { e.stopPropagation(); toggleLike(post.id); }}
                     />
 
-                    {post.musicLink && (
+                    {post.idSong && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handlePlayMusic(post); }}
-                        className={`absolute bottom-4 right-4 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full transition-all border border-white/30 z-10 shadow-xl ${(currentTrack?.id === post.id && isPlaying) ? 'bg-indigo-500 scale-110' : 'opacity-100 scale-100'}`}
+                        className={`absolute bottom-4 right-4 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full transition-all border border-white/30 z-10 shadow-xl ${(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? 'bg-indigo-500 scale-110' : 'opacity-100 scale-100'}`}
                       >
-                        {(currentTrack?.id === post.id && isPlaying) ? (
+                        {(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? (
                           <Pause className="w-6 h-6 fill-white" />
                         ) : (
                           <Play className="w-6 h-6 fill-white ml-0.5" />
@@ -348,7 +420,7 @@ function NewFeed() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                         <Heart
-                          className={`w-7 h-7 cursor-pointer hover:scale-125 transition-all duration-300 ${post.isLiked ? 'fill-red-500 text-red-500' : 'text-slate-500 hover:text-red-500'}`}
+                          className={`w-7 h-7 cursor-pointer hover:scale-125 transition-all duration-300 ${post.isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`}
                           onClick={() => toggleLike(post.id)}
                         />
                         <MessageCircle
@@ -366,12 +438,11 @@ function NewFeed() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
                       </div>
-                      <svg className="w-7 h-7 cursor-pointer text-slate-500 hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                      </svg>
                     </div>
 
-                    <div className="likes-count mb-2">{post.likes.toLocaleString()} likes</div>
+                    <div className="likes-count mb-2">
+                      {(post.likes !== undefined ? post.likes : post.likeCount).toLocaleString()} likes
+                    </div>
                     <div className="caption">
                       <span className="username">{post.username}</span>
                       <span className="opacity-90">{post.caption}</span>

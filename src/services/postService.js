@@ -39,6 +39,16 @@ const postService = {
     },
 
     /**
+     * Get new feed posts personalized for the current user
+     * @param {number} page
+     * @param {number} size
+     * @returns {Promise}
+     */
+    getNewFeedPosts: async (page = 0, size = 20) => {
+        return axiosClient.get(`/posts/new-feed?page=${page}&size=${size}`);
+    },
+
+    /**
      * Share an existing post
      * @param {Object} shareData { originalPostId, content, visibility, contextType, contextId }
      * @returns {Promise}

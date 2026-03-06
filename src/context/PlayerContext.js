@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+import songService from '../services/songService';
 
 const PlayerContext = createContext();
 
@@ -66,6 +67,13 @@ export const PlayerProvider = ({ children }) => {
         } else {
             setCurrentTrack(track);
             setIsPlaying(true);
+
+            // Record play history in backend
+            if (track.id) {
+                songService.recordPlay(track.id, 0).catch(err => {
+                    console.error("Failed to record play history:", err);
+                });
+            }
         }
     };
 

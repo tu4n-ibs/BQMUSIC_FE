@@ -4,6 +4,7 @@ import { Plus, Music, MoreVertical, Play, Trash2, Edit2, Search as SearchIcon, X
 import playlistService from '../../services/playlistService';
 import songService from '../../services/songService';
 import { toast } from 'react-hot-toast';
+import { usePlayer } from '../../context/PlayerContext';
 import './css/Playlists.css';
 
 const Playlists = () => {
@@ -18,6 +19,7 @@ const Playlists = () => {
     const [songSearchQuery, setSongSearchQuery] = useState('');
     const [songSearchResults, setSongSearchResults] = useState([]);
     const [isSearchingSongs, setIsSearchingSongs] = useState(false);
+    const { playTrack } = usePlayer();
 
     useEffect(() => {
         fetchPlaylists();
@@ -106,6 +108,34 @@ const Playlists = () => {
             console.error("Error searching songs:", error);
         } finally {
             setIsSearchingSongs(false);
+        }
+    };
+
+    const handlePlaySong = async (song) => {
+        try {
+            // Fetch the latest song details to get the music URL on-demand
+            const response = await songService.getSongById(song.songId);
+            const songData = response.data?.data || response.data;
+
+            if (!songData || !songData.musicUrl) {
+                toast.error("No audio file found for this song.");
+                return;
+            }
+
+            const musicLink = songData.musicUrl.startsWith('http')
+                ? songData.musicUrl
+                : `http://localhost:8080${songData.musicUrl}`;
+
+            playTrack({
+                id: songData.id || song.songId,
+                title: songData.name || song.songName,
+                artist: songData.artistName || song.songArtistName || "Unknown Artist",
+                avatar: songData.imageUrl || song.songImage || "",
+                url: musicLink
+            });
+        } catch (error) {
+            console.error("Error playing song:", error);
+            toast.error("Failed to load song audio.");
         }
     };
 
@@ -290,7 +320,10 @@ const Playlists = () => {
                                             <div key={song.songId} className="song-row grid grid-cols-[40px_1fr_1fr_1fr] px-4 py-3 hover:bg-white/5 rounded-xl transition group">
                                                 <div className="flex items-center text-sm opacity-40 group-hover:hidden">{index + 1}</div>
                                                 <div className="hidden items-center group-hover:flex">
-                                                    <Play className="w-3 h-3 fill-indigo-500 text-indigo-500" />
+                                                    <Play
+                                                        className="w-3 h-3 fill-indigo-500 text-indigo-500 cursor-pointer"
+                                                        onClick={() => handlePlaySong(song)}
+                                                    />
                                                 </div>
                                                 <div className="flex items-center gap-3 min-w-0">
                                                     <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
