@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Music, Film, Image as ImageIcon } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
-import CreatePostModal from '../../components/modals/CreatePostModal';
 import { useAuth } from '../../context/AuthContext';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Explore.css';
@@ -23,7 +22,6 @@ const Explore = () => {
     const { playTrack } = usePlayer();
 
     const [activeTab, setActiveTab] = useState('all');
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const handleItemClick = (item) => {
         if (item.type === 'music') {
@@ -47,8 +45,7 @@ const Explore = () => {
 
     return (
         <div className="explore-container">
-            <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
-            <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+            <Sidebar />
 
             <main className="explore-main ml-[120px]">
                 <div className="explore-wrapper">

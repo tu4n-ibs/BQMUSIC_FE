@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search as SearchIcon, X, Clock, User, Music, Disc, TrendingUp, ChevronRight } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
-import CreatePostModal from '../../components/modals/CreatePostModal';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Search.css';
 
@@ -41,7 +40,6 @@ const Search = () => {
         { id: 'r1', name: 'The Weeknd', type: 'history' },
         { id: 'r2', name: 'Taylor Swift', type: 'history' }
     ]);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     // Debounce search
     useEffect(() => {
@@ -96,8 +94,7 @@ const Search = () => {
 
     return (
         <div className="search-container">
-            <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
-            <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+            <Sidebar />
 
             <main className="search-main ml-[120px]">
                 <div className="search-wrapper">

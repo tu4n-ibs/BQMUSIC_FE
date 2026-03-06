@@ -9,6 +9,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import CreateUser from "../pages/admin/CreateUser";
 import GenreManagement from "../pages/admin/GenreManagement";
 import AlbumManagement from "../pages/admin/AlbumManagement";
+import MyAlbums from "../pages/user/MyAlbums";
 import NewFeed from "../pages/user/Feed";
 import Search from "../pages/user/Search";
 import Explore from "../pages/user/Explore";
@@ -43,6 +44,7 @@ function AppRoutes() {
                 <Route path="/admin" element={<AdminMenu />} />
                 <Route path="/admin/genres" element={<GenreManagement />} />
                 <Route path="/admin/albums" element={<AlbumManagement />} />
+                <Route path="/my-albums" element={<MyAlbums />} />
                 <Route path="/user/:userId" element={<UserMenu />} />
                 <Route path="/user" element={<UserMenu />} />
                 <Route path="/history" element={<History />} />

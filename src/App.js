@@ -3,7 +3,9 @@ import AppRoutes from "./routes/AppRoutes";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { PlayerProvider, usePlayer } from "./context/PlayerContext";
+import { ModalProvider, useModal } from "./context/ModalContext";
 import PlayerBar from "./components/layout/PlayerBar";
+import CreatePostModal from "./components/modals/CreatePostModal";
 import toast, { Toaster } from 'react-hot-toast';
 
 // Override global alert to use toast instead
@@ -23,12 +25,27 @@ window.alert = (message) => {
 
 const AppContent = () => {
   const { currentTrack } = usePlayer();
+  const { createPostModal, closeCreatePostModal } = useModal();
+
+  const handlePostCreated = () => {
+    // Dispatch custom event for pages to refresh
+    const event = new CustomEvent('POST_CREATED', {
+      detail: { groupId: createPostModal.groupId }
+    });
+    window.dispatchEvent(event);
+  };
 
   return (
     <div className={currentTrack ? 'has-player' : ''}>
       <Toaster position="top-center" reverseOrder={false} />
       <AppRoutes />
       <PlayerBar />
+      <CreatePostModal
+        isOpen={createPostModal.isOpen}
+        onClose={closeCreatePostModal}
+        onPostCreated={handlePostCreated}
+        groupId={createPostModal.groupId}
+      />
     </div>
   );
 };
@@ -37,11 +54,13 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <PlayerProvider>
-          <ThemeProvider>
-            <AppContent />
-          </ThemeProvider>
-        </PlayerProvider>
+        <ModalProvider>
+          <PlayerProvider>
+            <ThemeProvider>
+              <AppContent />
+            </ThemeProvider>
+          </PlayerProvider>
+        </ModalProvider>
       </AuthProvider>
     </BrowserRouter>
   );

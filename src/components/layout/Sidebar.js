@@ -2,19 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram, List, Users
+    Settings, Activity, Bookmark, Moon, Sun, AlertCircle, Instagram, List, Users, Disc
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useModal } from '../../context/ModalContext';
 import '../layout/css/Sidebar.css';
 import { getUserAvatar } from '../../utils/userUtils';
 import NotificationPanel from './NotificationPanel';
 
-const Sidebar = ({ onOpenCreateModal }) => {
+const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
+    const { openCreatePostModal } = useModal();
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const menuRef = useRef(null);
@@ -129,9 +131,15 @@ const Sidebar = ({ onOpenCreateModal }) => {
                         onClick={() => handleNavigation('/playlists')}
                     />
                     <NavItem
+                        icon={<Disc className="w-6 h-6" />}
+                        label="My Albums"
+                        active={isActive('/my-albums')}
+                        onClick={() => handleNavigation('/my-albums')}
+                    />
+                    <NavItem
                         icon={<PlusSquare className="w-6 h-6" />}
                         label="Create"
-                        onClick={onOpenCreateModal}
+                        onClick={() => openCreatePostModal()}
                     />
                     <div
                         className={`ig-nav-item ${isActive(`/user/userId=${user?.idUser}`) ? 'active' : ''}`}

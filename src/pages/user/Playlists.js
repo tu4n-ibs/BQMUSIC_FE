@@ -70,7 +70,7 @@ const Playlists = () => {
     };
 
     const filteredPlaylists = playlists.filter(pl =>
-        pl.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pl.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pl.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

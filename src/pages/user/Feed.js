@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Pause, Music, Heart, MessageCircle, Share2 } from 'lucide-react';
-import CreatePostModal from '../../components/modals/CreatePostModal';
 import SharePostModal from '../../components/modals/SharePostModal';
 import CommentSection from '../../components/content/CommentSection';
 import PostDetailModal from '../../components/modals/PostDetailModal';
@@ -12,6 +11,7 @@ import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
+import { useModal } from '../../context/ModalContext';
 import './css/Feed.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
@@ -46,7 +46,6 @@ function NewFeed() {
 
 
   // State Modal
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [postToShare, setPostToShare] = useState(null);
   const [expandedComments, setExpandedComments] = useState({}); // { postId: boolean }
@@ -114,6 +113,15 @@ function NewFeed() {
     fetchPosts();
   }, [fetchCurrentUser, fetchPosts]);
 
+  // Handle global post creation
+  useEffect(() => {
+    const handleGlobalPostCreated = () => {
+      fetchPosts();
+    };
+    window.addEventListener('POST_CREATED', handleGlobalPostCreated);
+    return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+  }, [fetchPosts]);
+
   // Helpers Audio/Like
   const handlePlayMusic = (post) => {
     playTrack({
@@ -153,7 +161,6 @@ function NewFeed() {
 
   return (
     <div className="flex min-h-screen feed-container">
-      <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onPostCreated={fetchPosts} />
       <SharePostModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
@@ -175,7 +182,7 @@ function NewFeed() {
       />
 
       {/* Left Sidebar */}
-      <Sidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
+      <Sidebar />
 
       {/* Main Content */}
       <main className="flex-1 ml-[120px] mr-[320px] transition-all duration-300">

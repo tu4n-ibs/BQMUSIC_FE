@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
-import { Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Lock, Edit2, Check, X, Heart, Share2 } from 'lucide-react';
+import { useModal } from "../../context/ModalContext";
+import { Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Lock, Edit2, Check, X, Heart, Share2, Disc } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
 import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
@@ -36,7 +37,6 @@ function Profile() {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   // Modals for posts
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [postToShare, setPostToShare] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -137,9 +137,25 @@ function Profile() {
         fetchPosts(targetId, 'OWNER');
       } else if (activeTab === 'shares') {
         fetchPosts(targetId, 'SHARE');
+      } else if (activeTab === 'albums') {
+        // For UI/UX first: we use existing OWNER posts but will filter for ALBUM targetType in render
+        fetchPosts(targetId, 'OWNER');
       }
     }
   }, [activeTab, targetId]);
+
+  // Handle global post creation refresh
+  useEffect(() => {
+    const handleGlobalPostCreated = () => {
+      if (targetId) {
+        if (activeTab === 'posts') fetchPosts(targetId, 'OWNER');
+        else if (activeTab === 'shares') fetchPosts(targetId, 'SHARE');
+        else if (activeTab === 'albums') fetchPosts(targetId, 'OWNER');
+      }
+    };
+    window.addEventListener('POST_CREATED', handleGlobalPostCreated);
+    return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+  }, [targetId, activeTab]);
 
   const fetchPosts = async (id, postType = null) => {
     try {
@@ -165,10 +181,13 @@ function Profile() {
           commentCount: p.commentCount || 0,
           liked: p.liked || p.isLiked || false,
           isLiked: p.liked || p.isLiked || false,
+          isLiked: p.liked || p.isLiked || false,
           createdAt: p.postDate || p.createdAt,
           user: author,
           // Share details
           postType: p.postType,
+          targetType: p.targetType,
+          targetId: p.targetId,
           idPostShare: p.idPostShare,
           userNameShare: p.userNameShare,
           userImageShare: p.userImageShare,
@@ -384,6 +403,9 @@ function Profile() {
             <div className={`ig-tab ${activeTab === 'shares' ? 'active' : ''}`} onClick={() => setActiveTab('shares')}>
               <Share2 className="w-4 h-4" /> SHARES
             </div>
+            <div className={`ig-tab ${activeTab === 'albums' ? 'active' : ''}`} onClick={() => setActiveTab('albums')}>
+              <Disc className="w-4 h-4" /> ALBUMS
+            </div>
             {isOwnProfile && (
               <>
                 <div className={`ig-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
@@ -393,13 +415,13 @@ function Profile() {
             )}
           </div>
 
-          {(activeTab === 'posts' || activeTab === 'shares') && (
+          {(activeTab === 'posts' || activeTab === 'shares' || activeTab === 'albums') && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {postsLoading ? (
                 <div className="text-center py-20 opacity-50">Loading posts...</div>
-              ) : userPosts.length > 0 ? (
+              ) : (activeTab === 'albums' ? userPosts.filter(p => p.targetType === 'ALBUM') : userPosts).length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {userPosts.map(post => (
+                  {(activeTab === 'albums' ? userPosts.filter(p => p.targetType === 'ALBUM') : userPosts).map(post => (
                     <div
                       key={post.id}
                       className="post-card bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all group overflow-hidden cursor-pointer flex flex-col"
@@ -447,9 +469,15 @@ function Profile() {
                   <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     {activeTab === 'posts' ? <Grid className="w-10 h-10 text-indigo-500" /> : <Share2 className="w-10 h-10 text-indigo-500" />}
                   </div>
-                  <div className="ig-empty-title">{activeTab === 'posts' ? 'Share Your Thoughts' : 'No Shared Posts'}</div>
+                  <div className="ig-empty-title">
+                    {activeTab === 'posts' ? 'Share Your Thoughts' : activeTab === 'albums' ? 'No Albums Yet' : 'No Shared Posts'}
+                  </div>
                   <div className="text-slate-500 max-w-sm mx-auto mb-8">
-                    {activeTab === 'posts' ? 'Your posts will appear here once you start sharing with the community.' : 'Shared posts will appear here when you share content from others.'}
+                    {activeTab === 'posts'
+                      ? 'Your posts will appear here once you start sharing with the community.'
+                      : activeTab === 'albums'
+                        ? 'Album posts will appear here when you post an album.'
+                        : 'Shared posts will appear here when you share content from others.'}
                   </div>
                   {isOwnProfile && activeTab === 'posts' && (
                     <button

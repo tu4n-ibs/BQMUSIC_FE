@@ -124,3 +124,58 @@
 .dark .post-content-text {
     color: #f1f5f9;
 }
+
+/* Album Tracklist Styles */
+.album-tracklist-section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.track-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.track-item:hover {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
+    transform: translateX(4px);
+}
+
+.track-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+@keyframes music-bar {
+
+    0%,
+    100% {
+        height: 2px;
+    }
+
+    50% {
+        height: 12px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar for tracklist if needed */
+.album-tracklist-section::-webkit-scrollbar {
+    width: 4px;
+}
+
+.album-tracklist-section::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+}

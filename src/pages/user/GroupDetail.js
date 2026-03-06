@@ -7,9 +7,9 @@ import {
     Check, X, UserPlus, ShieldCheck
 } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
-import CreatePostModal from '../../components/modals/CreatePostModal';
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import ConfirmModal from '../../components/modals/ConfirmModal';
+import { useModal } from '../../context/ModalContext';
 import groupService from '../../services/groupService';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
@@ -46,12 +46,12 @@ const GroupDetail = () => {
     const [isReviewing, setIsReviewing] = useState(false);
     const [reviewMessage, setReviewMessage] = useState('');
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [selectedPostIdDetail, setSelectedPostIdDetail] = useState(null);
     const [postToShare, setPostToShare] = useState(null);
 
     const { playTrack, currentTrack, isPlaying } = usePlayer();
+    const { openCreatePostModal } = useModal();
 
     // Ban User states
     const [isBanning, setIsBanning] = useState(false);
@@ -234,6 +234,21 @@ const GroupDetail = () => {
         fetchGroupData();
     }, [fetchGroupData]);
 
+    // Handle global post creation refresh
+    useEffect(() => {
+        const handleGlobalPostCreated = (e) => {
+            // Only refresh if it's a general post OR a post for this specific group
+            if (!e.detail?.groupId || e.detail.groupId === groupId) {
+                fetchGroupData();
+                if (group?.role?.toUpperCase() === 'ADMIN') {
+                    fetchPendingPosts();
+                }
+            }
+        };
+        window.addEventListener('POST_CREATED', handleGlobalPostCreated);
+        return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+    }, [groupId, group?.role, fetchGroupData]);
+
     useEffect(() => {
         if (group?.role?.toUpperCase() === 'ADMIN' || activeTab === 'review_posts') {
             fetchPendingPosts();
@@ -290,17 +305,6 @@ const GroupDetail = () => {
                 onUpdate={(postId, updates) => {
                     setPosts(prev => prev.map(p => p.idPost === postId ? { ...p, ...updates } : p));
                 }}
-            />
-            <CreatePostModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onPostCreated={() => {
-                    fetchGroupData();
-                    if (group?.role?.toUpperCase() === 'ADMIN') {
-                        fetchPendingPosts();
-                    }
-                }}
-                groupId={groupId}
             />
             <ConfirmModal
                 isOpen={isLeaveConfirmOpen}
@@ -595,7 +599,7 @@ const GroupDetail = () => {
                                                     <div className="flex-1">
                                                         <button
                                                             className="create-post-placeholder w-full text-left"
-                                                            onClick={() => setIsCreateModalOpen(true)}
+                                                            onClick={() => openCreatePostModal({ groupId })}
                                                         >
                                                             What's on your mind?
                                                         </button>

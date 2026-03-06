@@ -72,7 +72,9 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 likeCount: rawData.likeCount || 0,
                 commentCount: rawData.commentCount || 0,
                 liked: rawData.isLiked || false,
-                createdAt: rawData.timeCreated || new Date().toISOString()
+                createdAt: rawData.timeCreated || new Date().toISOString(),
+                targetType: rawData.targetType,
+                albumData: rawData.postResponse // This contains the songs list from backend
             };
 
             console.log("PostDetailModal: Formatted Post ->", formattedPost);
@@ -221,6 +223,52 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                         - {post.content}
                                     </p>
                                 </div>
+
+                                {post.targetType === 'ALBUM' && post.albumData?.songs && (
+                                    <div className="album-tracklist-section mt-6 mb-8">
+                                        <h3 className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-4 flex items-center gap-2">
+                                            <Music className="w-3 h-3" /> TRACKLIST
+                                        </h3>
+                                        <div className="flex flex-col gap-2">
+                                            {post.albumData.songs.map((song, index) => (
+                                                <div
+                                                    key={song.songId}
+                                                    className={`track-item group flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${currentTrack?.url?.includes(song.songId) ? 'bg-indigo-500/10 border border-indigo-500/30' : 'hover:bg-white/5 border border-transparent'}`}
+                                                    onClick={() => {
+                                                        const mUrl = song.musicUrl;
+                                                        const musicLink = mUrl ? (mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`) : null;
+                                                        if (!musicLink) return;
+                                                        playTrack({
+                                                            id: song.songId,
+                                                            title: song.name,
+                                                            artist: post.authorName,
+                                                            avatar: post.imageUrl || post.authorAvatar,
+                                                            url: musicLink
+                                                        });
+                                                    }}
+                                                >
+                                                    <span className="text-[10px] font-bold opacity-30 w-4">{index + 1}</span>
+                                                    <div className="w-8 h-8 rounded bg-slate-800 flex items-center justify-center relative overflow-hidden shrink-0">
+                                                        {currentTrack?.url?.includes(song.songId) && isPlaying ? (
+                                                            <div className="flex items-end gap-0.5 h-3">
+                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.6s_ease-in-out_infinite] h-full"></div>
+                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.8s_ease-in-out_infinite] h-2/3"></div>
+                                                                <div className="w-0.5 bg-indigo-500 animate-[music-bar_0.7s_ease-in-out_infinite] h-5/6"></div>
+                                                            </div>
+                                                        ) : (
+                                                            <Play className="w-3 h-3 fill-white text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className={`text-xs font-bold truncate ${currentTrack?.url?.includes(song.songId) ? 'text-indigo-400' : 'text-slate-200'}`}>
+                                                            {song.name}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="mt-8">
                                     <CommentSection
