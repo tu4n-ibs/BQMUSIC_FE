@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, X, Disc } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
 import CommentSection from '../../components/content/CommentSection';
+import PostItem from '../../components/content/PostItem';
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import Sidebar from '../../components/layout/Sidebar';
@@ -284,157 +285,27 @@ function NewFeed() {
               <div className="text-center text-gray-500 py-10">No posts available.</div>
             ) : (
               posts.map(post => (
-                <article key={post.id} className="post-article">
-                  <div className="post-header">
-                    <div className="flex flex-col w-full">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {post.groupId ? (
-                            <div className="relative cursor-pointer group-avatar-container" onClick={(e) => { e.stopPropagation(); navigate(`/groups/${post.groupId}`); }}>
-                              <img
-                                src={post.groupImage || 'https://via.placeholder.com/40?text=G'}
-                                alt={post.groupName}
-                                className="w-10 h-10 rounded-xl object-cover border-2 border-white/10"
-                                onError={(e) => { e.target.src = 'https://via.placeholder.com/40?text=G' }}
-                              />
-                            </div>
-                          ) : (
-                            <div className="relative cursor-pointer" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
-                              <img
-                                src={post.userAvatar}
-                                alt={post.username}
-                                className="w-10 h-10 rounded-full object-cover border-2 border-white/10"
-                                onError={(e) => { e.target.src = 'https://i.pravatar.cc/150' }}
-                              />
-                              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
-                            </div>
-                          )}
-                          <div className="flex flex-col cursor-pointer" onClick={(e) => {
-                            e.stopPropagation();
-                            if (post.groupId) navigate(`/groups/${post.groupId}`);
-                            else handleProfileClick(post.authorId);
-                          }}>
-                            {post.groupId ? (
-                              <>
-                                <span className="username font-bold text-white hover:text-indigo-400 transition-colors">{post.groupName}</span>
-                                <span className="text-[11px] text-slate-400 font-medium hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); handleProfileClick(post.authorId); }}>
-                                  {post.username}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <span className="username font-bold text-white hover:text-indigo-400 transition-colors">{post.username}</span>
-                                {(post.idSong || post.idAlbum) && (
-                                  <div className="flex items-center music-info text-[10px] text-slate-400">
-                                    {post.idAlbum ? <Disc className="w-3 h-3 mr-1" /> : <Music className="w-3 h-3 mr-1" />}
-                                    <span>{post.idAlbum ? 'Album' : 'Song'}</span>
-                                    {(post.idSong || post.idAlbum) && (
-                                      <>
-                                        <span className="mx-1">•</span>
-                                        <span>{(post.playCount || 0).toLocaleString()} plays</span>
-                                      </>
-                                    )}
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {post.postType === 'SHARE' && (
-                        <div
-                          className="mt-2 ml-13 flex items-center gap-2 text-xs text-slate-400 hover:text-indigo-400 cursor-pointer transition-colors border-t border-white/5 pt-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPostIdDetail(post.idPostShare);
-                            setIsDetailModalOpen(true);
-                          }}
-                        >
-                          <Share2 className="w-3 h-3" />
-                          <span>Shared from </span>
-                          <span className="font-bold text-indigo-400">{post.userNameShare}</span>
-                          <span>'s post</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="post-media-container group cursor-pointer" onClick={() => { setSelectedPostIdDetail(post.id); setIsDetailModalOpen(true); }}>
-                    <img
-                      src={post.postImage}
-                      alt="Post"
-                      className={`post-image ${(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? 'opacity-90 transition-all' : ''}`}
-                      onDoubleClick={(e) => { e.stopPropagation(); toggleLike(post.id); }}
-                    />
-
-                    {post.idSong && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handlePlayMusic(post); }}
-                        className={`absolute bottom-4 right-4 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full transition-all border border-white/30 z-10 shadow-xl ${(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? 'bg-indigo-500 scale-110' : 'opacity-100 scale-100'}`}
-                      >
-                        {(currentTrack?.id === (post.idSong || post.id) && isPlaying) ? (
-                          <Pause className="w-6 h-6 fill-white" />
-                        ) : (
-                          <Play className="w-6 h-6 fill-white ml-0.5" />
-                        )}
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="post-footer">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-5">
-                        <Heart
-                          className={`w-7 h-7 cursor-pointer hover:scale-125 transition-all duration-300 ${post.isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`}
-                          onClick={() => toggleLike(post.id)}
-                        />
-                        <MessageCircle
-                          className={`w-7 h-7 cursor-pointer transition-colors ${expandedComments[post.id] ? 'text-indigo-500' : 'text-slate-500 hover:text-indigo-500'}`}
-                          onClick={() => navigate(`/posts/${post.id}`)}
-                        />
-                        <svg
-                          onClick={() => {
-                            setPostToShare(post);
-                            setIsShareModalOpen(true);
-                          }}
-                          className="w-7 h-7 cursor-pointer text-slate-500 hover:text-indigo-500 transition-colors"
-                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div className="likes-count mb-2">
-                      {(post.likes !== undefined ? post.likes : post.likeCount).toLocaleString()} likes
-                    </div>
-                    <div className="caption">
-                      <span className="username">{post.username}</span>
-                      <span className="opacity-90">{post.caption}</span>
-                    </div>
-
-                    <div className="comment-input-container">
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
-                        <img src={currentUser.avatar} alt="Me" className="w-full h-full object-cover" />
-                      </div>
-                      <input type="text" placeholder="Add a comment..." className="comment-input" onClick={() => setExpandedComments(prev => ({ ...prev, [post.id]: true }))} readOnly />
-                    </div>
-
-                    {expandedComments[post.id] && (
-                      <CommentSection
-                        postId={post.id}
-                        totalComments={post.commentCount}
-                        onCommentAdded={() => {
-                          setPosts(prev => prev.map(p =>
-                            p.id === post.id ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p
-                          ));
-                        }}
-                        onClose={() => setExpandedComments(prev => ({ ...prev, [post.id]: false }))}
-                      />
-                    )}
-                  </div>
-                </article>
+                <PostItem
+                  key={post.id}
+                  post={post}
+                  currentUser={currentUser}
+                  isPlaying={isPlaying}
+                  currentTrack={currentTrack}
+                  onPlayMusic={handlePlayMusic}
+                  onToggleLike={toggleLike}
+                  onProfileClick={handleProfileClick}
+                  onPostClick={(id) => { setSelectedPostIdDetail(id); setIsDetailModalOpen(true); }}
+                  onSharePost={(p) => { setPostToShare(p); setIsShareModalOpen(true); }}
+                  onAddToPlaylist={(track) => { setSongToPlaylist(track); setIsPlaylistModalOpen(true); }}
+                  expandedComments={expandedComments[post.id]}
+                  onToggleComments={(id) => setExpandedComments(prev => ({ ...prev, [id]: !prev[id] }))}
+                  onCommentAdded={() => {
+                    setPosts(prev => prev.map(p =>
+                      p.id === post.id ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p
+                    ));
+                  }}
+                  onNavigateToGroup={(groupId) => navigate(`/groups/${groupId}`)}
+                />
               ))
             )}
           </div>

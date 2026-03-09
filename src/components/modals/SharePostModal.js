@@ -90,14 +90,9 @@ const SharePostModal = ({ isOpen, onClose, post, onShareSuccess }) => {
                 <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
                     {/* Original Post Preview */}
                     <div className="p-3 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3">
-                        <img
-                            src={post.postImage || post.authorAvatar || 'https://i.pravatar.cc/150'}
-                            alt="Post snippet"
-                            className="w-12 h-12 rounded object-cover"
-                        />
                         <div className="flex-1 min-w-0">
                             <div className="font-semibold text-sm truncate">{post.username}</div>
-                            <div className="text-xs text-slate-400 truncate">{post.caption || "Click to view post"}</div>
+                            <div className="text-xs text-slate-400 truncate">{post.caption}</div>
                         </div>
                     </div>
 

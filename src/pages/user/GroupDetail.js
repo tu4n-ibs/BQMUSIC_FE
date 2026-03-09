@@ -9,6 +9,9 @@ import {
 import SharePostModal from '../../components/modals/SharePostModal';
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import ConfirmModal from '../../components/modals/ConfirmModal';
+import CommentSection from '../../components/content/CommentSection';
+import PostItem from '../../components/content/PostItem';
+import { useAuth } from '../../context/AuthContext';
 import { useModal } from '../../context/ModalContext';
 import groupService from '../../services/groupService';
 import postService from '../../services/postService';
@@ -58,6 +61,27 @@ const GroupDetail = () => {
 
     const { playTrack, currentTrack, isPlaying } = usePlayer();
     const { openCreatePostModal } = useModal();
+    const { user } = useAuth();
+
+    // State to store current user info
+    const [currentUser, setCurrentUser] = useState({
+        name: '',
+        username: '',
+        avatar: null
+    });
+
+    useEffect(() => {
+        if (user) {
+            setCurrentUser({
+                name: user.name || "User",
+                username: user.email || "",
+                avatar: getUserAvatar(user.imageUrl)
+            });
+        }
+    }, [user]);
+
+    // Track expanded comments for each post
+    const [expandedComments, setExpandedComments] = useState({});
 
     // Ban User states
     const [isBanning, setIsBanning] = useState(false);
@@ -262,18 +286,42 @@ const GroupDetail = () => {
     }, [activeTab, group?.role, group?.id]);
 
     const toggleLike = async (postId) => {
+        // Optimistic update
+        let oldPostData = null;
+        setPosts(prevPosts =>
+            prevPosts.map(post => {
+                if (post.idPost === postId) {
+                    oldPostData = { ...post };
+                    const isLikedNow = !(post.isLiked || post.liked);
+                    const count = (post.likeCount || post.likes || 0) + (isLikedNow ? 1 : -1);
+                    return { ...post, isLiked: isLikedNow, liked: isLikedNow, likeCount: count, likes: count };
+                }
+                return post;
+            })
+        );
+
         try {
             const response = await likeService.toggleLike(postId);
-            const { isLiked, likeCount } = response?.data || response || {};
+            const apiData = response.data || response;
+            const resultData = apiData.data || apiData;
+
+            const isLikedResult = resultData.liked !== undefined ? resultData.liked : resultData.isLiked;
+            const likeCountResult = resultData.likeCount !== undefined ? resultData.likeCount : (resultData.likes || 0);
+
             setPosts(prevPosts =>
                 prevPosts.map(post =>
                     post.idPost === postId
-                        ? { ...post, isLiked: (isLiked !== undefined ? isLiked : !post.isLiked), likeCount: (likeCount !== undefined ? likeCount : (post.isLiked ? Math.max(0, post.likeCount - 1) : (post.likeCount || 0) + 1)) }
+                        ? { ...post, isLiked: isLikedResult, liked: isLikedResult, likeCount: likeCountResult, likes: likeCountResult }
                         : post
                 )
             );
         } catch (error) {
             console.error("Error toggling like:", error);
+            // Revert on error
+            if (oldPostData) {
+                setPosts(prevPosts => prevPosts.map(p => p.idPost === postId ? oldPostData : p));
+            }
+            toast.error("Failed to update like status");
         }
     };
 
@@ -607,17 +655,22 @@ const GroupDetail = () => {
                                     <>
                                         {/* Create Post Area - Only for members */}
                                         {group.isMember && (
-                                            <div className="group-create-post-card">
-                                                <div className="flex gap-4">
-                                                    <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-slate-800">
-                                                        <Users className="w-full h-full p-2 text-slate-500" />
+                                            <div className="group-create-post-card mb-8">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/10">
+                                                        <img
+                                                            src={currentUser.avatar}
+                                                            alt="Me"
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => { e.target.src = 'https://i.pravatar.cc/150' }}
+                                                        />
                                                     </div>
                                                     <div className="flex-1">
                                                         <button
-                                                            className="create-post-placeholder w-full text-left"
+                                                            className="create-post-placeholder w-full bg-white/5 hover:bg-white/10 border border-white/5 py-3 px-5 rounded-2xl text-left text-slate-400 font-medium transition-all"
                                                             onClick={() => openCreatePostModal({ groupId })}
                                                         >
-                                                            What's on your mind?
+                                                            What's on your mind, {currentUser.name}?
                                                         </button>
                                                     </div>
                                                 </div>
@@ -635,136 +688,35 @@ const GroupDetail = () => {
                                             </div>
                                         ) : (
                                             posts.map(post => (
-                                                <div key={post.idPost} className="group-post-card group">
-                                                    <div className="post-header cursor-pointer" onClick={() => { setSelectedPostIdDetail(post.idPost); setIsDetailModalOpen(true); }}>
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="relative cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${post.idUser}`); }}>
-                                                                <img
-                                                                    src={post.imageUrlUser || 'https://i.pravatar.cc/150'}
-                                                                    alt={post.username}
-                                                                    className="w-10 h-10 rounded-full object-cover border-2 border-white/10"
-                                                                    onError={(e) => { e.target.src = 'https://i.pravatar.cc/150' }}
-                                                                />
-                                                            </div>
-                                                            <div className="flex flex-col cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/user/${post.idUser}`); }}>
-                                                                <div className="post-author-name">{post.username}</div>
-                                                                <div className="post-time">{new Date(post.postDate).toLocaleString()}</div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="relative">
-                                                            <button
-                                                                className={`p-2 rounded-full transition-all ${activeMenuId === post.idPost ? 'bg-indigo-500/10 text-indigo-400 opacity-100' : 'opacity-0 group-hover:opacity-100 text-slate-400 hover:bg-white/5 hover:text-white'}`}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setActiveMenuId(activeMenuId === post.idPost ? null : post.idPost);
-                                                                }}
-                                                            >
-                                                                <MoreHorizontal className="w-5 h-5" />
-                                                            </button>
-
-                                                            {activeMenuId === post.idPost && (
-                                                                <>
-                                                                    <div className="fixed inset-0 z-[110]" onClick={() => setActiveMenuId(null)}></div>
-                                                                    <div
-                                                                        className="absolute right-0 top-full mt-2 w-56 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl py-2 z-[120] animate-in fade-in zoom-in-95 duration-200"
-                                                                        onClick={e => e.stopPropagation()}
-                                                                    >
-                                                                        {(post.idSong || post.idAlbum) && (
-                                                                            <button
-                                                                                className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-300 hover:text-white hover:bg-indigo-500/20 transition-all uppercase tracking-wider"
-                                                                                onClick={() => {
-                                                                                    setSongToPlaylist({
-                                                                                        id: post.idSong || post.idAlbum,
-                                                                                        name: post.songName || post.albumName || "Track"
-                                                                                    });
-                                                                                    setIsPlaylistModalOpen(true);
-                                                                                    setActiveMenuId(null);
-                                                                                }}
-                                                                            >
-                                                                                <ListMusic className="w-4 h-4" />
-                                                                                Add to Playlist
-                                                                            </button>
-                                                                        )}
-                                                                        <div className="mx-2 my-1 border-t border-white/5"></div>
-                                                                        <button className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/10 transition-all uppercase tracking-wider">
-                                                                            <X className="w-4 h-4" />
-                                                                            Hide Post
-                                                                        </button>
-                                                                    </div>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="post-content cursor-pointer relative z-0" onClick={() => { setSelectedPostIdDetail(post.idPost); setIsDetailModalOpen(true); }}>
-                                                        <p className="mb-6 leading-relaxed text-slate-300 pointer-events-none">{post.content || post.contentShare || 'Listening to this track'}</p>
-
-                                                        {(post.idSong || post.idAlbum) && (
-                                                            <div className="post-music-player">
-                                                                <div className="music-cover cursor-pointer relative z-10" onClick={(e) => { e.stopPropagation(); handlePlayMusic(post); }}>
-                                                                    <img
-                                                                        src={
-                                                                            post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `http://localhost:8080${post.imageUrlSong}`) :
-                                                                                post.imageUrlAlbum ? (post.imageUrlAlbum.startsWith('http') ? post.imageUrlAlbum : `http://localhost:8080${post.imageUrlAlbum}`) :
-                                                                                    getUserAvatar(post.userImage)
-                                                                        }
-                                                                        alt="Cover"
-                                                                        className={`w-full h-full object-cover ${(currentTrack?.id === post.idPost && isPlaying) ? 'opacity-90' : ''}`}
-                                                                    />
-                                                                    <div className={`play-overlay flex items-center justify-center ${(currentTrack?.id === post.idPost && isPlaying) ? 'bg-indigo-500/40' : 'bg-black/30'}`}>
-                                                                        {(currentTrack?.id === post.idPost && isPlaying) ? (
-                                                                            <Pause className="w-6 h-6 fill-white" />
-                                                                        ) : (
-                                                                            <Play className="w-5 h-5 fill-white" />
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                <div className="music-info">
-                                                                    <div className="song-title">{post.nameSong || post.nameAlbum}</div>
-                                                                    <div className="song-artist">{post.username}</div>
-                                                                </div>
-                                                                {(post.idSong) && (
-                                                                    <div className="visualizer">
-                                                                        <div className="bar v-bar-1"></div>
-                                                                        <div className="bar v-bar-2"></div>
-                                                                        <div className="bar v-bar-3"></div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="post-footer">
-                                                        <div className="post-actions">
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); toggleLike(post.idPost); }}
-                                                                className="post-action-btn flex items-center gap-2 hover:scale-110 transition-transform"
-                                                            >
-                                                                <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`} />
-                                                                <span>{post.likeCount || 0}</span>
-                                                            </button>
-                                                            <button
-                                                                className="post-action-btn flex items-center gap-2"
-                                                                onClick={(e) => { e.stopPropagation(); setSelectedPostIdDetail(post.idPost); setIsDetailModalOpen(true); }}
-                                                            >
-                                                                <MessageSquare className="w-5 h-5" />
-                                                                <span>{post.commentCount || 0}</span>
-                                                            </button>
-                                                        </div>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                // Normalize post to have id so SharePostModal works correctly
-                                                                setPostToShare({ ...post, id: post.idPost });
-                                                                setIsShareModalOpen(true);
-                                                            }}
-                                                            className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors"
-                                                        >
-                                                            <Share2 className="w-4 h-4" />
-                                                            <span className="text-sm font-bold uppercase tracking-wider">Share</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <PostItem
+                                                    key={post.idPost}
+                                                    post={post}
+                                                    currentUser={currentUser}
+                                                    isPlaying={isPlaying}
+                                                    currentTrack={currentTrack}
+                                                    onPlayMusic={handlePlayMusic}
+                                                    onToggleLike={toggleLike}
+                                                    onProfileClick={(id) => navigate(`/user/${id}`)}
+                                                    onPostClick={(id) => { setSelectedPostIdDetail(id); setIsDetailModalOpen(true); }}
+                                                    onSharePost={(p) => {
+                                                        setPostToShare({ ...p, id: p.idPost });
+                                                        setIsShareModalOpen(true);
+                                                    }}
+                                                    onAddToPlaylist={(track) => {
+                                                        setSongToPlaylist(track);
+                                                        setIsPlaylistModalOpen(true);
+                                                    }}
+                                                    expandedComments={expandedComments[post.idPost]}
+                                                    onToggleComments={(id) => setExpandedComments(prev => ({ ...prev, [id]: !prev[id] }))}
+                                                    onCommentAdded={() => {
+                                                        setPosts(prev => prev.map(p =>
+                                                            p.idPost === post.idPost ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p
+                                                        ));
+                                                    }}
+                                                    onNavigateToGroup={(id) => {
+                                                        if (id !== groupId) navigate(`/groups/${id}`);
+                                                    }}
+                                                />
                                             ))
                                         )}
                                     </>
