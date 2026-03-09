@@ -1,0 +1,254 @@
+.history-container {
+    display: flex;
+    min-height: 100vh;
+    background: #0f172a;
+    color: white;
+}
+
+.history-main {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 1024px) {
+    .history-main {
+        margin-left: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .history-main {
+        padding: calc(var(--mobile-header-height) + 1rem) 1rem;
+        margin-bottom: var(--mobile-nav-height);
+    }
+}
+
+.history-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+.history-header {
+    margin-bottom: 40px;
+}
+
+.history-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(to right, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.history-subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px border transparent;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+}
+
+.history-item:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateX(8px);
+}
+
+.history-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: #6366f1;
+}
+
+.history-index {
+    width: 30px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.history-image-wrapper {
+    width: 48px;
+    height: 48px;
+    margin: 0 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.history-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.history-play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.history-item:hover .history-play-overlay {
+    opacity: 1;
+}
+
+.history-track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-track-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-track-artist {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.history-genre-badge {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    color: #6366f1;
+}
+
+.history-time {
+    color: #64748b;
+    font-size: 0.85rem;
+    text-align: right;
+    margin-left: 24px;
+    white-space: nowrap;
+}
+
+.history-actions {
+    margin-left: 24px;
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.history-item:hover .history-actions {
+    opacity: 1;
+}
+
+.history-action-btn {
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.history-action-btn:hover {
+    color: #6366f1;
+}
+
+.history-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: #64748b;
+}
+
+.history-empty {
+    text-align: center;
+    padding: 80px 40px;
+    background: rgba(30, 41, 59, 0.2);
+    border-radius: 24px;
+    border: 2px dashed rgba(255, 255, 255, 0.05);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    color: #1e293b;
+}
+
+.history-empty h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.history-empty p {
+    color: #64748b;
+}
+
+.load-more-btn {
+    margin-top: 32px;
+    width: 100%;
+    padding: 16px;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 12px;
+    color: #94a3b8;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.load-more-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+@media (max-width: 768px) {
+    .history-wrapper {
+        max-width: 100%;
+    }
+
+    .history-title {
+        font-size: 1.75rem;
+    }
+
+    .history-image-wrapper {
+        margin: 0 12px;
+    }
+
+    .history-time {
+        display: none;
+    }
+
+    .history-index {
+        display: none;
+    }
+
+    .history-item {
+        padding: 10px 12px;
+    }
+}

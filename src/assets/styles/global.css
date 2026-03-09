@@ -13,6 +13,18 @@
     --text-muted: #94a3b8;
     --border-color: #e2e8f0;
 
+    /* Responsive Breakpoints */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-2xl: 1440px;
+
+    /* Responsive Spacing */
+    --main-content-padding: 2rem;
+    --mobile-nav-height: 70px;
+    --mobile-header-height: 60px;
+
     /* Sidebar Dimensions */
     --sidebar-width-collapsed: 80px;
     --sidebar-width-expanded: 240px;
@@ -77,10 +89,26 @@ body {
     bottom: 110px !important;
 }
 
+@media (max-width: 768px) {
+    .has-player .ig-sidebar {
+        bottom: calc(var(--mobile-nav-height) + 10px) !important;
+    }
+}
+
 .has-player main,
-.has-player .explore-main,
 .has-player .search-main,
 .has-player .feed-container,
+.has-player .history-main,
 .has-player .ig-profile-container {
-    padding-bottom: 90px !important;
+    padding-bottom: 110px !important;
+}
+
+@media (max-width: 768px) {
+
+    .has-player main,
+    .has-player .feed-container,
+    .has-player .history-main,
+    .has-player .ig-profile-container {
+        padding-bottom: calc(var(--mobile-nav-height) + 100px) !important;
+    }
 }

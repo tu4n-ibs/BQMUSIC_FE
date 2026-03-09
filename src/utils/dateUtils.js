@@ -1,9 +1,10 @@
 /**
  * Formats a date value (string, number, or array from backend) into a readable string.
  * @param {any} dateValue 
+ * @param {boolean} includeTime
  * @returns {string}
  */
-export const formatDate = (dateValue) => {
+export const formatDate = (dateValue, includeTime = false) => {
     if (!dateValue) return 'Unknown date';
 
     try {
@@ -19,6 +20,16 @@ export const formatDate = (dateValue) => {
 
         if (isNaN(date.getTime())) {
             return 'Invalid Date';
+        }
+
+        if (includeTime) {
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         return date.toLocaleDateString('en-US', {

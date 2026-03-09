@@ -64,7 +64,7 @@ const Groups = () => {
         <div className="groups-container">
             <Sidebar />
 
-            <main className="groups-main ml-[120px]">
+            <main className="ig-profile-main lg:ml-[240px] ml-0 transition-all duration-300">
                 <div className="groups-content">
                     {/* Header Section */}
                     <header className="groups-header">
@@ -94,19 +94,6 @@ const Groups = () => {
                             <Star className="w-4 h-4" />
                             My Groups
                         </button>
-                    </div>
-
-                    {/* Search & Stats Bar */}
-                    <div className="groups-tools-bar">
-                        <div className="search-box">
-                            <Search className="w-5 h-5 text-slate-500" />
-                            <input
-                                type="text"
-                                placeholder={`Search ${activeTab === 'explore' ? 'all' : 'your'} groups...`}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
                     </div>
 
                     {/* Groups Grid */}

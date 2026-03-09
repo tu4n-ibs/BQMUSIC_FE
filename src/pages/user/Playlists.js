@@ -148,7 +148,7 @@ const Playlists = () => {
         <div className="playlists-page-container">
             <Sidebar />
 
-            <main className="playlists-main ml-[120px]">
+            <main className="playlists-main lg:ml-[240px] ml-0 transition-all duration-300">
                 <div className="playlists-header-section">
                     <div className="flex justify-between items-end mb-8">
                         <div>
@@ -162,16 +162,6 @@ const Playlists = () => {
                             <Plus className="w-5 h-5" />
                             Create New Playlist
                         </button>
-                    </div>
-
-                    <div className="playlists-search-bar">
-                        <SearchIcon className="w-5 h-5 opacity-40" />
-                        <input
-                            type="text"
-                            placeholder="Search your playlists..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
                     </div>
                 </div>
 
@@ -256,52 +246,6 @@ const Playlists = () => {
                             <button onClick={() => setSelectedPlaylist(null)} className="p-2 hover:bg-white/10 rounded-full transition">
                                 <X className="w-6 h-6" />
                             </button>
-                        </div>
-
-                        {/* Search Songs Area */}
-                        <div className="playlist-song-search-area mb-8">
-                            <h3 className="text-xs font-bold uppercase tracking-widest opacity-40 mb-4">Let's find something for your playlist</h3>
-                            <div className="relative">
-                                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
-                                <input
-                                    type="text"
-                                    className="playlist-song-search-input w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/5 focus:border-indigo-500/50 transition-all text-sm outline-none"
-                                    placeholder="Search for songs to add..."
-                                    value={songSearchQuery}
-                                    onChange={(e) => handleSearchSongs(e.target.value)}
-                                />
-                            </div>
-
-                            {/* Search Results */}
-                            {songSearchQuery.length >= 2 && (
-                                <div className="mt-4 bg-white/5 rounded-3xl border border-white/5 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-                                    {isSearchingSongs ? (
-                                        <div className="p-8 text-center opacity-40 text-xs font-bold uppercase tracking-widest">Searching...</div>
-                                    ) : songSearchResults.length > 0 ? (
-                                        <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                                            {songSearchResults.map(song => (
-                                                <div key={song.songId} className="flex items-center gap-4 px-6 py-3 hover:bg-indigo-500/10 transition-colors group">
-                                                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                                                        <Music className="w-5 h-5 opacity-20" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="font-bold text-sm truncate uppercase tracking-tight">{song.name}</p>
-                                                        <p className="text-[10px] opacity-40 uppercase tracking-widest font-bold font-mono">Original Audio</p>
-                                                    </div>
-                                                    <button
-                                                        className="px-4 py-2 rounded-xl bg-white/5 hover:bg-indigo-500 font-bold text-[10px] uppercase tracking-widest transition-all scale-95 hover:scale-100"
-                                                        onClick={() => handleAddSongDirectly(song)}
-                                                    >
-                                                        Add
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="p-8 text-center opacity-40 text-xs font-bold uppercase tracking-widest">No songs found</div>
-                                    )}
-                                </div>
-                            )}
                         </div>
 
                         <div className="songs-list-container custom-scrollbar">

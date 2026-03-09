@@ -99,6 +99,15 @@ const postService = {
      */
     reviewPost: async (postId, approve) => {
         return axiosClient.post(`/posts/post/${postId}/review?approve=${approve}`);
+    },
+
+    /**
+     * Search for songs, albums, groups, or users
+     * @param {string} keyword 
+     * @param {string} type SONG, ALBUM, GROUP, USER
+     */
+    search: async (keyword, type = 'SONG') => {
+        return axiosClient.get(`/posts/search?keyword=${keyword}&type=${type}`);
     }
 };
 

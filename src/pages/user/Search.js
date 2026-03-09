@@ -1,52 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Search as SearchIcon, X, Clock, User, Music, Disc, TrendingUp, ChevronRight, MoreHorizontal, ListMusic } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search as SearchIcon, X, Clock, User, Music, Disc, TrendingUp, ChevronRight, MoreHorizontal, ListMusic, Loader2 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import songService from '../../services/songService';
+import postService from '../../services/postService';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Search.css';
-
-const MOCK_RESULTS = {
-    all: [
-        { id: 'u1', name: 'John Doe', meta: 'Artist • 248k followers', type: 'user', image: 'https://i.pravatar.cc/150?img=1' },
-        { id: 's1', name: 'Midnight City', meta: 'M83 • Hurry Up, We\'re Dreaming', type: 'song', image: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150' },
-        { id: 'a1', name: 'After Hours', meta: 'The Weeknd • Album', type: 'album', image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=150' }
-    ],
-    users: [
-        { id: 'u1', name: 'John Doe', meta: 'Artist • 248k followers', type: 'user', image: 'https://i.pravatar.cc/150?img=1' },
-        { id: 'u2', name: 'Jane Smith', meta: 'DJ • 120k followers', type: 'user', image: 'https://i.pravatar.cc/150?img=2' }
-    ],
-    songs: [
-        { id: 's1', name: 'Midnight City', meta: 'M83 • Hurry Up, We\'re Dreaming', type: 'song', image: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100' },
-        { id: 's2', name: 'Starboy', meta: 'The Weeknd • Starboy', type: 'song', image: 'https://images.unsplash.com/photo-1514525253361-bee8a487409e?q=80&w=100' }
-    ],
-    albums: [
-        { id: 'a1', name: 'After Hours', meta: 'The Weeknd • 14 tracks', type: 'album', image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=100' },
-        { id: 'a2', name: 'Random Access Memories', meta: 'Daft Punk • 13 tracks', type: 'album', image: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=100' }
-    ]
-};
-
-const SUGGESTED = [
-    { id: 't1', name: 'Pop Hits 2024', meta: 'Trending Collection', type: 'trending', icon: <TrendingUp className="w-5 h-5" /> },
-    { id: 't2', name: 'Lo-fi Beats', meta: 'Perfect for studying', type: 'trending', icon: <Music className="w-5 h-5" /> },
-];
 
 const Search = () => {
     const { playTrack } = usePlayer();
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeTab, setActiveTab] = useState('all');
+    const [activeTab, setActiveTab] = useState('songs');
     const [results, setResults] = useState([]);
-    const [recentSearches, setRecentSearches] = useState([
-        { id: 'r1', name: 'The Weeknd', type: 'history' },
-        { id: 'r2', name: 'Taylor Swift', type: 'history' }
-    ]);
+    const [loading, setLoading] = useState(false);
+    const [recentSearches, setRecentSearches] = useState([]);
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [playlistModal, setPlaylistModal] = useState({
         isOpen: false,
         songId: null,
         songName: ''
     });
+
+    const navigate = useNavigate();
+
+    // Map tab to API type
+    const tabToType = {
+        all: 'SONG',
+        songs: 'SONG',
+        users: 'USER',
+        albums: 'ALBUM',
+        groups: 'GROUP'
+    };
 
     // Debounce search
     useEffect(() => {
@@ -55,12 +41,59 @@ const Search = () => {
             return;
         }
 
-        const timer = setTimeout(() => {
-            const baseResults = MOCK_RESULTS[activeTab] || [];
-            const filtered = baseResults.filter(item =>
-                item.name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            setResults(filtered);
+        const timer = setTimeout(async () => {
+            try {
+                setLoading(true);
+                const type = tabToType[activeTab] || 'SONG';
+                const response = await postService.search(searchQuery, type);
+
+                // Response is Slice<DTO> -> data.data.content or data.content
+                const content = response.data?.data?.content || response.data?.content || response.data?.data || [];
+
+                const mapped = content.map(item => {
+                    let typeLabel = 'song';
+                    let meta = '';
+                    let image = item.imageUrl;
+
+                    if (type === 'USER') {
+                        typeLabel = 'user';
+                        meta = item.email || 'User';
+                    } else if (type === 'ALBUM') {
+                        typeLabel = 'album';
+                        meta = item.description || 'Album';
+                    } else if (type === 'GROUP') {
+                        typeLabel = 'group';
+                        meta = item.description || 'Group';
+                    } else {
+                        // SONG
+                        typeLabel = 'song';
+                        meta = item.groupName || 'Track';
+                    }
+
+                    // Format image URL
+                    if (image && !image.startsWith('http')) {
+                        image = `http://localhost:8080${image}`;
+                    } else if (!image) {
+                        image = 'https://via.placeholder.com/150?text=' + typeLabel;
+                    }
+
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        meta: meta,
+                        type: typeLabel,
+                        image: image,
+                        rawData: item // Keep for playback/navigation
+                    };
+                });
+
+                setResults(mapped);
+            } catch (error) {
+                console.error("Search failed:", error);
+                setResults([]);
+            } finally {
+                setLoading(false);
+            }
         }, 500);
 
         return () => clearTimeout(timer);
@@ -77,23 +110,23 @@ const Search = () => {
 
     const handleResultClick = async (item) => {
         if (item.type === 'song') {
-            try {
-                const res = await songService.getSongById(item.id);
-                const fullSong = res.data?.data || res.data;
-                const mUrl = fullSong?.musicUrl;
-                if (!mUrl) return;
-                const musicLink = mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`;
+            const mUrl = item.rawData?.musicUrl;
+            if (!mUrl) return;
+            const musicLink = mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`;
 
-                playTrack({
-                    id: item.id,
-                    title: item.name,
-                    artist: item.meta.split('•')[0].trim(),
-                    avatar: item.image,
-                    url: musicLink
-                });
-            } catch (err) {
-                console.error("Failed to fetch song for playback:", err);
-            }
+            playTrack({
+                id: item.id,
+                title: item.name,
+                artist: item.meta,
+                avatar: item.image,
+                url: musicLink
+            });
+        } else if (item.type === 'user') {
+            navigate(`/user/${item.id}`);
+        } else if (item.type === 'album') {
+            navigate(`/album/${item.id}`);
+        } else if (item.type === 'group') {
+            navigate(`/groups/${item.id}`);
         }
     };
 
@@ -102,6 +135,7 @@ const Search = () => {
             case 'user': return <User className="w-4 h-4" />;
             case 'song': return <Music className="w-4 h-4" />;
             case 'album': return <Disc className="w-4 h-4" />;
+            case 'group': return <ListMusic className="w-4 h-4" />;
             default: return <ChevronRight className="w-4 h-4" />;
         }
     };
@@ -110,16 +144,16 @@ const Search = () => {
         <div className="search-container">
             <Sidebar />
 
-            <main className="search-main ml-[120px]">
+            <main className="search-main lg:ml-[240px] ml-0 transition-all duration-300">
                 <div className="search-wrapper">
                     <header className="search-header">
                         <h1 className="search-title">Search</h1>
                         <div className="search-bar-container">
-                            <SearchIcon className="search-icon w-5 h-5" />
+                            <SearchIcon className={`search-icon w-5 h-5 ${loading ? 'animate-pulse text-indigo-500' : ''}`} />
                             <input
                                 type="text"
                                 className="search-input"
-                                placeholder="Search for songs, artists, albums..."
+                                placeholder="Search for songs, artists, albums, groups..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 autoFocus
@@ -132,7 +166,7 @@ const Search = () => {
                         </div>
 
                         <div className="search-tabs">
-                            {['all', 'users', 'songs', 'albums'].map((tab) => (
+                            {['songs', 'albums', 'users', 'groups'].map((tab) => (
                                 <div
                                     key={tab}
                                     className={`search-tab ${activeTab === tab ? 'active' : ''}`}
@@ -171,32 +205,15 @@ const Search = () => {
                                         </div>
                                     </section>
                                 )}
-
-                                <section>
-                                    <div className="section-title">Suggested for you</div>
-                                    <div className="results-grid">
-                                        {SUGGESTED.map(item => (
-                                            <div key={item.id} className="result-card">
-                                                <div className="result-image-wrapper">
-                                                    <div className="result-image bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                                                        {item.icon}
-                                                    </div>
-                                                </div>
-                                                <div className="result-info">
-                                                    <div className="result-name">{item.name}</div>
-                                                    <div className="result-meta">{item.meta}</div>
-                                                </div>
-                                                <button className="result-action">
-                                                    <ChevronRight className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
                             </div>
                         ) : (
                             <div className="animate-slide-up">
-                                {results.length > 0 ? (
+                                {loading && results.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-20 opacity-40">
+                                        <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
+                                        <p className="text-sm font-bold uppercase tracking-widest">Searching the universe...</p>
+                                    </div>
+                                ) : results.length > 0 ? (
                                     <div className="results-grid">
                                         {results.map(item => (
                                             <div

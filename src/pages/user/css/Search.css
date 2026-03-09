@@ -10,8 +10,15 @@
 
 .search-main {
     flex: 1;
-    padding: 2rem 4rem;
+    padding: 2rem;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+    .search-main {
+        padding: calc(var(--mobile-header-height) + 1rem) 1rem;
+        margin-bottom: var(--mobile-nav-height);
+    }
 }
 
 .search-wrapper {
@@ -99,18 +106,27 @@
     display: flex;
     gap: 8px;
     margin-top: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.search-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .search-tab {
-    padding: 12px 32px;
+    padding: 10px 24px;
     border-radius: 20px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .search-tab:hover {
@@ -156,8 +172,15 @@
 /* Result Cards */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
+}
+
+@media (max-width: 640px) {
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }
 
 .result-card {

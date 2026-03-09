@@ -86,6 +86,8 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 createdAt: rawData.timeCreated || new Date().toISOString(),
                 targetType: rawData.targetType,
                 targetId: targetId,
+                idSong: rawData.idSong || (rawData.targetType === 'SONG' ? targetId : null),
+                idAlbum: rawData.idAlbum || (rawData.targetType === 'ALBUM' ? targetId : null),
                 liked: rawData.isLiked !== undefined ? rawData.isLiked : rawData.liked,
                 playCount: rawData.playCount || 0,
                 albumData: rawData.postResponse // This contains the songs list from backend
@@ -422,7 +424,18 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                                             className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-indigo-500/20 transition-all uppercase tracking-wider text-left"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                setSongToPlaylist({ id: post.id, name: post.songName || "Track" });
+                                                                // Use the actual song ID (targetId or idSong) instead of the post ID
+                                                                const songIdToAdd = post.targetType === 'SONG' ? (post.idSong || post.targetId) : post.idSong;
+
+                                                                if (!songIdToAdd && post.targetType !== 'ALBUM') {
+                                                                    toast.error("Could not find song ID for this post.");
+                                                                    return;
+                                                                }
+
+                                                                setSongToPlaylist({
+                                                                    id: songIdToAdd,
+                                                                    name: post.songName || "Track"
+                                                                });
                                                                 setIsPlaylistModalOpen(true);
                                                                 setShowTrackMenu(null);
                                                             }}

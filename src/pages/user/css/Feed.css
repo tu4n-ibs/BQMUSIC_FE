@@ -6,6 +6,13 @@
     color: var(--text-primary);
     min-height: 100vh;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .feed-container {
+        padding-top: calc(var(--mobile-header-height) + 1rem);
+    }
 }
 
 /* Stories Section */

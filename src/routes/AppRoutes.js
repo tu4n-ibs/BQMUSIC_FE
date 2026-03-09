@@ -3,7 +3,8 @@ import List from "../pages/common/List";
 import Login from "../pages/auth/Login";
 import UserMenu from "../pages/user/Profile";
 import AdminMenu from "../pages/admin/Dashboard";
-import History from "../pages/admin/History";
+import AdminHistory from "../pages/admin/History";
+import UserHistory from "../pages/user/History";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import CreateUser from "../pages/admin/CreateUser";
@@ -13,7 +14,6 @@ import MyAlbums from "../pages/user/MyAlbums";
 import AlbumDetail from "../pages/user/AlbumDetail";
 import NewFeed from "../pages/user/Feed";
 import Search from "../pages/user/Search";
-import Explore from "../pages/user/Explore";
 import Playlists from "../pages/user/Playlists";
 import Groups from "../pages/user/Groups";
 import GroupDetail from "../pages/user/GroupDetail";
@@ -42,17 +42,17 @@ function AppRoutes() {
             <Route element={<PrivateRoute />}>
                 <Route path="/list" element={<List />} />
                 <Route path="/admin" element={<AdminMenu />} />
+                <Route path="/admin/history" element={<AdminHistory />} />
                 <Route path="/admin/genres" element={<GenreManagement />} />
                 <Route path="/admin/albums" element={<AlbumManagement />} />
                 <Route path="/my-albums" element={<MyAlbums />} />
                 <Route path="/album/:albumId" element={<AlbumDetail />} />
                 <Route path="/user/:userId" element={<UserMenu />} />
                 <Route path="/user" element={<UserMenu />} />
-                <Route path="/history" element={<History />} />
+                <Route path="/history" element={<UserHistory />} />
                 <Route path="/newF" element={<NewFeed />} />
                 <Route path="/posts/:postId" element={<NewFeed />} />
                 <Route path="/search" element={<Search />} />
-                <Route path="/explore" element={<Explore />} />
                 <Route path="/playlists" element={<Playlists />} />
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/groups/:groupId" element={<GroupDetail />} />

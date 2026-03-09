@@ -12,12 +12,13 @@
     flex-direction: column;
     padding: 1.5rem 0.75rem;
     z-index: 1000;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     color: var(--text-primary);
     box-shadow: var(--glass-shadow);
 }
 
-.ig-sidebar:hover {
+.ig-sidebar:hover,
+.ig-sidebar.force-expanded {
     width: var(--sidebar-width-expanded);
 }
 
@@ -44,7 +45,8 @@
     white-space: nowrap;
 }
 
-.ig-sidebar:hover .ig-logo-text {
+.ig-sidebar:hover .ig-logo-text,
+.ig-sidebar.force-expanded .ig-logo-text {
     opacity: 1;
 }
 
@@ -93,7 +95,8 @@
     overflow: hidden;
 }
 
-.ig-sidebar:hover .ig-nav-label {
+.ig-sidebar:hover .ig-nav-label,
+.ig-sidebar.force-expanded .ig-nav-label {
     opacity: 1;
 }
 
@@ -150,6 +153,98 @@
 
 .ig-bottom-actions {
     margin-top: auto;
+}
+
+/* Mobile Top Nav */
+.ig-mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-header-height);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1001;
+    padding: 0 1rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .ig-sidebar {
+        top: auto;
+        left: 0;
+        bottom: 0;
+        width: 100% !important;
+        height: var(--mobile-nav-height);
+        border-radius: 20px 20px 0 0;
+        flex-direction: row;
+        padding: 0;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0;
+        border: none;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .ig-logo-container,
+    .ig-nav-label,
+    .ig-bottom-actions,
+    .ig-sidebar:hover .ig-nav-label {
+        display: none;
+    }
+
+    .ig-nav {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0;
+        padding: 0 10px;
+    }
+
+    .ig-nav-item {
+        padding: 8px;
+        border-radius: 12px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .ig-nav-item:hover {
+        transform: none;
+        background: transparent;
+    }
+
+    .ig-nav-item.active {
+        background: transparent;
+        color: var(--accent-color) !important;
+        box-shadow: none;
+    }
+
+    .ig-icon-wrapper svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .ig-mobile-header {
+        display: flex;
+    }
+
+    .ig-mobile-logo {
+        font-family: 'cursive';
+        font-size: 1.25rem;
+        font-weight: 800;
+        background: var(--grad-primary);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .ig-sidebar:hover {
+        width: 100% !important;
+    }
 }
 
 .notif-badge {

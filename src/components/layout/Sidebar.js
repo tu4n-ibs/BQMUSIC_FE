@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Search, Compass, MessageCircle, Bell, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, CircleAlert as AlertCircle, Instagram, List, Users, Disc
+    Settings, Activity, Bookmark, Moon, Sun, CircleAlert as AlertCircle, Instagram, List, Users, Disc, History
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -74,7 +74,27 @@ const Sidebar = () => {
 
     return (
         <>
-            <aside className="ig-sidebar">
+            {/* Mobile Header (Top) */}
+            <div className="ig-mobile-header">
+                <div className="ig-mobile-logo" onClick={() => navigate('/newF')}>
+                    BQMUSIC
+                </div>
+                <div className="flex items-center gap-4">
+                    <div
+                        className="relative cursor-pointer"
+                        onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    >
+                        <Bell className="w-6 h-6" />
+                        {unreadCount > 0 && (
+                            <span className="notif-badge">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <aside className={`ig-sidebar ${isNotificationsOpen ? 'force-expanded' : ''}`}>
                 {/* Logo */}
                 <div className="ig-logo-container" onClick={() => navigate('/newF')}>
                     <div className="ig-logo-icon">
@@ -97,12 +117,6 @@ const Sidebar = () => {
                         label="Search"
                         active={isActive('/search')}
                         onClick={() => handleNavigation('/search')}
-                    />
-                    <NavItem
-                        icon={<Compass className="w-6 h-6" />}
-                        label="Explore"
-                        active={isActive('/explore')}
-                        onClick={() => handleNavigation('/explore')}
                     />
                     <NavItem
                         icon={<Users className="w-6 h-6" />}
@@ -135,6 +149,12 @@ const Sidebar = () => {
                         label="Playlists"
                         active={isActive('/playlists')}
                         onClick={() => handleNavigation('/playlists')}
+                    />
+                    <NavItem
+                        icon={<History className="w-6 h-6" />}
+                        label="History"
+                        active={isActive('/history')}
+                        onClick={() => handleNavigation('/history')}
                     />
                     <NavItem
                         icon={<Disc className="w-6 h-6" />}

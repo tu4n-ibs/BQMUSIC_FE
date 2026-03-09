@@ -237,7 +237,7 @@ const MyAlbums = () => {
         <div className="my-albums-container feed-container flex min-h-screen bg-slate-950 text-white">
             <Sidebar />
 
-            <main className="flex-1 lg:ml-64 min-h-screen flex flex-col">
+            <main className="flex-1 lg:ml-[240px] ml-0 transition-all duration-300 min-h-screen flex flex-col">
                 <div className="container-fluid p-4 lg:p-8">
                     <div className="dashboard-header rounded-3 px-4">
                         <div className="header-content">

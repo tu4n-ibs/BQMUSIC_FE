@@ -16,6 +16,7 @@ import Sidebar from '../../components/layout/Sidebar';
 import { toast } from 'react-hot-toast';
 import CreatePostModal from '../../components/modals/CreatePostModal';
 import { getUserAvatar } from '../../utils/userUtils';
+import { formatDate } from '../../utils/dateUtils';
 import './css/AlbumDetail.css';
 
 const AlbumDetail = () => {
@@ -59,19 +60,21 @@ const AlbumDetail = () => {
         try {
             setLoading(true);
             const response = await albumService.getSongsByAlbumId(albumId);
-            const data = response.data || response;
+            // The response from albumService.getSongsByAlbumId is the ApiResponse object
+            // ApiResponse.data is the AlbumResponseDetail
+            const payload = response.data?.data || response.data || response;
 
             setAlbum({
-                name: data.name,
-                description: data.description,
-                imageUrl: data.albumImageUrl || data.imageUrl,
-                username: data.username,
-                nameUser: data.nameUser,
-                userId: data.userId,
-                createdAt: data.createdAt
+                name: payload.name,
+                description: payload.description,
+                imageUrl: payload.albumImageUrl || payload.imageUrl,
+                username: payload.username || payload.nameUser,
+                nameUser: payload.nameUser || payload.username,
+                userId: payload.userId || payload.userIdUser, // handle potential variations
+                createdAt: payload.createdAt
             });
 
-            const songsList = data.songs || [];
+            const songsList = payload.songs || [];
             setSongs(Array.isArray(songsList) ? songsList : []);
         } catch (err) {
             console.error("Error fetching album details:", err);
@@ -197,7 +200,7 @@ const AlbumDetail = () => {
         return (
             <div className="flex min-h-screen bg-slate-950 text-white">
                 <Sidebar />
-                <div className="flex-1 ml-[120px] flex items-center justify-center">
+                <div className="flex-1 lg:ml-[240px] ml-0 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-indigo-500" />
                         <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Opening the vault...</p>
@@ -211,7 +214,7 @@ const AlbumDetail = () => {
         return (
             <div className="flex min-h-screen bg-slate-950 text-white">
                 <Sidebar />
-                <div className="flex-1 ml-[120px] flex flex-col items-center justify-center p-8 text-center">
+                <div className="flex-1 lg:ml-[240px] ml-0 flex flex-col items-center justify-center p-8 text-center">
                     <Disc className="w-20 h-20 text-slate-800 mb-6" />
                     <h2 className="text-2xl font-bold mb-2">Album not found</h2>
                     <p className="text-slate-500 mb-8 max-w-md">The record you're looking for might have been moved or removed from our collection.</p>
@@ -232,7 +235,7 @@ const AlbumDetail = () => {
         <div className="album-detail-container flex min-h-screen bg-slate-950 text-white">
             <Sidebar />
 
-            <main className="flex-1 ml-[120px] transition-all duration-300 relative overflow-hidden">
+            <main className="flex-1 lg:ml-[240px] ml-0 transition-all duration-300 relative overflow-hidden">
                 {/* Dynamic Background Blur */}
                 <div
                     className="album-detail-bg-blur"
@@ -319,12 +322,10 @@ const AlbumDetail = () => {
                                     <Music className="w-4 h-4" />
                                     <span>{songs.length} songs</span>
                                 </div>
-                                {album.createdAt && (
-                                    <div className="flex items-center gap-2">
-                                        <Calendar className="w-4 h-4" />
-                                        <span>Created on {new Date(album.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                                    </div>
-                                )}
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="w-4 h-4" />
+                                    <span>Created on {formatDate(album.createdAt)}</span>
+                                </div>
                             </div>
 
                             {album.description && (

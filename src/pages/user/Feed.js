@@ -259,7 +259,7 @@ function NewFeed() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 ml-[120px] mr-[320px] transition-all duration-300">
+      <main className="flex-1 lg:ml-[240px] xl:mr-[320px] ml-0 mr-0 transition-all duration-300">
         <div className="max-w-[630px] mx-auto px-4 py-8">
           {/* Stories */}
           <div className="stories-container">
@@ -442,11 +442,13 @@ function NewFeed() {
       </main>
 
       {/* Right Sidebar */}
-      <RightSidebar
-        currentUser={currentUser}
-        suggestions={suggestions}
-        onFollow={handleFollow}
-      />
+      <div className="hidden xl:block">
+        <RightSidebar
+          currentUser={currentUser}
+          suggestions={suggestions}
+          onFollow={handleFollow}
+        />
+      </div>
     </div>
   );
 }

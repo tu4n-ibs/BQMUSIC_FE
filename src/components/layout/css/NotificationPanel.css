@@ -19,7 +19,7 @@
     background: var(--card-bg);
     border-right: 1px solid var(--border-color);
     box-shadow: 20px 0 30px -10px rgba(0, 0, 0, 0.1);
-    z-index: 999;
+    z-index: 1002;
     display: flex;
     flex-direction: column;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, visibility 0.4s ease;
@@ -28,7 +28,25 @@
     visibility: hidden;
 }
 
-.ig-sidebar:hover~.notification-panel {
+@media (max-width: 768px) {
+    .notification-panel {
+        left: 0 !important;
+        width: 100%;
+        height: calc(100vh - var(--mobile-nav-height));
+        top: 0;
+        z-index: 1005;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        transform: translateY(-100%);
+    }
+
+    .notification-panel.open {
+        transform: translateY(0);
+    }
+}
+
+.ig-sidebar:hover~.notification-panel,
+.ig-sidebar.force-expanded~.notification-panel {
     left: calc(20px + var(--sidebar-width-expanded));
 }
 
@@ -44,6 +62,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+@media (max-width: 768px) {
+    .notification-panel-header {
+        padding-top: calc(var(--mobile-header-height) + 1rem);
+    }
 }
 
 .notification-item.unread {
