@@ -26,10 +26,11 @@ const PostItem = ({
     const username = post.username;
     const userAvatar = post.userAvatar || post.imageUrlUser || 'https://i.pravatar.cc/150';
     const authorId = post.authorId || post.idUser;
-    const postImage = post.postImage ||
+    const postImage = (post.postImage ? (post.postImage.startsWith('http') ? post.postImage : `http://localhost:8080${post.postImage}`) : null) ||
         (post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `http://localhost:8080${post.imageUrlSong}`) :
-            post.imageUrlAlbum ? (post.imageUrlAlbum.startsWith('http') ? post.imageUrlAlbum : `http://localhost:8080${post.imageUrlAlbum}`) :
-                DEFAULT_COVER_URL);
+            (post.imageUrlAlbum || post.albumImageUrl) ? (
+                (post.imageUrlAlbum || post.albumImageUrl).startsWith('http') ? (post.imageUrlAlbum || post.albumImageUrl) : `http://localhost:8080${(post.imageUrlAlbum || post.albumImageUrl)}`
+            ) : DEFAULT_COVER_URL);
 
     const caption = post.caption || post.content || post.contentShare || 'No caption';
     const likeCount = post.likes !== undefined ? post.likes : (post.likeCount || 0);
@@ -147,15 +148,14 @@ const PostItem = ({
                     <span className="opacity-90 text-slate-200">{caption}</span>
                 </div>
 
-                <div className="comment-input-container">
+                <div className="comment-input-container cursor-pointer" onClick={() => onPostClick(id)}>
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
                         <img src={currentUser.avatar} alt="Me" className="w-full h-full object-cover" />
                     </div>
                     <input
                         type="text"
                         placeholder="Add a comment..."
-                        className="comment-input w-full bg-transparent border-none outline-none text-sm text-white"
-                        onClick={() => onToggleComments(id)}
+                        className="comment-input w-full bg-transparent border-none outline-none text-sm text-white cursor-pointer"
                         readOnly
                     />
                 </div>

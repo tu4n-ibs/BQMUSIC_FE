@@ -85,6 +85,18 @@ const songService = {
      */
     recordPlay: async (songId, durationPlayed = 0) => {
         return axiosClient.post(`/song/${songId}/play?durationPlayed=${durationPlayed}`);
+    },
+
+    /**
+     * Get top songs based on period and genre
+     * @param {string} period - ALL_TIME, WEEK_7, DAY_30
+     * @param {string|number} genreId - optional genre filter
+     * @returns {Promise}
+     */
+    getTopSongs: async (period = 'ALL_TIME', genreId = null) => {
+        let url = `/song/top-songs?period=${period}`;
+        if (genreId) url += `&genreId=${genreId}`;
+        return axiosClient.get(url);
     }
 };
 

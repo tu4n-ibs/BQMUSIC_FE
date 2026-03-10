@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Search, Compass, MessageCircle, Bell, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, CircleAlert as AlertCircle, Instagram, List, Users, Disc, History
+    Settings, Activity, Bookmark, Moon, Sun, CircleAlert as AlertCircle, Instagram, List, Users, Disc, History, TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -33,7 +33,7 @@ const Sidebar = () => {
     const handleNotifMouseLeave = () => {
         notifTimeoutRef.current = setTimeout(() => {
             setIsNotificationsOpen(false);
-        }, 150);
+        }, 300);
     };
 
     const isActive = (path) => location.pathname === path;
@@ -155,6 +155,12 @@ const Sidebar = () => {
                         label="History"
                         active={isActive('/history')}
                         onClick={() => handleNavigation('/history')}
+                    />
+                    <NavItem
+                        icon={<TrendingUp className="w-6 h-6" />}
+                        label="Top Songs"
+                        active={isActive('/top-songs')}
+                        onClick={() => handleNavigation('/top-songs')}
                     />
                     <NavItem
                         icon={<Disc className="w-6 h-6" />}

@@ -33,7 +33,7 @@ describe('postService', () => {
         const mockData = { data: { success: true } };
         axiosClient.post.mockResolvedValue(mockData);
 
-        const postData = { content: "With image", visibility: "FRIEND" };
+        const postData = { content: "With image", visibility: "PRIVATE" };
         const mockFile = new File(['dummy content'], 'test.png', { type: 'image/png' });
 
         const result = await postService.createPost(postData, mockFile);
@@ -58,7 +58,7 @@ describe('postService', () => {
 
         // Test without image
         axiosClient.post.mockResolvedValueOnce(mockData);
-        const postData = { content: "Group post", visibility: "FRIEND" };
+        const postData = { content: "Group post", visibility: "PRIVATE" };
         let result = await postService.createGroupPost("grp123", postData);
         expect(axiosClient.post).toHaveBeenCalledWith('/posts/group/grp123', postData);
         expect(result).toEqual(mockData);

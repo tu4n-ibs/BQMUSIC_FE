@@ -22,7 +22,7 @@
     z-index: 1002;
     display: flex;
     flex-direction: column;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, visibility 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.05, 0.7, 0.1, 1), opacity 0.4s ease, visibility 0.4s ease;
     transform: translateX(-100%);
     opacity: 0;
     visibility: hidden;
@@ -47,6 +47,7 @@
 
 .ig-sidebar:hover~.notification-panel,
 .ig-sidebar.force-expanded~.notification-panel {
+    /* Always stay at the expanded edge to prevent jitter during width change */
     left: calc(20px + var(--sidebar-width-expanded));
 }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
 import { useModal } from "../../context/ModalContext";
-import { Grid, Bookmark, User as UserIcon, Camera, Link as LinkIcon, Lock, Edit2, Check, X, Heart, Share2, Disc, MoreHorizontal, ListMusic, Play } from 'lucide-react';
+import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Disc } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
 import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
@@ -53,6 +53,9 @@ function Profile() {
 
   // Stats State
   const [stats, setStats] = useState({
+    postCount: 0,
+    albumCount: 0,
+    followerCount: 0,
     followingCount: 0
   });
 
@@ -113,6 +116,7 @@ function Profile() {
           const rawStats = statsResponse.data || statsResponse;
           setStats({
             postCount: rawStats.postCount || 0,
+            albumCount: rawStats.albumCount || 0,
             followerCount: rawStats.followerCount || 0,
             followingCount: rawStats.followingCount || 0
           });
@@ -136,12 +140,9 @@ function Profile() {
   useEffect(() => {
     if (targetId) {
       if (activeTab === 'posts') {
-        fetchPosts(targetId, 'OWNER');
-      } else if (activeTab === 'shares') {
-        fetchPosts(targetId, 'SHARE');
+        fetchPosts(targetId, null); // null postType to get both OWNER and SHARE
       } else if (activeTab === 'albums') {
-        // For UI/UX first: we use existing OWNER posts but will filter for ALBUM targetType in render
-        fetchPosts(targetId, 'OWNER');
+        fetchPosts(targetId, 'OWNER'); // Still fetch OWNER posts, then filter for ALBUM targetType in render
       }
     }
   }, [activeTab, targetId]);
@@ -150,8 +151,7 @@ function Profile() {
   useEffect(() => {
     const handleGlobalPostCreated = () => {
       if (targetId) {
-        if (activeTab === 'posts') fetchPosts(targetId, 'OWNER');
-        else if (activeTab === 'shares') fetchPosts(targetId, 'SHARE');
+        if (activeTab === 'posts') fetchPosts(targetId, null);
         else if (activeTab === 'albums') fetchPosts(targetId, 'OWNER');
       }
     };
@@ -170,7 +170,7 @@ function Profile() {
         const authorAvatar = getUserAvatar(p.authorAvatar || author.imageUrl || author.avatar);
 
         const musicUrl = p.musicLink || p.musicUrl;
-        const imgUrl = p.imageUrlSong || p.imageUrlAlbum || p.imageUrl || p.postImage;
+        const imgUrl = p.imageUrlAlbum || p.imageUrlSong || p.imageUrl || p.postImage;
         let finalImageUrl = imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `http://localhost:8080${imgUrl}`) : authorAvatar;
 
         return {
@@ -391,6 +391,11 @@ function Profile() {
             </div>
             <div className="h-10 w-[1px] bg-slate-200 dark:bg-slate-800 self-center"></div>
             <div className="ig-stat-item">
+              <span className="ig-stat-count">{stats.albumCount}</span>
+              <span className="ig-stat-label">Albums</span>
+            </div>
+            <div className="h-10 w-[1px] bg-slate-200 dark:bg-slate-800 self-center"></div>
+            <div className="ig-stat-item">
               <span className="ig-stat-count">{stats.followerCount}</span>
               <span className="ig-stat-label">Followers</span>
             </div>
@@ -405,20 +410,15 @@ function Profile() {
             <div className={`ig-tab ${activeTab === 'posts' ? 'active' : ''}`} onClick={() => setActiveTab('posts')}>
               <Grid className="w-4 h-4" /> POSTS
             </div>
-            <div className={`ig-tab ${activeTab === 'shares' ? 'active' : ''}`} onClick={() => setActiveTab('shares')}>
-              <Share2 className="w-4 h-4" /> SHARES
-            </div>
             <div className={`ig-tab ${activeTab === 'albums' ? 'active' : ''}`} onClick={() => setActiveTab('albums')}>
               <Disc className="w-4 h-4" /> ALBUMS
             </div>
           </div>
 
-          {(activeTab === 'posts' || activeTab === 'shares' || activeTab === 'albums') && (() => {
+          {(activeTab === 'posts' || activeTab === 'albums') && (() => {
             const displayedPosts = activeTab === 'albums'
-              ? userPosts.filter(p => p.targetType === 'ALBUM')
-              : activeTab === 'posts'
-                ? userPosts.filter(p => p.targetType !== 'ALBUM')
-                : userPosts;
+              ? userPosts.filter(p => p.postType === 'OWNER' && p.targetType === 'ALBUM')
+              : userPosts.filter(p => p.postType === 'SHARE' || (p.postType === 'OWNER' && p.targetType !== 'ALBUM'));
 
             return (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -434,12 +434,7 @@ function Profile() {
                       >
                         <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
                           <img
-                            src={
-                              post.imageUrl ? (post.imageUrl.startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`) :
-                                post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `http://localhost:8080${post.imageUrlSong}`) :
-                                  post.imageUrlAlbum ? (post.imageUrlAlbum.startsWith('http') ? post.imageUrlAlbum : `http://localhost:8080${post.imageUrlAlbum}`) :
-                                    getUserAvatar(user?.imageUrl)
-                            }
+                            src={post.imageUrl || getUserAvatar(user?.imageUrl)}
                             alt="Post Media"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
@@ -539,24 +534,22 @@ function Profile() {
                 ) : (
                   <div className="ig-empty-state">
                     <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                      {activeTab === 'posts' ? <Grid className="w-10 h-10 text-indigo-500" /> : <Share2 className="w-10 h-10 text-indigo-500" />}
+                      {activeTab === 'posts' ? <Grid className="w-10 h-10 text-indigo-500" /> : <Disc className="w-10 h-10 text-indigo-500" />}
                     </div>
                     <div className="ig-empty-title">
-                      {activeTab === 'posts' ? 'Share Your Thoughts' : activeTab === 'albums' ? 'No Albums Yet' : 'No Shared Posts'}
+                      {activeTab === 'posts' ? 'Share Your Thoughts' : 'No Albums Yet'}
                     </div>
                     <div className="text-slate-500 max-w-sm mx-auto mb-8">
                       {activeTab === 'posts'
-                        ? 'Your posts will appear here once you start sharing with the community.'
-                        : activeTab === 'albums'
-                          ? 'Album posts will appear here when you post an album.'
-                          : 'Shared posts will appear here when you share content from others.'}
+                        ? 'Your posts and shared content will appear here once you start sharing with the community.'
+                        : 'Album posts will appear here when you post an album.'}
                     </div>
                     {isOwnProfile && activeTab === 'posts' && (
                       <button
                         className="btn-primary px-8 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-500/25 hover:scale-105 transition-transform"
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/newF')}
                       >
-                        Create First Post
+                        Go to Newfeed
                       </button>
                     )}
                   </div>
@@ -574,8 +567,7 @@ function Profile() {
         onClose={() => setIsShareModalOpen(false)}
         post={postToShare}
         onShareSuccess={() => {
-          if (activeTab === 'posts') fetchPosts(targetId, 'OWNER');
-          else if (activeTab === 'shares') fetchPosts(targetId, 'SHARE');
+          if (activeTab === 'posts') fetchPosts(targetId, null);
           else if (activeTab === 'albums') fetchPosts(targetId, 'OWNER');
         }}
       />

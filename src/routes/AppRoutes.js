@@ -17,6 +17,7 @@ import Search from "../pages/user/Search";
 import Playlists from "../pages/user/Playlists";
 import Groups from "../pages/user/Groups";
 import GroupDetail from "../pages/user/GroupDetail";
+import TopSongs from "../pages/user/TopSongs";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
@@ -54,6 +55,7 @@ function AppRoutes() {
                 <Route path="/posts/:postId" element={<NewFeed />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/playlists" element={<Playlists />} />
+                <Route path="/top-songs" element={<TopSongs />} />
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/groups/:groupId" element={<GroupDetail />} />
             </Route>

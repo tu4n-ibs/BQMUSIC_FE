@@ -5,7 +5,7 @@ import {
     MoreHorizontal, ListMusic, Heart, Share2,
     Disc, Loader2, Calendar, User, Info,
     Plus, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle,
-    Search as SearchIcon
+    Search as SearchIcon, Camera
 } from 'lucide-react';
 import albumService from '../../services/albumService';
 import songService from '../../services/songService';
@@ -226,9 +226,9 @@ const AlbumDetail = () => {
         );
     }
 
-    const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
+    const albumRawImage = album.albumImageUrl || album.imageUrl;
     const albumCover = albumRawImage
-        ? (albumRawImage.startsWith('http') ? albumRawImage : (albumRawImage.startsWith('/') ? `http://localhost:8080${albumRawImage}` : `http://localhost:8080/${albumRawImage}`))
+        ? (albumRawImage.startsWith('http') ? albumRawImage : `http://localhost:8080${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`)
         : null;
 
     return (
@@ -259,14 +259,14 @@ const AlbumDetail = () => {
                                         className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-500/20"
                                     >
                                         <Share2 className="w-4 h-4" />
-                                        Post Album
+                                        Share Album
                                     </button>
                                     <button
                                         onClick={handleOpenAddSong}
                                         className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all border border-white/5"
                                     >
                                         <Plus className="w-4 h-4" />
-                                        Upload New
+                                        Upload Songs
                                     </button>
                                 </>
                             )}
@@ -301,7 +301,7 @@ const AlbumDetail = () => {
                                         {isUpdatingImage ? (
                                             <Loader2 className="w-6 h-6 animate-spin text-white" />
                                         ) : (
-                                            <Disc className="w-6 h-6 text-white" />
+                                            <Camera className="w-6 h-6 text-white" />
                                         )}
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-widest text-white">{isUpdatingImage ? 'Updating...' : 'Change Cover'}</span>

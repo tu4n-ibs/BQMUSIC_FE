@@ -14,11 +14,11 @@ import { usePlayer } from '../../context/PlayerContext';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
 import songService from '../../services/songService';
+import groupService from '../../services/groupService';
 import { toast } from 'react-hot-toast';
 import './css/Feed.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
-import { MOCK_STORIES } from '../../mocks/mockData';
 
 const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop";
 
@@ -58,6 +58,8 @@ function NewFeed() {
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
   const [songToPlaylist, setSongToPlaylist] = useState({ id: null, name: '' });
   const [activeMenuId, setActiveMenuId] = useState(null);
+  const [userGroups, setUserGroups] = useState([]);
+  const [groupsLoading, setGroupsLoading] = useState(true);
 
   const audioRef = useRef(null);
 
@@ -126,6 +128,23 @@ function NewFeed() {
     }
   }, []);
 
+  // --- 2.5 Fetch User Groups ---
+  const fetchUserGroups = useCallback(async () => {
+    if (!user) return;
+    try {
+      setGroupsLoading(true);
+      const userId = user.userId || user.idUser || user.id;
+      if (userId) {
+        const groups = await groupService.getUserGroups(userId);
+        setUserGroups(groups);
+      }
+    } catch (error) {
+      console.error("Error loading user groups:", error);
+    } finally {
+      setGroupsLoading(false);
+    }
+  }, [user]);
+
   // --- 3. Fetch Suggestions (Moved to hook) ---
 
   // --- 4. Handle Follow (Moved to hook) ---
@@ -133,7 +152,8 @@ function NewFeed() {
   useEffect(() => {
     fetchCurrentUser();
     fetchPosts();
-  }, [fetchCurrentUser, fetchPosts]);
+    fetchUserGroups();
+  }, [fetchCurrentUser, fetchPosts, fetchUserGroups]);
 
   // Handle global post creation
   useEffect(() => {
@@ -219,7 +239,6 @@ function NewFeed() {
     }
   };
 
-  const stories = MOCK_STORIES;
 
   const handleProfileClick = (authorId) => {
     if (authorId) {
@@ -262,20 +281,55 @@ function NewFeed() {
       {/* Main Content */}
       <main className="flex-1 lg:ml-[240px] xl:mr-[320px] ml-0 mr-0 transition-all duration-300">
         <div className="max-w-[630px] mx-auto px-4 py-8">
-          {/* Stories */}
-          <div className="stories-container">
-            <div className="flex gap-4 overflow-x-auto stories pb-1">
-              <style>{`.stories::-webkit-scrollbar { display: none; }`}</style>
-              {stories.map(story => (
-                <div key={story.id} className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 w-[72px] story-item group">
-                  <div className={`p-[3px] rounded-full transition-all duration-300 group-hover:scale-105 ${story.isOwn ? 'bg-slate-200 dark:bg-slate-700' : 'bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500'}`}>
-                    <div className="story-ring">
-                      <img src={story.avatar} alt={story.username} className="story-avatar" />
+          {/* Groups Section (Replaces Stories) */}
+          <div className="stories-container mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Your Groups</h3>
+              <button onClick={() => navigate('/groups')} className="text-xs font-bold text-indigo-500 hover:text-indigo-400 transition-colors">Explore Groups</button>
+            </div>
+            <div className="flex gap-4 overflow-x-auto stories pb-2">
+              <style>{`
+                .stories::-webkit-scrollbar { height: 4px; }
+                .stories::-webkit-scrollbar-track { background: transparent; }
+                .stories::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+                .stories::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+              `}</style>
+
+              {groupsLoading ? (
+                <div className="flex gap-4">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="flex flex-col items-center gap-2 animate-pulse">
+                      <div className="w-[66px] h-[66px] rounded-full bg-slate-800"></div>
+                      <div className="w-12 h-2 bg-slate-800 rounded"></div>
                     </div>
-                  </div>
-                  <span className="text-[11px] font-semibold truncate w-full text-center opacity-80 group-hover:opacity-100 transition-opacity">{story.isOwn ? 'Your Story' : story.username}</span>
+                  ))}
                 </div>
-              ))}
+              ) : userGroups.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-4 w-full">
+                  <p className="text-xs text-slate-500 mb-2">You haven't joined any groups yet.</p>
+                </div>
+              ) : (
+                userGroups.map(group => (
+                  <div
+                    key={group.id}
+                    className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 w-[72px] story-item group"
+                    onClick={() => navigate(`/groups/${group.id}`)}
+                  >
+                    <div className="p-[3px] rounded-full transition-all duration-300 group-hover:scale-105 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/20">
+                      <div className="story-ring bg-slate-900">
+                        <img
+                          src={group.imageUrl ? (group.imageUrl.startsWith('http') ? group.imageUrl : `http://localhost:8080${group.imageUrl}`) : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop'}
+                          alt={group.name}
+                          className="story-avatar w-full h-full rounded-full object-cover"
+                        />
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-bold truncate w-full text-center opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap overflow-hidden text-ellipsis">
+                      {group.name}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

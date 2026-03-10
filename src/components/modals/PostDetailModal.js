@@ -60,7 +60,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             // Try to find music and image from various possible paths (nested or flat)
             const songObj = rawData.song || rawData.target || {};
             const rawMusic = rawData.musicLink || rawData.musicUrl || rawData.songUrl || songObj.musicLink || songObj.musicUrl || songObj.targetUrl;
-            const rawImage = rawData.imageUrl || rawData.postImage || rawData.songImgUrl || songObj.imageUrl || songObj.postImage;
+            const rawImage = rawData.imageUrl || rawData.postImage || rawData.songImgUrl || rawData.imageUrlAlbum || rawData.postResponse?.imageUrl || songObj.imageUrl || songObj.postImage;
             const songName = rawData.songName || songObj.name || songObj.title || "Original Audio";
 
             const targetId = rawData.targetId || rawData.idSong || rawData.idAlbum || songObj.id;
