@@ -173,13 +173,13 @@ function Profile() {
 
         const musicUrl = p.musicLink || p.musicUrl;
         const imgUrl = p.imageUrlAlbum || p.imageUrlSong || p.imageUrl || p.postImage;
-        let finalImageUrl = imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `http://localhost:8080${imgUrl}`) : authorAvatar;
+        let finalImageUrl = imgUrl ? (imgUrl.startsWith('http') ? imgUrl : `${process.env.REACT_APP_API_BASE_URL}${imgUrl}`) : authorAvatar;
 
         return {
           id: p.idPost || p.id || p.postId,
           content: p.content || p.caption || "",
           imageUrl: finalImageUrl,
-          musicLink: musicUrl ? (musicUrl.startsWith('http') ? musicUrl : `http://localhost:8080${musicUrl}`) : null,
+          musicLink: musicUrl ? (musicUrl.startsWith('http') ? musicUrl : `${process.env.REACT_APP_API_BASE_URL}${musicUrl}`) : null,
           authorName: authorName,
           authorAvatar: authorAvatar,
           likeCount: p.likeCount || 0,

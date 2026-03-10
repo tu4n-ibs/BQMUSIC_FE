@@ -55,7 +55,7 @@ const AlbumManagement = () => {
                 name: album.name,
                 description: album.description || '',
                 imageFile: null,
-                imagePreview: album.imageUrl ? `http://localhost:8080${album.imageUrl}` : null
+                imagePreview: album.imageUrl ? `${process.env.REACT_APP_API_BASE_URL}${album.imageUrl}` : null
             });
         } else {
             setEditingAlbum(null);
@@ -206,7 +206,7 @@ const AlbumManagement = () => {
                                             <div className="user-cell">
                                                 <div className="user-avatar-placeholder" style={{ borderRadius: '8px' }}>
                                                     {album.imageUrl ? (
-                                                        <img src={`http://localhost:8080${album.imageUrl}`} alt="" className="w-full h-full object-cover rounded-[8px]" />
+                                                        <img src={`${process.env.REACT_APP_API_BASE_URL}${album.imageUrl}`} alt="" className="w-full h-full object-cover rounded-[8px]" />
                                                     ) : <Disc className="w-5 h-5" />}
                                                 </div>
                                                 <span className="user-name">{album.name}</span>

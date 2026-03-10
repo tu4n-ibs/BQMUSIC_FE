@@ -209,7 +209,7 @@ function AdminMenu() {
                       <div className="user-cell">
                         {user.imageUrl ? (
                           <img
-                            src={`http://localhost:8080${user.imageUrl}`}
+                            src={`${process.env.REACT_APP_API_BASE_URL}${user.imageUrl}`}
                             alt={user.email}
                             className="user-avatar"
                           />
@@ -291,7 +291,7 @@ function AdminMenu() {
               </div>
               <div className="modal-body text-center pt-4">
                 {selectedUser.imageUrl ? (
-                  <img src={`http://localhost:8080${selectedUser.imageUrl}`} className="rounded-circle mb-3 shadow-sm" width="100" height="100" style={{ objectFit: 'cover' }} alt="User" />
+                  <img src={`${process.env.REACT_APP_API_BASE_URL}${selectedUser.imageUrl}`} className="rounded-circle mb-3 shadow-sm" width="100" height="100" style={{ objectFit: 'cover' }} alt="User" />
                 ) : (
                   <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm" style={{ width: 100, height: 100, fontSize: 32 }}>
                     {selectedUser.name.charAt(0)}

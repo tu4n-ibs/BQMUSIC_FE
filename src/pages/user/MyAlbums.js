@@ -72,7 +72,7 @@ const MyAlbums = () => {
             setEditingAlbum(album);
             const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
             const albumCover = albumRawImage
-                ? (albumRawImage.startsWith('http') ? albumRawImage : (albumRawImage.startsWith('/') ? `http://localhost:8080${albumRawImage}` : `http://localhost:8080/${albumRawImage}`))
+                ? (albumRawImage.startsWith('http') ? albumRawImage : (albumRawImage.startsWith('/') ? `${process.env.REACT_APP_API_BASE_URL}${albumRawImage}` : `${process.env.REACT_APP_API_BASE_URL}/${albumRawImage}`))
                 : null;
             setForm({
                 name: album.name,
@@ -274,7 +274,7 @@ const MyAlbums = () => {
                                                 if (imgPath) {
                                                     const finalUrl = imgPath.startsWith('http')
                                                         ? imgPath
-                                                        : (imgPath.startsWith('/') ? `http://localhost:8080${imgPath}` : `http://localhost:8080/${imgPath}`);
+                                                        : (imgPath.startsWith('/') ? `${process.env.REACT_APP_API_BASE_URL}${imgPath}` : `${process.env.REACT_APP_API_BASE_URL}/${imgPath}`);
 
                                                     return <img src={finalUrl} alt="" className="album-card-cover" onError={(e) => {
                                                         e.target.onerror = null;

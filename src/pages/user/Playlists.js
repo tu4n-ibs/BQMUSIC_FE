@@ -124,7 +124,7 @@ const Playlists = () => {
 
             const musicLink = songData.musicUrl.startsWith('http')
                 ? songData.musicUrl
-                : `http://localhost:8080${songData.musicUrl}`;
+                : `${process.env.REACT_APP_API_BASE_URL}${songData.musicUrl}`;
 
             playTrack({
                 id: songData.id || song.songId,

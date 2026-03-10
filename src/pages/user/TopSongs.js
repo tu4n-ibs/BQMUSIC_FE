@@ -81,13 +81,13 @@ const TopSongs = () => {
         let musicLink = track.musicUrl || track.musicLink;
         if (!musicLink) return;
 
-        musicLink = musicLink.startsWith('http') ? musicLink : `http://localhost:8080${musicLink}`;
+        musicLink = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
 
         playTrack({
             id: track.id,
             title: track.name,
             artist: track.artistName,
-            avatar: track.imageUrlSnippet ? (track.imageUrlSnippet.startsWith('http') ? track.imageUrlSnippet : `http://localhost:8080${track.imageUrlSnippet}`) : null,
+            avatar: track.imageUrlSnippet ? (track.imageUrlSnippet.startsWith('http') ? track.imageUrlSnippet : `${process.env.REACT_APP_API_BASE_URL}${track.imageUrlSnippet}`) : null,
             url: musicLink
         });
 
@@ -200,7 +200,7 @@ const TopSongs = () => {
 
                                     <div className="song-image-wrapper">
                                         <img
-                                            src={song.imageUrlSnippet ? (song.imageUrlSnippet.startsWith('http') ? song.imageUrlSnippet : `http://localhost:8080${song.imageUrlSnippet}`) : DEFAULT_COVER_URL}
+                                            src={song.imageUrlSnippet ? (song.imageUrlSnippet.startsWith('http') ? song.imageUrlSnippet : `${process.env.REACT_APP_API_BASE_URL}${song.imageUrlSnippet}`) : DEFAULT_COVER_URL}
                                             alt={song.name}
                                             className="song-image"
                                             onError={(e) => e.target.src = DEFAULT_COVER_URL}

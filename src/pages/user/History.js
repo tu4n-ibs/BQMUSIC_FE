@@ -46,14 +46,14 @@ const History = () => {
     };
 
     const handlePlayTrack = (track) => {
-        const musicLink = track.musicUrl ? (track.musicUrl.startsWith('http') ? track.musicUrl : `http://localhost:8080${track.musicUrl}`) : null;
+        const musicLink = track.musicUrl ? (track.musicUrl.startsWith('http') ? track.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${track.musicUrl}`) : null;
         if (!musicLink) return;
 
         playTrack({
             id: track.id,
             title: track.name,
             artist: track.artist?.name || 'Unknown Artist',
-            avatar: track.imageUrl ? (track.imageUrl.startsWith('http') ? track.imageUrl : `http://localhost:8080${track.imageUrl}`) : null,
+            avatar: track.imageUrl ? (track.imageUrl.startsWith('http') ? track.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${track.imageUrl}`) : null,
             url: musicLink
         });
     };
@@ -85,7 +85,7 @@ const History = () => {
                                         <div className="history-index">{(index + 1).toString().padStart(2, '0')}</div>
                                         <div className="history-image-wrapper">
                                             <img
-                                                src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:8080${item.imageUrl}`) : 'https://via.placeholder.com/150'}
+                                                src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${item.imageUrl}`) : 'https://via.placeholder.com/150'}
                                                 alt={item.name}
                                                 className="history-image"
                                                 onError={(e) => e.target.src = 'https://via.placeholder.com/150'}

@@ -17,7 +17,7 @@ function Login() {
   const { login } = useAuth();
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/google";
   };
 
   const handleSubmit = async (e) => {

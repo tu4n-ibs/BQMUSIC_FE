@@ -61,7 +61,7 @@ function CreateUser() {
 
       const token = localStorage.getItem("token");
 
-      await axios.post("http://localhost:8080/api/v1/user", formData, {
+      await axios.post("${process.env.REACT_APP_API_BASE_URL}/api/v1/user", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

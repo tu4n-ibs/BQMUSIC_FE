@@ -39,7 +39,7 @@ export const NotificationProvider = ({ children }) => {
                 heartbeatOutgoing: 4000,
             });
 
-            client.webSocketFactory = () => new SockJS('http://localhost:8080/ws');
+            client.webSocketFactory = () => new SockJS('${process.env.REACT_APP_API_BASE_URL}/ws');
 
             client.onConnect = (frame) => {
                 client.subscribe(`/user/${user.idUser}/queue/notifications`, (message) => {

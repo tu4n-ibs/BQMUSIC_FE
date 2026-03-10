@@ -84,7 +84,7 @@ function NewFeed() {
         const fallbackAvatar = getUserAvatar(post.imageUrlUser || post.authorAvatar || post.user?.imageUrl);
 
         let imageToUse = post.imageUrlSong || post.imageUrlAlbum;
-        imageToUse = imageToUse ? (imageToUse.startsWith('http') ? imageToUse : `http://localhost:8080${imageToUse}`) : fallbackAvatar;
+        imageToUse = imageToUse ? (imageToUse.startsWith('http') ? imageToUse : `${process.env.REACT_APP_API_BASE_URL}${imageToUse}`) : fallbackAvatar;
 
         return {
           id: post.idPost || post.id,
@@ -92,7 +92,7 @@ function NewFeed() {
           username: post.username || post.authorName || (post.user?.name) || 'Unknown',
           userAvatar: fallbackAvatar,
           postImage: imageToUse,
-          musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `http://localhost:8080${post.musicLink}`) : null,
+          musicLink: post.musicLink ? (post.musicLink.startsWith('http') ? post.musicLink : `${process.env.REACT_APP_API_BASE_URL}${post.musicLink}`) : null,
           caption: post.content,
           content: post.content,
           commentCount: post.commentCount || 0,
@@ -111,7 +111,7 @@ function NewFeed() {
           // Group info
           groupId: post.groupId,
           groupName: post.groupName,
-          groupImage: post.groupImage ? (post.groupImage.startsWith('http') ? post.groupImage : `http://localhost:8080${post.groupImage}`) : null,
+          groupImage: post.groupImage ? (post.groupImage.startsWith('http') ? post.groupImage : `${process.env.REACT_APP_API_BASE_URL}${post.groupImage}`) : null,
           // Share details
           postType: post.postType,
           idPostShare: post.idPostShare,
@@ -186,7 +186,7 @@ function NewFeed() {
             title: song.songName,
             artist: albumDetail.nameUser || albumDetail.username || post.username,
             avatar: song.songImageUrl || albumDetail.imageUrl || post.postImage,
-            url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `http://localhost:8080${song.musicUrl}`) : null
+            url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${song.musicUrl}`) : null
           }));
 
           // Fetch first song URL if missing (some responses might only have partial data)
@@ -194,7 +194,7 @@ function NewFeed() {
           if (!firstSong.url) {
             const res = await songService.getSongById(firstSong.id);
             const fullSong = res.data?.data || res.data;
-            firstSong.url = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `http://localhost:8080${fullSong.musicUrl}`) : null;
+            firstSong.url = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${fullSong.musicUrl}`) : null;
           }
 
           if (firstSong.url) {
@@ -220,7 +220,7 @@ function NewFeed() {
         return;
       }
     }
-    musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `http://localhost:8080${musicLink}`) : null;
+    musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
     if (!musicLink) return;
 
     playTrack({
@@ -360,7 +360,7 @@ function NewFeed() {
                     <div className="p-[3px] rounded-full transition-all duration-300 group-hover:scale-105 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/20">
                       <div className="story-ring bg-slate-900">
                         <img
-                          src={group.imageUrl ? (group.imageUrl.startsWith('http') ? group.imageUrl : `http://localhost:8080${group.imageUrl}`) : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop'}
+                          src={group.imageUrl ? (group.imageUrl.startsWith('http') ? group.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${group.imageUrl}`) : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop'}
                           alt={group.name}
                           className="story-avatar w-full h-full rounded-full object-cover"
                         />

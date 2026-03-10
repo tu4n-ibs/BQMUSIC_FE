@@ -6,7 +6,7 @@ import axiosClient from "./axiosClient";
 const notificationService = {
     /**
      * Get all notifications for the current user.
-     * API: GET http://localhost:8080/api/v1/notifications
+     * API: GET ${process.env.REACT_APP_API_BASE_URL}/api/v1/notifications
      * @returns {Promise<Object>} List of notifications, newest first.
      */
     getAllNotifications: async () => {
@@ -21,7 +21,7 @@ const notificationService = {
 
     /**
      * Mark a specific notification as read.
-     * API: PATCH http://localhost:8080/api/v1/notifications/{notificationId}/read
+     * API: PATCH ${process.env.REACT_APP_API_BASE_URL}/api/v1/notifications/{notificationId}/read
      * @param {string|number} notificationId 
      * @returns {Promise<Object>} Response data
      */
@@ -37,7 +37,7 @@ const notificationService = {
 
     /**
      * Mark all notifications as read for the current user.
-     * API: PATCH http://localhost:8080/api/v1/notifications/read-all
+     * API: PATCH ${process.env.REACT_APP_API_BASE_URL}/api/v1/notifications/read-all
      * @returns {Promise<Object>} Response data
      */
     markAllAsRead: async () => {

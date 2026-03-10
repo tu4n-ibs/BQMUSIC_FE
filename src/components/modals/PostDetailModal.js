@@ -65,8 +65,8 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
 
             const targetId = rawData.targetId || rawData.idSong || rawData.idAlbum || songObj.id;
 
-            const imageUrl = rawImage ? (rawImage.startsWith('http') ? rawImage : `http://localhost:8080${rawImage}`) : null;
-            const musicLink = rawMusic ? (rawMusic.startsWith('http') ? rawMusic : `http://localhost:8080${rawMusic}`) : null;
+            const imageUrl = rawImage ? (rawImage.startsWith('http') ? rawImage : `${process.env.REACT_APP_API_BASE_URL}${rawImage}`) : null;
+            const musicLink = rawMusic ? (rawMusic.startsWith('http') ? rawMusic : `${process.env.REACT_APP_API_BASE_URL}${rawMusic}`) : null;
 
             // Handle author/user object nested or flat
             const author = rawData.user || {};
@@ -156,7 +156,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 title: song.name,
                 artist: post.authorName,
                 avatar: song.imageUrl || post.imageUrl || post.authorAvatar,
-                url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `http://localhost:8080${song.musicUrl}`) : null
+                url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${song.musicUrl}`) : null
             }));
 
             if (albumQueue.length > 0) {
@@ -166,7 +166,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                     try {
                         const res = await songService.getSongById(firstSong.id);
                         const fullSong = res.data?.data || res.data;
-                        firstSong.url = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `http://localhost:8080${fullSong.musicUrl}`) : null;
+                        firstSong.url = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${fullSong.musicUrl}`) : null;
                     } catch (err) {
                         console.error("Failed to fetch first song for album queue:", err);
                     }
@@ -191,7 +191,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 return;
             }
         }
-        musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `http://localhost:8080${musicLink}`) : null;
+        musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
         if (!musicLink) return;
 
         playTrack({
@@ -238,7 +238,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                         <div className="lg:w-[60%] bg-black flex items-center justify-center relative group overflow-hidden">
                             {post.imageUrl ? (
                                 <img
-                                    src={post.imageUrl.toString().startsWith('http') ? post.imageUrl : `http://localhost:8080${post.imageUrl}`}
+                                    src={post.imageUrl.toString().startsWith('http') ? post.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${post.imageUrl}`}
                                     alt="Post Content"
                                     className="max-h-full max-w-full object-contain"
                                 />
@@ -305,7 +305,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                         <div className="flex flex-col gap-2">
                                             {post.albumData.songs.map((song, index) => {
                                                 const isActive = currentTrack?.id === song.songId;
-                                                const trackImage = song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `http://localhost:8080${song.imageUrl}`) : (post.imageUrl || post.authorAvatar);
+                                                const trackImage = song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${song.imageUrl}`) : (post.imageUrl || post.authorAvatar);
 
                                                 return (
                                                     <div
@@ -323,7 +323,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                                                     return;
                                                                 }
                                                             }
-                                                            musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `http://localhost:8080${musicLink}`) : null;
+                                                            musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
                                                             if (!musicLink) return;
 
                                                             playTrack({

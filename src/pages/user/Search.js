@@ -72,7 +72,7 @@ const Search = () => {
 
                     // Format image URL
                     if (image && !image.startsWith('http')) {
-                        image = `http://localhost:8080${image}`;
+                        image = `${process.env.REACT_APP_API_BASE_URL}${image}`;
                     } else if (!image) {
                         image = 'https://via.placeholder.com/150?text=' + typeLabel;
                     }
@@ -112,7 +112,7 @@ const Search = () => {
         if (item.type === 'song') {
             const mUrl = item.rawData?.musicUrl;
             if (!mUrl) return;
-            const musicLink = mUrl.startsWith('http') ? mUrl : `http://localhost:8080${mUrl}`;
+            const musicLink = mUrl.startsWith('http') ? mUrl : `${process.env.REACT_APP_API_BASE_URL}${mUrl}`;
 
             playTrack({
                 id: item.id,

@@ -26,10 +26,10 @@ const PostItem = ({
     const username = post.username;
     const userAvatar = post.userAvatar || post.imageUrlUser || 'https://i.pravatar.cc/150';
     const authorId = post.authorId || post.idUser;
-    const postImage = (post.postImage ? (post.postImage.startsWith('http') ? post.postImage : `http://localhost:8080${post.postImage}`) : null) ||
-        (post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `http://localhost:8080${post.imageUrlSong}`) :
+    const postImage = (post.postImage ? (post.postImage.startsWith('http') ? post.postImage : `${process.env.REACT_APP_API_BASE_URL}${post.postImage}`) : null) ||
+        (post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `${process.env.REACT_APP_API_BASE_URL}${post.imageUrlSong}`) :
             (post.imageUrlAlbum || post.albumImageUrl) ? (
-                (post.imageUrlAlbum || post.albumImageUrl).startsWith('http') ? (post.imageUrlAlbum || post.albumImageUrl) : `http://localhost:8080${(post.imageUrlAlbum || post.albumImageUrl)}`
+                (post.imageUrlAlbum || post.albumImageUrl).startsWith('http') ? (post.imageUrlAlbum || post.albumImageUrl) : `${process.env.REACT_APP_API_BASE_URL}${(post.imageUrlAlbum || post.albumImageUrl)}`
             ) : DEFAULT_COVER_URL);
 
     const caption = post.caption || post.content || post.contentShare || 'No caption';

@@ -114,7 +114,7 @@ const AlbumDetail = () => {
             title: s.songName || s.name,
             artist: album.nameUser || album.username || "Artist",
             avatar: s.songImageUrl || s.imageUrl || album.imageUrl || getUserAvatar(null),
-            url: s.musicUrl ? (s.musicUrl.startsWith('http') ? s.musicUrl : `http://localhost:8080${s.musicUrl}`) : null
+            url: s.musicUrl ? (s.musicUrl.startsWith('http') ? s.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${s.musicUrl}`) : null
         }));
 
         playTrack({
@@ -122,7 +122,7 @@ const AlbumDetail = () => {
             title: song.songName || song.name,
             artist: album.nameUser || album.username || "Artist",
             avatar: song.songImageUrl || song.imageUrl || album.imageUrl || getUserAvatar(null),
-            url: musicUrl.startsWith('http') ? musicUrl : `http://localhost:8080${musicUrl}`
+            url: musicUrl.startsWith('http') ? musicUrl : `${process.env.REACT_APP_API_BASE_URL}${musicUrl}`
         }, queue, index);
     };
 
@@ -237,7 +237,7 @@ const AlbumDetail = () => {
 
     const albumRawImage = album.albumImageUrl || album.imageUrl;
     const albumCover = albumRawImage
-        ? (albumRawImage.startsWith('http') ? albumRawImage : `http://localhost:8080${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`)
+        ? (albumRawImage.startsWith('http') ? albumRawImage : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`)
         : null;
 
     return (
@@ -398,7 +398,7 @@ const AlbumDetail = () => {
                                             <div className="flex items-center gap-3 min-w-0">
                                                 <div className="w-10 h-10 rounded-lg bg-white/5 overflow-hidden shrink-0">
                                                     <img
-                                                        src={song.songImageUrl ? (song.songImageUrl.startsWith('http') ? song.songImageUrl : `http://localhost:8080${song.songImageUrl}`) : (albumCover || getUserAvatar(null))}
+                                                        src={song.songImageUrl ? (song.songImageUrl.startsWith('http') ? song.songImageUrl : `${process.env.REACT_APP_API_BASE_URL}${song.songImageUrl}`) : (albumCover || getUserAvatar(null))}
                                                         alt=""
                                                         className="w-full h-full object-cover"
                                                     />

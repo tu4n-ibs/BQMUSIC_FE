@@ -337,7 +337,7 @@ const GroupDetail = () => {
                 return;
             }
         }
-        musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `http://localhost:8080${musicLink}`) : null;
+        musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
         if (!musicLink) return;
 
         playTrack({
