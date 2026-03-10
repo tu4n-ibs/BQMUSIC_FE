@@ -191,6 +191,7 @@ const TopSongs = () => {
                                 <div
                                     key={song.id}
                                     className={`song-item ${currentTrack?.id === song.id ? 'active' : ''}`}
+                                    style={{ "--i": index }}
                                     onClick={() => handlePlayTrack(song)}
                                 >
                                     <div className="song-rank">
