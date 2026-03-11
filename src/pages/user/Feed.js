@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, X, Disc } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
 import CommentSection from '../../components/content/CommentSection';
@@ -26,7 +26,6 @@ const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fb
 function NewFeed() {
   const navigate = useNavigate();
   const { postId } = useParams();
-  const [searchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const { suggestions, handleFollow } = useSuggestions();
   const { playTrack, currentTrack, isPlaying } = usePlayer();
@@ -305,8 +304,6 @@ function NewFeed() {
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         postId={selectedPostIdDetail}
-        targetCommentId={searchParams.get('commentId')}
-        targetParentId={searchParams.get('parentId')}
         onUpdate={(postId, updates) => {
           // Sync updates to the feed list if needed
           setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
