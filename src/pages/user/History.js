@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Play, Pause, Music } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import playHistoryService from '../../services/playHistoryService';
+import songService from '../../services/songService';
 import { usePlayer } from '../../context/PlayerContext';
 import { formatDate } from '../../utils/dateUtils';
+import { toast } from 'react-hot-toast';
 import './css/History.css';
 
 const History = () => {
@@ -45,17 +47,28 @@ const History = () => {
         }
     };
 
-    const handlePlayTrack = (track) => {
-        const musicLink = track.musicUrl ? (track.musicUrl.startsWith('http') ? track.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${track.musicUrl}`) : null;
-        if (!musicLink) return;
+    const handlePlayTrack = async (track) => {
+        try {
+            const response = await songService.getSongById(track.id);
+            const songData = response.data?.data || response.data;
+            const musicLink = songData?.musicUrl ? (songData.musicUrl.startsWith('http') ? songData.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${songData.musicUrl}`) : null;
 
-        playTrack({
-            id: track.id,
-            title: track.name,
-            artist: track.artist?.name || 'Unknown Artist',
-            avatar: track.imageUrl ? (track.imageUrl.startsWith('http') ? track.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${track.imageUrl}`) : null,
-            url: musicLink
-        });
+            if (!musicLink) {
+                toast.error("Music source not available");
+                return;
+            }
+
+            playTrack({
+                id: songData.id || track.id,
+                title: songData.name || track.name,
+                artist: songData.artistName || track.artist?.name || 'Unknown Artist',
+                avatar: songData.imageUrl ? (songData.imageUrl.startsWith('http') ? songData.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${songData.imageUrl}`) : (track.imageUrl?.startsWith('http') ? track.imageUrl : track.imageUrl ? `${process.env.REACT_APP_API_BASE_URL}${track.imageUrl}` : null),
+                url: musicLink
+            });
+        } catch (error) {
+            console.error("Failed to play track from history:", error);
+            toast.error("Could not load music stream");
+        }
     };
 
     const formatDatePlayed = (dateString) => {

@@ -187,6 +187,17 @@ const Sidebar = () => {
                         </div>
                         <span className="ig-nav-label">Profile</span>
                     </div>
+
+                    {/* Mobile More Button */}
+                    <div
+                        className="ig-nav-item md:hidden"
+                        ref={buttonRef}
+                        onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                    >
+                        <div className="ig-icon-wrapper">
+                            <Menu className="w-6 h-6" />
+                        </div>
+                    </div>
                 </nav>
 
                 {/* Bottom Actions */}
@@ -224,6 +235,7 @@ const Sidebar = () => {
             </aside>
             <NotificationPanel
                 isOpen={isNotificationsOpen}
+                onClose={() => setIsNotificationsOpen(false)}
                 onMouseEnter={handleNotifMouseEnter}
                 onMouseLeave={handleNotifMouseLeave}
             />

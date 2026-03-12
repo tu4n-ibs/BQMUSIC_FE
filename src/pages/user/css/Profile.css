@@ -172,9 +172,22 @@
     border-radius: 12px;
     padding: 0 10px;
     color: var(--text-primary);
-    width: auto;
-    min-width: 200px;
+    width: 100%;
+    max-width: 100%;
     outline: none;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .ig-name-input {
+        font-size: 1.75rem;
+        min-width: 0;
+    }
+    
+    .ig-name-edit-wrapper {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .ig-edit-name-btn {
@@ -496,5 +509,90 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+/* --- SONGS TAB --- */
+.profile-song-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.profile-song-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
+    border-color: var(--accent-color);
+}
+
+.song-row-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.song-row-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.song-row-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.song-row-name {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.song-row-artist {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.song-row-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.song-row-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+    .song-row-stat {
+        display: none;
+    }
+    
+    .profile-song-row {
+        padding: 0.5rem;
+    }
+    
+    .song-row-name {
+        font-size: 0.9rem;
+    }
+    
+    .song-row-artist {
+        font-size: 0.75rem;
     }
 }

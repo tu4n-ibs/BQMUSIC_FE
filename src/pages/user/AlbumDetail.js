@@ -79,20 +79,17 @@ const AlbumDetail = () => {
     };
 
     const handlePlaySong = async (song, index) => {
-        let musicUrl = song.musicUrl;
+        let musicUrl = song.musicUrl || song.musicLink;
+        let songId = song.songId || song.id || song.idSong;
+        let songMetadata = null;
 
-        // If musicUrl is not provided (on-demand fetching)
-        if (!musicUrl) {
+        if (songId) {
             try {
-                const toastId = toast.loading("Loading stream...");
-                const response = await songService.getSongById(song.songId || song.id);
-                const songData = response.data?.data || response.data;
-                musicUrl = songData?.musicUrl;
-                toast.dismiss(toastId);
-            } catch (error) {
-                console.error("Failed to fetch song URL:", error);
-                toast.error("Could not load music stream");
-                return;
+                const res = await songService.getSongById(songId);
+                songMetadata = res.data?.data || res.data;
+                musicUrl = songMetadata?.musicUrl || musicUrl;
+            } catch (err) {
+                console.error("Failed to fetch song for playback:", err);
             }
         }
 
@@ -102,7 +99,7 @@ const AlbumDetail = () => {
         }
 
         // Construct normalized queue for the player
-        const queue = songs.map(s => ({
+        const queue = (songs || []).map(s => ({
             id: s.songId || s.id || s.idSong,
             title: s.songName || s.name,
             artist: album.nameUser || album.username || "Artist",
@@ -111,10 +108,10 @@ const AlbumDetail = () => {
         }));
 
         playTrack({
-            id: song.songId || song.id || song.idSong,
-            title: song.songName || song.name,
-            artist: album.nameUser || album.username || "Artist",
-            avatar: song.songImageUrl || song.imageUrl || album.imageUrl || getUserAvatar(null),
+            id: songId,
+            title: songMetadata?.name || song.songName || song.name,
+            artist: songMetadata?.artistName || album.nameUser || album.username || "Artist",
+            avatar: songMetadata?.imageUrl || song.songImageUrl || song.imageUrl || album.imageUrl || getUserAvatar(null),
             url: musicUrl.startsWith('http') ? musicUrl : `${process.env.REACT_APP_API_BASE_URL}${musicUrl}`
         }, queue, index);
     };

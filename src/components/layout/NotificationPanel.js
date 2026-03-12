@@ -1,17 +1,22 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart } from 'lucide-react';
+import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart, X } from 'lucide-react';
 import userService from '../../services/userService';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { useNotification } from '../../context/NotificationContext';
 import './css/NotificationPanel.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
-const NotificationPanel = ({ isOpen, onMouseEnter, onMouseLeave }) => {
+const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
     const navigate = useNavigate();
     const { notifications, markAsRead, markAllAsRead } = useNotification();
     const { suggestions, handleFollow } = useSuggestions();
     const closeTimeoutRef = React.useRef(null);
+
+    const handleClose = (e) => {
+        if (e) e.stopPropagation();
+        onClose();
+    };
 
     const handleMouseEnter = () => {
         if (closeTimeoutRef.current) {
@@ -183,15 +188,24 @@ const NotificationPanel = ({ isOpen, onMouseEnter, onMouseLeave }) => {
             >
                 <div className="notification-panel-header flex justify-between items-center">
                     <h2 className="notification-panel-title">Notifications</h2>
-                    {hasNotifications && (
+                    <div className="flex items-center gap-3">
+                        {hasNotifications && (
+                            <button
+                                onClick={markAllAsRead}
+                                className="text-xs text-indigo-500 hover:text-indigo-400 flex items-center gap-1 font-semibold transition-colors"
+                            >
+                                <CheckCheck className="w-3.5 h-3.5" />
+                                Mark all as read
+                            </button>
+                        )}
                         <button
-                            onClick={markAllAsRead}
-                            className="text-xs text-indigo-500 hover:text-indigo-400 flex items-center gap-1 font-semibold transition-colors"
+                            onClick={handleClose}
+                            className="p-1 hover:bg-white/10 rounded-full transition-colors md:hidden"
+                            aria-label="Close notifications"
                         >
-                            <CheckCheck className="w-3.5 h-3.5" />
-                            Mark all as read
+                            <X className="w-5 h-5 text-slate-400" />
                         </button>
-                    )}
+                    </div>
                 </div>
 
                 <div className="notification-panel-content">

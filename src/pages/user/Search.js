@@ -4,7 +4,9 @@ import { Search as SearchIcon, X, Clock, User, Music, Disc, ChevronRight, MoreHo
 import Sidebar from '../../components/layout/Sidebar';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import postService from '../../services/postService';
+import songService from '../../services/songService';
 import { usePlayer } from '../../context/PlayerContext';
+import { toast } from 'react-hot-toast';
 import './css/Search.css';
 
 const Search = () => {
@@ -110,16 +112,31 @@ const Search = () => {
 
     const handleResultClick = async (item) => {
         if (item.type === 'song') {
-            const mUrl = item.rawData?.musicUrl;
-            if (!mUrl) return;
-            const musicLink = mUrl.startsWith('http') ? mUrl : `${process.env.REACT_APP_API_BASE_URL}${mUrl}`;
+            let songId = item.id;
+            let musicLink = item.rawData?.musicUrl;
+            let songMetadata = null;
+
+            try {
+                const toastId = toast.loading("Loading stream...");
+                const res = await songService.getSongById(songId);
+                songMetadata = res.data?.data || res.data;
+                musicLink = songMetadata?.musicUrl || musicLink;
+                toast.dismiss(toastId);
+            } catch (err) {
+                console.error("Failed to fetch song for playback:", err);
+                toast.error("Could not load music stream");
+                return;
+            }
+
+            if (!musicLink) return;
+            const fullUrl = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
 
             playTrack({
-                id: item.id,
-                title: item.name,
-                artist: item.meta,
+                id: songId,
+                title: songMetadata?.name || item.name,
+                artist: songMetadata?.artistName || item.meta,
                 avatar: item.image,
-                url: musicLink
+                url: fullUrl
             });
         } else if (item.type === 'user') {
             navigate(`/user/${item.id}`);

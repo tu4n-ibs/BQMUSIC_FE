@@ -151,49 +151,52 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 title: song.name,
                 artist: post.authorName,
                 avatar: song.imageUrl || post.imageUrl || post.authorAvatar,
-                url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${song.musicUrl}`) : null
+                url: null // We'll fetch on play
             }));
 
             if (albumQueue.length > 0) {
                 const firstSong = albumQueue[0];
-                // Ensure URL is present for the first song
-                if (!firstSong.url) {
-                    try {
-                        const res = await songService.getSongById(firstSong.id);
-                        const fullSong = res.data?.data || res.data;
-                        firstSong.url = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${fullSong.musicUrl}`) : null;
-                    } catch (err) {
-                        console.error("Failed to fetch first song for album queue:", err);
+                try {
+                    const res = await songService.getSongById(firstSong.id);
+                    const fullSong = res.data?.data || res.data;
+                    const musicLink = fullSong?.musicUrl ? (fullSong.musicUrl.startsWith('http') ? fullSong.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${fullSong.musicUrl}`) : null;
+                    
+                    if (musicLink) {
+                        firstSong.url = musicLink;
+                        playTrack(firstSong, albumQueue, 0);
+                        return;
                     }
-                }
-
-                if (firstSong.url) {
-                    playTrack(firstSong, albumQueue, 0);
-                    return;
+                } catch (err) {
+                    console.error("Failed to fetch first song for album queue:", err);
+                    toast.error("Could not load music stream");
                 }
             }
         }
 
         // 2. Handle Single Song Context
+        let songId = post.idSong || post.id;
         let musicLink = post.musicLink;
-        if (!musicLink && post.idSong) {
-            try {
-                const res = await songService.getSongById(post.idSong);
-                const fullSong = res.data?.data || res.data;
-                musicLink = fullSong?.musicUrl;
-            } catch (err) {
-                console.error("Failed to fetch song details:", err);
-                return;
-            }
+        let songMetadata = null;
+
+        try {
+            const res = await songService.getSongById(songId);
+            songMetadata = res.data?.data || res.data;
+            musicLink = songMetadata?.musicUrl || musicLink;
+        } catch (err) {
+            console.error("Failed to fetch song details for playback:", err);
         }
+
         musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
-        if (!musicLink) return;
+        if (!musicLink) {
+            toast.error("Music source not available");
+            return;
+        }
 
         playTrack({
-            id: post.idSong || post.id,
-            title: post.songName,
-            artist: post.authorName,
-            avatar: post.imageUrl || post.authorAvatar,
+            id: songId,
+            title: songMetadata?.name || post.songName,
+            artist: songMetadata?.artistName || post.authorName,
+            avatar: songMetadata?.imageUrl || post.imageUrl || post.authorAvatar,
             url: musicLink
         });
     };

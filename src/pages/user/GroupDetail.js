@@ -13,13 +13,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useModal } from '../../context/ModalContext';
 import groupService from '../../services/groupService';
 import postService from '../../services/postService';
-import likeService from '../../services/likeService';
 import songService from '../../services/songService';
+import { toast } from 'react-hot-toast';
+import likeService from '../../services/likeService';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import { usePlayer } from '../../context/PlayerContext';
 import { getUserAvatar } from '../../utils/userUtils';
 import { formatDate } from '../../utils/dateUtils';
-import { toast } from 'react-hot-toast';
 import './css/Groups.css';
 
 const GroupDetail = () => {
@@ -326,24 +326,30 @@ const GroupDetail = () => {
 
     const handlePlayMusic = async (post) => {
         let musicLink = post.musicLink;
-        if (!musicLink && post.idSong) {
+        let songId = post.idSong || post.idPost;
+        let songMetadata = null;
+
+        if (songId) {
             try {
-                const res = await songService.getSongById(post.idSong);
-                const fullSong = res.data?.data || res.data;
-                musicLink = fullSong?.musicUrl;
+                const res = await songService.getSongById(songId);
+                songMetadata = res.data?.data || res.data;
+                musicLink = songMetadata?.musicUrl || musicLink;
             } catch (err) {
                 console.error("Failed to fetch song details:", err);
-                return;
             }
         }
+        
         musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
         if (!musicLink) return;
 
+        const avatarToUse = songMetadata?.imageUrl || post.imageUrlSong || post.imageUrlAlbum;
+        const fullAvatar = avatarToUse ? (avatarToUse.startsWith('http') ? avatarToUse : `${process.env.REACT_APP_API_BASE_URL}${avatarToUse}`) : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop";
+
         playTrack({
-            id: post.idSong || post.idPost,
-            title: post.nameSong || post.nameAlbum || "Original Audio",
-            artist: post.username,
-            avatar: post.imageUrlSong || post.imageUrlAlbum || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop",
+            id: songId,
+            title: songMetadata?.name || post.nameSong || post.nameAlbum || "Original Audio",
+            artist: songMetadata?.artistName || post.username,
+            avatar: fullAvatar,
             url: musicLink
         });
     };

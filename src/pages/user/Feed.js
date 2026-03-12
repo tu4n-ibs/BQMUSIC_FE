@@ -13,8 +13,8 @@ import postService from '../../services/postService';
 import likeService from '../../services/likeService';
 import songService from '../../services/songService';
 import albumService from '../../services/albumService';
-import groupService from '../../services/groupService';
 import { toast } from 'react-hot-toast';
+import groupService from '../../services/groupService';
 import './css/Feed.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
@@ -200,25 +200,31 @@ function NewFeed() {
     }
 
     // 2. Handle Single Song Post
+    let songId = post.idSong || post.id;
     let musicLink = post.musicLink;
-    if (!musicLink && post.idSong) {
+    let songMetadata = null;
+
+    if (songId) {
       try {
-        const res = await songService.getSongById(post.idSong);
-        const fullSong = res.data?.data || res.data;
-        musicLink = fullSong?.musicUrl;
+        const res = await songService.getSongById(songId);
+        songMetadata = res.data?.data || res.data;
+        musicLink = songMetadata?.musicUrl || musicLink;
       } catch (err) {
-        console.error("Failed to fetch song details:", err);
-        return;
+        console.error("Failed to fetch song details for playback:", err);
       }
     }
+    
     musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
     if (!musicLink) return;
 
+    const avatarToUse = songMetadata?.imageUrl || post.imageUrlSong || post.postImage || getUserAvatar(post.imageUrlUser);
+    const fullAvatar = avatarToUse ? (avatarToUse.startsWith('http') ? avatarToUse : `${process.env.REACT_APP_API_BASE_URL}${avatarToUse}`) : getUserAvatar(user.imageUrl);
+
     playTrack({
-      id: post.idSong || post.id,
-      title: post.nameSong || "Original Audio",
-      artist: post.username,
-      avatar: post.imageUrlSong || post.postImage || getUserAvatar(post.imageUrlUser),
+      id: songId,
+      title: songMetadata?.name || post.nameSong || "Original Audio",
+      artist: songMetadata?.artistName || post.username,
+      avatar: fullAvatar,
       url: musicLink
     }, posts.filter(p => p.musicLink || p.idSong).map(p => ({
       id: p.idSong || p.id,
@@ -316,9 +322,14 @@ function NewFeed() {
         <div className="max-w-[630px] mx-auto px-4 py-8">
           {/* Groups Section (Replaces Stories) */}
           <div className="stories-container mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Your Groups</h3>
-              <button onClick={() => navigate('/groups')} className="text-xs font-bold text-indigo-500 hover:text-indigo-400 transition-colors">Explore Groups</button>
+            <div className="flex items-center justify-between mb-6 px-1">
+              <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em]">Your Groups</h3>
+              <button 
+                onClick={() => navigate('/groups')} 
+                className="text-[11px] font-extrabold text-indigo-500 hover:text-indigo-400 transition-colors uppercase tracking-wider"
+              >
+                Explore Groups
+              </button>
             </div>
             <div className="flex gap-4 overflow-x-auto stories pb-2">
               <style>{`

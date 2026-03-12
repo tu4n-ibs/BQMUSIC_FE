@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
 
-import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Disc } from 'lucide-react';
+import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Disc, Music, Headphones } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
+import songService from "../../services/songService";
 import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import SharePostModal from '../../components/modals/SharePostModal';
@@ -39,6 +40,8 @@ function Profile() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState("");
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [userSongs, setUserSongs] = useState([]);
+  const [songsLoading, setSongsLoading] = useState(false);
 
   // Modals for posts
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -133,6 +136,8 @@ function Profile() {
         fetchPosts(targetId, null); // null postType to get both OWNER and SHARE
       } else if (activeTab === 'albums') {
         fetchPosts(targetId, 'OWNER'); // Still fetch OWNER posts, then filter for ALBUM targetType in render
+      } else if (activeTab === 'songs') {
+        fetchSongs(targetId);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -200,22 +205,94 @@ function Profile() {
     }
   };
 
-  const handlePlayMusic = (post) => {
+  const fetchSongs = async (id) => {
+    try {
+      setSongsLoading(true);
+      const response = await songService.getUserSongs(id || targetId, 0, 50);
+      const songList = response.data?.data?.content || response.data?.content || response.data || [];
+      setUserSongs(songList);
+    } catch (err) {
+      console.error("Error fetching user songs:", err);
+    } finally {
+      setSongsLoading(false);
+    }
+  };
+
+  const handlePlayMusic = async (post) => {
     if (!post.musicLink && !post.idSong) return;
 
+    let musicLink = post.musicLink;
+    let songId = post.idSong || post.id;
+    let songMetadata = null;
+
+    if (songId) {
+      try {
+        const res = await songService.getSongById(songId);
+        songMetadata = res.data?.data || res.data;
+        musicLink = songMetadata?.musicUrl || musicLink;
+      } catch (err) {
+        console.error("Failed to fetch song for playback:", err);
+      }
+    }
+
+    if (!musicLink) return;
+
+    const fullUrl = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
+    const avatarToUse = songMetadata?.imageUrl || post.imageUrl || post.authorAvatar;
+    const fullAvatar = avatarToUse ? (avatarToUse.startsWith('http') ? avatarToUse : `${process.env.REACT_APP_API_BASE_URL}${avatarToUse}`) : getUserAvatar(user.imageUrl);
+
     playTrack({
-      id: post.idSong || post.id,
-      title: post.songName || "Original Audio",
-      artist: post.authorName,
-      avatar: post.imageUrl || post.authorAvatar,
-      url: post.musicLink
+      id: songId,
+      title: songMetadata?.name || post.songName || "Original Audio",
+      artist: songMetadata?.artistName || post.authorName,
+      avatar: fullAvatar,
+      url: fullUrl
     }, userPosts.filter(p => p.musicLink || p.idSong).map(p => ({
       id: p.idSong || p.id,
       title: p.songName || "Original Audio",
       artist: p.authorName,
-      avatar: p.imageUrl || p.authorAvatar,
-      url: p.musicLink
+      avatar: p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${p.imageUrl}`) : getUserAvatar(p.imageUrlUser),
+      url: p.musicLink ? (p.musicLink.startsWith('http') ? p.musicLink : `${process.env.REACT_APP_API_BASE_URL}${p.musicLink}`) : null
     })));
+  };
+
+  const handlePlaySong = async (song) => {
+    let musicLink = song.musicUrl || song.musicLink;
+    let songId = song.songId || song.id;
+    let songMetadata = null;
+
+    if (songId) {
+      try {
+        const res = await songService.getSongById(songId);
+        songMetadata = res.data?.data || res.data;
+        musicLink = songMetadata?.musicUrl || musicLink;
+      } catch (err) {
+        console.error("Failed to fetch song for playback:", err);
+      }
+    }
+
+    if (!musicLink) return;
+
+    const fullUrl = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
+    const avatarToUse = songMetadata?.imageUrl || song.imageUrl;
+    const fullAvatar = avatarToUse ? (avatarToUse.startsWith('http') ? avatarToUse : `${process.env.REACT_APP_API_BASE_URL}${avatarToUse}`) : getUserAvatar(user.imageUrl);
+
+    playTrack({
+      id: songId,
+      title: songMetadata?.name || song.songName || "Original Audio",
+      artist: songMetadata?.artistName || song.artistName || user.name,
+      avatar: fullAvatar,
+      url: fullUrl
+    }, userSongs.map(s => {
+      const sLink = s.musicUrl || s.musicLink;
+      return {
+        id: s.songId || s.id,
+        title: s.songName || "Original Audio",
+        artist: s.artistName || user.name,
+        avatar: s.imageUrl ? (s.imageUrl.startsWith('http') ? s.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${s.imageUrl}`) : getUserAvatar(user.imageUrl),
+        url: sLink ? (sLink.startsWith('http') ? sLink : `${process.env.REACT_APP_API_BASE_URL}${sLink}`) : null
+      };
+    }).filter(s => s.url));
   };
 
   const handleAvatarUpdate = async (e) => {
@@ -359,12 +436,6 @@ function Profile() {
                           <Edit2 className="w-5 h-5" />
                         </button>
                       )}
-                      <button
-                        className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-500/20"
-                        onClick={() => userPosts.length > 0 && handlePlayMusic(userPosts[0])}
-                      >
-                        <Play className="w-5 h-5 fill-white" />
-                      </button>
                     </div>
                   )}
                 </div>
@@ -415,6 +486,9 @@ function Profile() {
           <div className="flex border-t border-slate-200 dark:border-slate-800 ig-tabs mt-10">
             <div className={`ig-tab ${activeTab === 'posts' ? 'active' : ''}`} onClick={() => setActiveTab('posts')}>
               <Grid className="w-4 h-4" /> POSTS
+            </div>
+            <div className={`ig-tab ${activeTab === 'songs' ? 'active' : ''}`} onClick={() => setActiveTab('songs')}>
+              <Music className="w-4 h-4" /> SONGS
             </div>
             <div className={`ig-tab ${activeTab === 'albums' ? 'active' : ''}`} onClick={() => setActiveTab('albums')}>
               <Disc className="w-4 h-4" /> ALBUMS
@@ -493,7 +567,18 @@ function Profile() {
                               </button>
 
                               {(post.targetType === 'SONG' || post.targetType === 'ALBUM' || post.idSong || post.idAlbum) && (
-                                <div className="relative">
+                                <div className="relative flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handlePlayMusic(post);
+                                    }}
+                                    className="flex items-center gap-2 text-indigo-500 hover:text-indigo-400 font-bold bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg transition-all"
+                                  >
+                                    <Play className="w-4 h-4 fill-current" />
+                                    <span className="text-[11px] uppercase tracking-wider">Play</span>
+                                  </button>
+
                                   <button
                                     className={`flex items-center gap-1.5 transition-colors p-1.5 rounded-md ${activeMenuId === post.id ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10'}`}
                                     onClick={(e) => {
@@ -563,6 +648,54 @@ function Profile() {
               </div>
             );
           })()}
+
+          {activeTab === 'songs' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {songsLoading ? (
+                <div className="text-center py-20 opacity-50">Loading songs...</div>
+              ) : userSongs.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {userSongs.map((song, index) => (
+                    <div
+                      key={song.songId || index}
+                      className="profile-song-row group"
+                      onClick={() => handlePlaySong(song)}
+                    >
+                      <div className="song-row-left">
+                        <img
+                          src={song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${song.imageUrl}`) : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
+                          alt={song.songName}
+                          className="song-row-img"
+                          onError={(e) => e.target.src = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
+                        />
+                        <div className="song-row-info">
+                          <div className="song-row-name">{song.songName}</div>
+                          <div className="song-row-artist">{song.artistName || user.name}</div>
+                        </div>
+                      </div>
+                      <div className="song-row-right">
+                        <div className="song-row-stat">
+                          <Headphones className="w-4 h-4 opacity-50" />
+                          <span>{(song.playCount || 0).toLocaleString()}</span>
+                        </div>
+                        <Heart className={`w-5 h-5 transition-colors ${song.isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="ig-empty-state">
+                  <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Music className="w-10 h-10 text-indigo-500" />
+                  </div>
+                  <div className="ig-empty-title">No Songs Library</div>
+                  <div className="text-slate-500 max-w-sm mx-auto mb-8">
+                    This user hasn't added any songs to their library yet.
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
 
         </div>

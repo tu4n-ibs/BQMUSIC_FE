@@ -74,23 +74,36 @@ const TopSongs = () => {
         fetchTopSongs();
     }, [fetchTopSongs]);
 
-    const handlePlayTrack = (track) => {
-        let musicLink = track.musicUrl || track.musicLink;
-        if (!musicLink) return;
+    const handlePlayTrack = async (track) => {
+        try {
+            const toastId = toast.loading("Loading stream...");
+            const response = await songService.getSongById(track.id);
+            const songData = response.data?.data || response.data;
+            let musicLink = songData?.musicUrl || songData?.musicLink;
+            toast.dismiss(toastId);
 
-        musicLink = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
+            if (!musicLink) {
+                toast.error("Music source not available");
+                return;
+            }
 
-        playTrack({
-            id: track.id,
-            title: track.name,
-            artist: track.artistName,
-            avatar: track.imageUrlSnippet ? (track.imageUrlSnippet.startsWith('http') ? track.imageUrlSnippet : `${process.env.REACT_APP_API_BASE_URL}${track.imageUrlSnippet}`) : null,
-            url: musicLink
-        });
+            musicLink = musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`;
 
-        // Record play if not already the current track or if playing again
-        if (currentTrack?.id !== track.id) {
-            songService.recordPlay(track.id).catch(console.error);
+            playTrack({
+                id: songData.id || track.id,
+                title: songData.name || track.name,
+                artist: songData.artistName || track.artistName,
+                avatar: songData.imageUrl ? (songData.imageUrl.startsWith('http') ? songData.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${songData.imageUrl}`) : (track.imageUrlSnippet?.startsWith('http') ? track.imageUrlSnippet : track.imageUrlSnippet ? `${process.env.REACT_APP_API_BASE_URL}${track.imageUrlSnippet}` : null),
+                url: musicLink
+            });
+
+            // Record play if not already the current track
+            if (currentTrack?.id !== track.id) {
+                songService.recordPlay(track.id).catch(console.error);
+            }
+        } catch (error) {
+            console.error("Failed to play track:", error);
+            toast.error("Could not load music stream");
         }
     };
 
