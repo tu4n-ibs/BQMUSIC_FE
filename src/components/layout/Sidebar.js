@@ -152,6 +152,11 @@ const Sidebar = () => {
                         active={isActive('/playlists')}
                         onClick={() => handleNavigation('/playlists')}
                     />
+                    <NavItem
+                        icon={<PlusSquare className="w-6 h-6" />}
+                        label="Create"
+                        onClick={() => openCreatePostModal()}
+                    />
                     <div className="hidden md:block">
                         <NavItem
                             icon={<History className="w-6 h-6" />}
@@ -171,25 +176,7 @@ const Sidebar = () => {
                             active={isActive('/my-albums')}
                             onClick={() => handleNavigation('/my-albums')}
                         />
-                        <NavItem
-                            icon={<PlusSquare className="w-6 h-6" />}
-                            label="Create"
-                            onClick={() => openCreatePostModal()}
-                        />
                     </div>
-                    <NavItem
-                        icon={
-                            <img
-                                src={getUserAvatar(user?.imageUrl)}
-                                alt="Profile"
-                                className="ig-profile-avatar"
-                                onError={(e) => e.target.src = "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?w=360"}
-                            />
-                        }
-                        label="Profile"
-                        active={isActive(`/user/userId=${user?.idUser || ""}`)}
-                        onClick={() => handleNavigation(`/user/userId=${user?.idUser || ""}`)}
-                    />
 
                     {/* Desktop Spacer - pushes Profile and More to bottom */}
                     <div className="flex-grow hidden md:block"></div>
@@ -209,74 +196,79 @@ const Sidebar = () => {
                     />
 
                     {/* More Button */}
-                    <div ref={buttonRef} className="flex-1 md:w-full">
+                    <div 
+                        ref={buttonRef} 
+                        className="flex-1 md:w-full cursor-pointer"
+                        onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                    >
                         <NavItem
                             icon={<Menu className="w-6 h-6" />}
                             label="More"
                             active={isMoreMenuOpen}
-                            onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
                         />
                     </div>
                 </nav>
 
                 {/* Bottom Actions - no longer needed as we moved the item */}
                 <div className="hidden"></div>
-
-                {/* More Menu Popup */}
-                {isMoreMenuOpen && (
-                    <div ref={menuRef} className="ig-more-menu">
-                        {/* Mobile and Tablet Specific items */}
-                        <div className="md:hidden">
-                            <MenuItem 
-                                icon={<Users className="w-5 h-5" />} 
-                                label="Groups" 
-                                onClick={() => handleNavigation('/groups')}
-                            />
-                            <MenuItem 
-                                icon={<Bell className="w-5 h-5" />} 
-                                label="Notifications" 
-                                onClick={() => setIsNotificationsOpen(true)}
-                            />
-                            <MenuItem 
-                                icon={<History className="w-5 h-5" />} 
-                                label="History" 
-                                onClick={() => handleNavigation('/history')}
-                            />
-                            <MenuItem 
-                                icon={<TrendingUp className="w-5 h-5" />} 
-                                label="Top Songs" 
-                                onClick={() => handleNavigation('/top-songs')}
-                            />
-                            <MenuItem 
-                                icon={<Disc className="w-5 h-5" />} 
-                                label="My Albums" 
-                                onClick={() => handleNavigation('/my-albums')}
-                            />
-                            <MenuItem 
-                                icon={<PlusSquare className="w-5 h-5" />} 
-                                label="Create Post" 
-                                onClick={() => openCreatePostModal()}
-                            />
-                            <div className="h-0.5 bg-gray-700/30 my-1"></div>
-                        </div>
-
-                        {/* Common Items for More Menu */}
-                        <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
-                        <MenuItem
-                            icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-                            label="Switch appearance"
-                            onClick={toggleTheme}
-                        />
-                        <MenuItem icon={<AlertCircle className="w-5 h-5" />} label="Report a problem" />
-
-                        <div className="h-0.5 bg-gray-700/30 my-1"></div>
-
-                        <div className="ig-menu-item text-red-500 font-bold" onClick={handleLogout}>
-                            Log out
-                        </div>
-                    </div>
-                )}
             </aside>
+
+            {/* More Menu Popup - Moved outside aside to prevent clipping */}
+            {isMoreMenuOpen && (
+                <div ref={menuRef} className="ig-more-menu shadow-2xl">
+                    {/* Mobile and Tablet Specific items - Only show in more menu on mobile */}
+                    <div className="md:hidden">
+                        <MenuItem 
+                            icon={<Users className="w-5 h-5" />} 
+                            label="Groups" 
+                            onClick={() => handleNavigation('/groups')}
+                        />
+                        <MenuItem 
+                            icon={<Bell className="w-5 h-5" />} 
+                            label="Notifications" 
+                            onClick={() => setIsNotificationsOpen(true)}
+                        />
+                        <MenuItem 
+                            icon={<History className="w-5 h-5" />} 
+                            label="History" 
+                            onClick={() => handleNavigation('/history')}
+                        />
+                        <MenuItem 
+                            icon={<TrendingUp className="w-5 h-5" />} 
+                            label="Top Songs" 
+                            onClick={() => handleNavigation('/top-songs')}
+                        />
+                        <MenuItem 
+                            icon={<Disc className="w-5 h-5" />} 
+                            label="My Albums" 
+                            onClick={() => handleNavigation('/my-albums')}
+                        />
+                        <div className="h-0.5 bg-gray-700/30 my-1"></div>
+                    </div>
+
+                    {/* Common Items for More Menu */}
+                    <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
+                    <MenuItem
+                        icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                        label="Switch appearance"
+                        onClick={toggleTheme}
+                    />
+                    <MenuItem icon={<AlertCircle className="w-5 h-5" />} label="Report a problem" />
+
+                    <div className="h-0.5 bg-gray-700/30 my-1"></div>
+
+                    <div 
+                        className="ig-menu-item text-red-500 font-bold cursor-pointer hover:bg-red-500/10 transition-colors" 
+                        onClick={handleLogout}
+                    >
+                        <div className="text-red-500">
+                             <Menu className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm">Log out</span>
+                    </div>
+                </div>
+            )}
+
             <NotificationPanel
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
