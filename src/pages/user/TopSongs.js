@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    TrendingUp, Play, Pause, Heart, MessageCircle, Share2,
-    MoreHorizontal, Music, Clock, Headphones, ListMusic,
-    ChevronRight, Filter, Disc
+    TrendingUp, Play, Pause, Heart,
+    Headphones,
+    ChevronRight, Disc
 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import songService from '../../services/songService';
 import genreService from '../../services/genreService';
-import likeService from '../../services/likeService';
 import { usePlayer } from '../../context/PlayerContext';
-import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import SharePostModal from '../../components/modals/SharePostModal';
@@ -25,11 +23,10 @@ const TopSongs = () => {
     // UI States
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const [songToPlaylist, setSongToPlaylist] = useState({ id: null, name: '' });
-    const [postToShare, setPostToShare] = useState(null);
+    const [songToPlaylist] = useState({ id: null, name: '' });
+    const [postToShare] = useState(null);
 
     const { playTrack, currentTrack, isPlaying } = usePlayer();
-    const { user } = useAuth();
 
     const fetchGenres = useCallback(async () => {
         try {
@@ -95,41 +92,6 @@ const TopSongs = () => {
         if (currentTrack?.id !== track.id) {
             songService.recordPlay(track.id).catch(console.error);
         }
-    };
-
-    const handleToggleLike = async (e, trackId) => {
-        e.stopPropagation();
-        try {
-            const res = await likeService.toggleLike(trackId);
-            const isLiked = res.data?.liked !== undefined ? res.data?.liked : res.data?.isLiked;
-
-            setSongs(prev => prev.map(s =>
-                s.id === trackId ? { ...s, isLiked: (isLiked !== undefined ? isLiked : !s.isLiked) } : s
-            ));
-        } catch (error) {
-            console.error("Like failed:", error);
-        }
-    };
-
-    const handleOpenPlaylist = (e, track) => {
-        e.stopPropagation();
-        setSongToPlaylist({ id: track.id, name: track.name });
-        setIsPlaylistModalOpen(true);
-    };
-
-    const handleOpenShare = (e, track) => {
-        e.stopPropagation();
-        // Construct a post-like object for share modal
-        setPostToShare({
-            id: track.id,
-            idPost: track.id,
-            idSong: track.id,
-            nameSong: track.name,
-            username: track.artistName,
-            imageUrlSong: track.imageUrlSnippet,
-            content: `Check out this trending song: ${track.name}`
-        });
-        setIsShareModalOpen(true);
     };
 
     const periods = [

@@ -62,3 +62,18 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(99, 102, 241, 0.4);
 }
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .add-to-playlist-premium {
+        max-height: 100vh;
+        height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .playlist-selection-list-premium {
+        max-height: calc(100vh - 200px);
+    }
+}

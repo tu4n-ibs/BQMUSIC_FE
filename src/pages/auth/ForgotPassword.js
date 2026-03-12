@@ -126,13 +126,11 @@ function ForgotPassword() {
 
     return (
         <div className="instagram-login-container">
-            <div className="instagram-login-content" style={{ display: 'flex', justifyContent: 'center' }}>
-
-                <div className="login-card" style={{ textAlign: 'center', maxWidth: '400px' }}>
-
+            <div className="instagram-login-content auth-single-card">
+                <div className="login-card">
                     {/* Lock Icon */}
-                    <div style={{ margin: '0 auto 20px', width: '90px', height: '90px', border: '2px solid #000', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <svg aria-label="Lock Icon" color="#000" fill="#000" height="50" role="img" viewBox="0 0 96 96" width="50">
+                    <div className="auth-icon-circle">
+                        <svg aria-label="Lock Icon" className="auth-svg-icon" height="50" role="img" viewBox="0 0 96 96" width="50">
                             <circle cx="48" cy="48" fill="none" r="47" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></circle>
                             <path d="M66.098 48.014V34.545a18.098 18.098 0 1 0-36.196 0v13.469" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
                             <rect fill="none" height="28.098" rx="4" ry="4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" width="45.197" x="25.402" y="48.014"></rect>
@@ -180,20 +178,19 @@ function ForgotPassword() {
                         </form>
                     ) : !isVerified ? (
                         <form onSubmit={handleVerifyOtp} className="login-form">
-                            <div className="alert-message alert-success" style={{ marginBottom: '15px' }}>
-                                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Email sent!</div>
+                            <div className="alert-message alert-success">
+                                <div className="alert-title">Email sent!</div>
                                 <div>Check your email for the OTP code.</div>
                             </div>
 
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    className="form-input"
+                                    className="form-input otp-input"
                                     placeholder="Enter OTP Code"
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
                                     required
-                                    style={{ textAlign: 'center', letterSpacing: '4px', fontWeight: 'bold' }}
                                 />
                             </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
-import { Search, Plus, Users, ArrowRight, TrendingUp, Star } from 'lucide-react';
+import { Plus, Users, ArrowRight, TrendingUp, Star } from 'lucide-react';
 import groupService from '../../services/groupService';
 import CreateGroupModal from '../../components/modals/CreateGroupModal';
 import { useAuth } from '../../context/AuthContext';
@@ -14,7 +14,7 @@ const Groups = () => {
     const [groups, setGroups] = useState([]);
     const [myGroups, setMyGroups] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('explore'); // 'explore' or 'my-groups'
 
@@ -54,6 +54,7 @@ const Groups = () => {
 
     useEffect(() => {
         loadData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.idUser]);
 
     const displayedGroups = activeTab === 'explore'
@@ -64,7 +65,7 @@ const Groups = () => {
         <div className="groups-container">
             <Sidebar />
 
-            <main className="ig-profile-main lg:ml-[240px] ml-0 transition-all duration-300">
+            <main className="ig-profile-main lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300">
                 <div className="groups-content">
                     {/* Header Section */}
                     <header className="groups-header">

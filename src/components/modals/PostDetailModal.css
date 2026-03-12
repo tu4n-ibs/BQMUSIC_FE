@@ -1,7 +1,7 @@
 .post-detail-overlay {
     position: fixed;
     inset: 0;
-    z-index: 200;
+    z-index: 2500;
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(10px);
     display: flex;
@@ -91,7 +91,18 @@
 
     .post-detail-modal {
         max-height: 100vh;
+        height: 100vh;
         border-radius: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .close-btn-absolute {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
     }
 }
 

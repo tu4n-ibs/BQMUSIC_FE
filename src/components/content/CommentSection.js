@@ -66,7 +66,7 @@ const CommentSection = ({ postId, onClose, totalComments, onCommentAdded }) => {
                 parentCommentId: replyTo ? replyTo.id : null
             };
 
-            const response = await commentService.createComment(commentData);
+            await commentService.createComment(commentData);
             setContent('');
 
             if (replyTo) {

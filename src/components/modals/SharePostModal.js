@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Globe, Users, Lock, Share2 } from 'lucide-react';
+import { X, Share2 } from 'lucide-react';
 import postService from '../../services/postService';
 import groupService from '../../services/groupService';
 

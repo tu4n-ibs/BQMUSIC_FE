@@ -1,7 +1,7 @@
 .modal-overlay {
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
-    z-index: 1000;
+    z-index: 2500;
 }
 
 .modal-content {
@@ -316,4 +316,18 @@
 .step-1-content,
 .step-2-content {
     animation: slideIn 0.4s ease-out;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .modal-overlay {
+        padding: 0;
+    }
 }

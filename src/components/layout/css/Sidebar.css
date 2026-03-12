@@ -172,6 +172,20 @@
     justify-content: space-between;
 }
 
+/* Tablet Adjustments (768px to 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .ig-sidebar:hover,
+    .ig-sidebar.force-expanded {
+        width: var(--sidebar-width-collapsed);
+    }
+    .ig-nav-label {
+        display: none;
+    }
+    .ig-logo-text {
+        display: none;
+    }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .ig-sidebar {
@@ -188,6 +202,8 @@
         margin: 0;
         border: none;
         border-top: 1px solid var(--glass-border);
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 1002;
     }
 
     .ig-logo-container,
@@ -224,8 +240,13 @@
     }
 
     .ig-icon-wrapper svg {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
+    }
+
+    .ig-nav-item.active .ig-icon-wrapper svg {
+        color: var(--accent-color);
+        filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
     }
 
     .ig-mobile-header {
@@ -244,6 +265,26 @@
 
     .ig-sidebar:hover {
         width: 100% !important;
+    }
+    
+    .ig-more-menu {
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 300px;
+        animation: menuFadeInMobile 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+@keyframes menuFadeInMobile {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
     }
 }
 

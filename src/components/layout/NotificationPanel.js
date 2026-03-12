@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart } from 'lucide-react';
 import userService from '../../services/userService';

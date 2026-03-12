@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, Disc } from 'lucide-react';
+import { Play, Pause, Music, Heart, MessageCircle, Share2, Disc } from 'lucide-react';
 import CommentSection from './CommentSection';
 import './PostItem.css';
 

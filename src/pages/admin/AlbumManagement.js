@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../../utils/errorUtils';
 import {
     Plus, Trash2, Edit, Disc, Music, Camera, AlertTriangle,
-    ChevronLeft, Loader2, Image as ImageIcon, CheckCircle2, XCircle
+    ChevronLeft, Loader2, CheckCircle2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import './css/GenreManagement.css';

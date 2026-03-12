@@ -19,6 +19,12 @@
     }
 }
 
+@media (max-width: 1023px) and (min-width: 769px) {
+    .top-songs-main {
+        margin-left: 80px;
+    }
+}
+
 @media (max-width: 768px) {
     .top-songs-main {
         padding: calc(var(--mobile-header-height) + 1rem) 1rem;

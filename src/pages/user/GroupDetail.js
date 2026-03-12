@@ -2,14 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import {
-    Users, Info, Shield, MessageSquare, Share2, Heart,
-    MoreHorizontal, Music, Play, Pause, Globe, Calendar, MapPin, Lock,
-    ListMusic, Check, X, UserPlus, ShieldCheck
+    Users, Info, Shield, MessageSquare, Globe, Calendar, Lock,
+    Check, X, UserPlus, ShieldCheck
 } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import ConfirmModal from '../../components/modals/ConfirmModal';
-import CommentSection from '../../components/content/CommentSection';
 import PostItem from '../../components/content/PostItem';
 import { useAuth } from '../../context/AuthContext';
 import { useModal } from '../../context/ModalContext';
@@ -56,7 +54,6 @@ const GroupDetail = () => {
     const [selectedPostIdDetail, setSelectedPostIdDetail] = useState(null);
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
     const [songToPlaylist, setSongToPlaylist] = useState({ id: null, name: '' });
-    const [activeMenuId, setActiveMenuId] = useState(null);
     const [postToShare, setPostToShare] = useState(null);
 
     const { playTrack, currentTrack, isPlaying } = usePlayer();
@@ -277,12 +274,14 @@ const GroupDetail = () => {
         };
         window.addEventListener('POST_CREATED', handleGlobalPostCreated);
         return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groupId, group?.role, fetchGroupData]);
 
     useEffect(() => {
         if (group?.role?.toUpperCase() === 'ADMIN' || activeTab === 'review_posts') {
             fetchPendingPosts();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, group?.role, group?.id]);
 
     const toggleLike = async (postId) => {
@@ -393,7 +392,7 @@ const GroupDetail = () => {
             />
             <Sidebar />
 
-            <main className="group-detail-main ml-[120px]">
+            <main className="group-detail-main ml-0 md:ml-[80px] lg:ml-[240px] transition-all duration-300">
                 {/* 1. Group Banner & Profile */}
                 <div className="group-banner-container">
                     <img src={group.imageUrl} alt="Banner" className="group-banner-img" />

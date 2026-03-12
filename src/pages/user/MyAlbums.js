@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import albumService from '../../services/albumService';
-import songService from '../../services/songService';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getErrorMessage } from '../../utils/errorUtils';
 import {
-    Plus, Trash2, Edit, Disc, Music, Camera, AlertTriangle,
-    ChevronLeft, Loader2, Image as ImageIcon, CheckCircle2, XCircle, UploadCloud,
-    MoreHorizontal, ListMusic, Search as SearchIcon
+    Plus, Disc, Music, Camera,
+    Loader2
 } from 'lucide-react';
-import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import Sidebar from '../../components/layout/Sidebar';
 import '../admin/css/GenreManagement.css';
 import { toast } from 'react-hot-toast';
@@ -34,17 +31,8 @@ const MyAlbums = () => {
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Song Selection State (for addSongToAlbum)
-    const [availableSongs, setAvailableSongs] = useState([]);
-    const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false);
-    const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
-    const [activeMenuId, setActiveMenuId] = useState(null);
-    const [playlistModal, setPlaylistModal] = useState({
-        isOpen: false,
-        songId: null,
-        songName: ''
-    });
+
 
     useEffect(() => {
         if (user?.idUser) {
@@ -184,60 +172,14 @@ const MyAlbums = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this album?")) return;
-        try {
-            await albumService.deleteAlbum(id);
-            fetchAlbums();
-        } catch (err) {
-            toast.error(getErrorMessage(err));
-        }
-    };
 
-    // logic Adding Song to Album
-    const handleOpenAddSong = (albumId) => {
-        setSelectedAlbumId(albumId);
-        fetchAvailableSongs();
-        setIsAddSongModalOpen(true);
-    };
 
-    const fetchAvailableSongs = async () => {
-        try {
-            const res = await songService.getAllSongs();
-            // Standardize: if res.data exists (axios), and has a .data property (backend structure)
-            const songs = res.data?.data || res.data || [];
-            setAvailableSongs(Array.isArray(songs) ? songs : []);
-        } catch (err) {
-            console.error("Error fetching songs:", err);
-        }
-    };
-
-    const addSongToAlbum = async (song) => {
-        // Validation 1: Song already belongs to another Album
-        if (song.albumId && song.albumId !== selectedAlbumId) {
-            toast.error(`Warning: Song "${song.name}" already belongs to another Album! (Each song can only belong to one album).`);
-            return;
-        }
-
-        try {
-            await albumService.addSongToAlbum(selectedAlbumId, song.id || song.idSong);
-            toast.success("Song added to album!");
-        } catch (err) {
-            toast.error(getErrorMessage(err));
-        }
-    };
-
-    const [songSearch, setSongSearch] = useState('');
-
-    const filteredAvailableSongs = availableSongs.filter(song =>
-        song.name.toLowerCase().includes(songSearch.toLowerCase())
-    );
 
     return (
         <div className="my-albums-container feed-container flex min-h-screen bg-slate-950 text-white">
             <Sidebar />
 
-            <main className="flex-1 lg:ml-[240px] ml-0 transition-all duration-300 min-h-screen flex flex-col">
+            <main className="flex-1 lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300 min-h-screen flex flex-col">
                 <div className="container-fluid p-4 lg:p-8">
                     <div className="dashboard-header rounded-3 px-4">
                         <div className="header-content">
@@ -419,135 +361,7 @@ const MyAlbums = () => {
                     </div>
                 )}
 
-                {/* Add Song Modal */}
-                {isAddSongModalOpen && (
-                    <div className="modal show d-block album-premium-modal">
-                        <div className="modal-dialog modal-lg modal-dialog-centered">
-                            <div className="modal-content album-modal-glass border-0">
-                                <div className="modal-header album-modal-header border-b border-white/5 pb-6">
-                                    <h5 className="album-modal-title flex items-center gap-3">
-                                        <Music className="w-6 h-6 text-indigo-500" /> Manage Album Songs
-                                    </h5>
-                                    <button className="btn-close-album" onClick={() => setIsAddSongModalOpen(false)}>
-                                        <Plus className="w-6 h-6 rotate-45" />
-                                    </button>
-                                </div>
-                                <div className="modal-body p-8 pt-6">
-                                    <div className="manage-songs-search-wrapper">
-                                        <SearchIcon className="manage-songs-search-icon w-5 h-5" />
-                                        <input
-                                            type="text"
-                                            className="manage-songs-search-input"
-                                            placeholder="Search your library for songs..."
-                                            value={songSearch}
-                                            onChange={(e) => setSongSearch(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="custom-scrollbar" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                                        <div className="songs-table-premium">
-                                            <div className="grid grid-cols-[1fr_120px_100px] gap-4 px-4 py-3 border-b border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/30">
-                                                <span>Song Details</span>
-                                                <span>Status</span>
-                                                <span className="text-end">Action</span>
-                                            </div>
-
-                                            <div className="mt-2 flex flex-col gap-1">
-                                                {filteredAvailableSongs.length > 0 ? filteredAvailableSongs.map(song => (
-                                                    <div key={song.id || song.idSong} className="song-item-glass grid grid-cols-[1fr_120px_100px] gap-4 items-center group">
-                                                        <div className="flex items-center gap-4 min-w-0">
-                                                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-indigo-500/10 transition-colors">
-                                                                <Music className="w-4 h-4 text-white/20 group-hover:text-indigo-500/50 transition-colors" />
-                                                            </div>
-                                                            <div className="truncate">
-                                                                <div className="font-bold text-white text-sm truncate">{song.name}</div>
-                                                                <div className="text-[10px] text-white/30 truncate">Target ID: {song.id || song.idSong}</div>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            {song.albumId ? (
-                                                                <div className={`text-[10px] font-bold px-2 py-1 rounded-lg w-fit flex items-center gap-1.5
-                                                                ${song.albumId === selectedAlbumId
-                                                                        ? 'bg-green-500/10 text-green-400'
-                                                                        : 'bg-amber-500/10 text-amber-400'}`}>
-                                                                    {song.albumId === selectedAlbumId ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                                                                    {song.albumId === selectedAlbumId ? "Added" : "Busy"}
-                                                                </div>
-                                                            ) : (
-                                                                <div className="text-[10px] font-bold px-2 py-1 rounded-lg bg-white/5 text-white/20 w-fit">
-                                                                    Available
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex justify-end items-center gap-2">
-                                                            <button
-                                                                onClick={() => addSongToAlbum(song)}
-                                                                disabled={song.albumId === selectedAlbumId}
-                                                                className={`text-[10px] font-bold py-1.5 px-3 rounded-lg transition-all
-                                                                ${song.albumId === selectedAlbumId
-                                                                        ? 'bg-transparent text-white/20 border border-white/5'
-                                                                        : 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'}`}
-                                                            >
-                                                                {song.albumId === selectedAlbumId ? "In Album" : "Add"}
-                                                            </button>
-                                                            <div className="relative">
-                                                                <button
-                                                                    className={`p-2 rounded-lg transition-all ${activeMenuId === (song.id || song.idSong) ? 'bg-white/10 text-white' : 'text-white/20 hover:bg-white/5 hover:text-white'}`}
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setActiveMenuId(activeMenuId === (song.id || song.idSong) ? null : (song.id || song.idSong));
-                                                                    }}
-                                                                >
-                                                                    <MoreHorizontal className="w-4 h-4" />
-                                                                </button>
-
-                                                                {activeMenuId === (song.id || song.idSong) && (
-                                                                    <>
-                                                                        <div className="fixed inset-0 z-[1100]" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}></div>
-                                                                        <div className="absolute right-0 top-full mt-2 w-48 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl py-2 z-[1200] animate-in fade-in zoom-in-95 duration-200">
-                                                                            <button
-                                                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider text-left"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    setPlaylistModal({
-                                                                                        isOpen: true,
-                                                                                        songId: song.id || song.idSong,
-                                                                                        songName: song.name
-                                                                                    });
-                                                                                    setActiveMenuId(null);
-                                                                                }}
-                                                                            >
-                                                                                <ListMusic className="w-4 h-4" />
-                                                                                Add to Playlist
-                                                                            </button>
-                                                                        </div>
-                                                                    </>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )) : (
-                                                    <div className="text-center py-12 opacity-20 italic text-sm">No songs match your search</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="modal-footer border-t border-white/5 p-6">
-                                    <button className="btn-album-save-premium px-8 py-3 text-sm" onClick={() => setIsAddSongModalOpen(false)}>Done</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </main>
-
-            <AddToPlaylistModal
-                isOpen={playlistModal.isOpen}
-                onClose={() => setPlaylistModal({ ...playlistModal, isOpen: false })}
-                songId={playlistModal.songId}
-                songName={playlistModal.songName}
-            />
         </div>
     );
 };

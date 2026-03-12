@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ChevronLeft, Play, Pause, Music, Clock,
-    MoreHorizontal, ListMusic, Heart, Share2,
-    Disc, Loader2, Calendar, User, Info,
-    Plus, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle,
-    Search as SearchIcon, Camera
+    Share2,
+    Disc, Loader2, Calendar, User,
+    Plus, Camera
 } from 'lucide-react';
 import albumService from '../../services/albumService';
 import songService from '../../services/songService';
-import postService from '../../services/postService';
 import { useAuth } from '../../context/AuthContext';
 import { usePlayer } from '../../context/PlayerContext';
 import Sidebar from '../../components/layout/Sidebar';
@@ -29,7 +27,6 @@ const AlbumDetail = () => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isPosting, setIsPosting] = useState(false);
 
     // Modals state
     const [createPostModal, setCreatePostModal] = useState({
@@ -40,11 +37,6 @@ const AlbumDetail = () => {
         onlyUpload: false
     });
 
-    // Add from Library state
-    const [isLibraryModalOpen, setIsLibraryModalOpen] = useState(false);
-    const [availableSongs, setAvailableSongs] = useState([]);
-    const [songSearch, setSongSearch] = useState('');
-    const [isLinkingSong, setIsLinkingSong] = useState(false);
     const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
     // Refs
@@ -54,6 +46,7 @@ const AlbumDetail = () => {
         if (albumId) {
             fetchAlbumData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [albumId]);
 
     const fetchAlbumData = async () => {
@@ -146,38 +139,6 @@ const AlbumDetail = () => {
         });
     };
 
-    const handleOpenLibrary = async () => {
-        if (!user?.idUser) return;
-        setIsLibraryModalOpen(true);
-        try {
-            const res = await songService.getUserSongs(user.idUser, 0, 50);
-            const songs = res.data?.data?.content || res.data?.data || res.data || [];
-            setAvailableSongs(Array.isArray(songs) ? songs : []);
-        } catch (err) {
-            console.error("Error fetching library:", err);
-            toast.error("Failed to load your library.");
-        }
-    };
-
-    const linkSongToAlbum = async (songId) => {
-        try {
-            setIsLinkingSong(true);
-            // This uses the /album/add-new-song API via albumService.addSongToAlbum
-            await albumService.addSongToAlbum(albumId, songId);
-            toast.success("Song added to album! 🎵");
-            fetchAlbumData(); // Refresh list
-        } catch (err) {
-            console.error("Error linking song:", err);
-            toast.error(err.response?.data?.message || "Failed to link song.");
-        } finally {
-            setIsLinkingSong(false);
-        }
-    };
-
-    const filteredAvailableSongs = availableSongs.filter(song =>
-        (song.name || song.songName || "").toLowerCase().includes(songSearch.toLowerCase())
-    );
-
     const handleImageClick = () => {
         if (isOwner && albumImageInputRef.current) {
             albumImageInputRef.current.click();
@@ -190,7 +151,7 @@ const AlbumDetail = () => {
 
         try {
             setIsUpdatingImage(true);
-            const res = await albumService.uploadAlbumImage(albumId, file);
+            await albumService.uploadAlbumImage(albumId, file);
             toast.success("Album cover updated! 🎨");
 
             // Re-fetch to get the new URL
@@ -209,7 +170,7 @@ const AlbumDetail = () => {
         return (
             <div className="flex min-h-screen bg-slate-950 text-white">
                 <Sidebar />
-                <div className="flex-1 lg:ml-[240px] ml-0 flex items-center justify-center">
+                <div className="flex-1 lg:ml-[240px] md:ml-[80px] ml-0 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-indigo-500" />
                         <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Opening the vault...</p>
@@ -223,7 +184,7 @@ const AlbumDetail = () => {
         return (
             <div className="flex min-h-screen bg-slate-950 text-white">
                 <Sidebar />
-                <div className="flex-1 lg:ml-[240px] ml-0 flex flex-col items-center justify-center p-8 text-center">
+                <div className="flex-1 lg:ml-[240px] md:ml-[80px] ml-0 flex flex-col items-center justify-center p-8 text-center">
                     <Disc className="w-20 h-20 text-slate-800 mb-6" />
                     <h2 className="text-2xl font-bold mb-2">Album not found</h2>
                     <p className="text-slate-500 mb-8 max-w-md">The record you're looking for might have been moved or removed from our collection.</p>
@@ -244,7 +205,7 @@ const AlbumDetail = () => {
         <div className="album-detail-container flex min-h-screen bg-slate-950 text-white">
             <Sidebar />
 
-            <main className="flex-1 lg:ml-[240px] ml-0 transition-all duration-300 relative overflow-hidden">
+            <main className="flex-1 lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300 relative overflow-hidden">
                 {/* Dynamic Background Blur */}
                 <div
                     className="album-detail-bg-blur"
@@ -459,97 +420,6 @@ const AlbumDetail = () => {
                     onPostCreated={() => fetchAlbumData()}
                 />
 
-                {/* Library Selection Modal */}
-                {isLibraryModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-slate-900 border border-white/10 rounded-[32px] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                            <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                                <h3 className="text-xl font-black flex items-center gap-3">
-                                    <ListMusic className="w-6 h-6 text-indigo-500" /> My Library
-                                </h3>
-                                <button onClick={() => setIsLibraryModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                                    <Plus className="w-6 h-6 rotate-45" />
-                                </button>
-                            </div>
-
-                            <div className="p-8 pb-4">
-                                <div className="relative">
-                                    <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
-                                    <input
-                                        type="text"
-                                        className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-indigo-500/50 transition-all text-white"
-                                        placeholder="Search your songs..."
-                                        value={songSearch}
-                                        onChange={(e) => setSongSearch(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto p-8 pt-0 custom-scrollbar">
-                                <div className="flex flex-col gap-2">
-                                    {filteredAvailableSongs.length > 0 ? filteredAvailableSongs.map(song => {
-                                        const isInThisAlbum = songs.some(s => {
-                                            const albumSongId = String(s.songId || s.id || s.idSong || "");
-                                            const libSongId = String(song.id || song.idSong || song.songId || "");
-                                            return albumSongId !== "" && albumSongId === libSongId;
-                                        });
-                                        return (
-                                            <div key={song.id || song.idSong} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
-                                                <div className="flex items-center gap-4 min-w-0">
-                                                    <div className="w-12 h-12 rounded-xl bg-slate-800 overflow-hidden shrink-0">
-                                                        <img
-                                                            src={song.imageUrl || song.songImageUrl || getUserAvatar(null)}
-                                                            alt=""
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <div className="truncate">
-                                                        <p className="font-bold text-sm truncate">{song.name || song.songName}</p>
-                                                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mt-1">
-                                                            {song.genreName || "Track"}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    onClick={() => linkSongToAlbum(song.id || song.idSong)}
-                                                    disabled={isInThisAlbum || isLinkingSong}
-                                                    className={`px-6 py-2 rounded-xl text-xs font-black transition-all
-                                                        ${isInThisAlbum
-                                                            ? 'bg-green-500/20 text-green-400 border border-green-500/20'
-                                                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 active:scale-95'
-                                                        } disabled:opacity-50`}
-                                                >
-                                                    {isInThisAlbum ? (
-                                                        <span className="flex items-center gap-2 tracking-widest"><CheckCircle2 size={12} /> IN ALBUM</span>
-                                                    ) : (
-                                                        <span className="tracking-widest">{isLinkingSong ? "ADDING..." : "ADD TRACK"}</span>
-                                                    )}
-                                                </button>
-                                            </div>
-                                        );
-                                    }) : (
-                                        <div className="py-20 text-center flex flex-col items-center gap-4">
-                                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center">
-                                                <Music className="w-8 h-8 text-white/10" />
-                                            </div>
-                                            <p className="text-white/20 font-bold italic">No songs found in your library.</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="p-8 border-t border-white/5 flex justify-end">
-                                <button
-                                    onClick={() => setIsLibraryModalOpen(false)}
-                                    className="px-8 py-3 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all border border-white/5 text-sm"
-                                >
-                                    Finish
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </main>
         </div>
     );

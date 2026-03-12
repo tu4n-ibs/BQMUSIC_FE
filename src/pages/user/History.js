@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, Play, Pause, Bookmark, MoreHorizontal, ListMusic, Music, ChevronRight } from 'lucide-react';
+import { Clock, Play, Pause, Music } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import playHistoryService from '../../services/playHistoryService';
 import { usePlayer } from '../../context/PlayerContext';

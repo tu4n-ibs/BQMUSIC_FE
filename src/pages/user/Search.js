@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search as SearchIcon, X, Clock, User, Music, Disc, TrendingUp, ChevronRight, MoreHorizontal, ListMusic, Loader2 } from 'lucide-react';
+import { Search as SearchIcon, X, Clock, User, Music, Disc, ChevronRight, MoreHorizontal, ListMusic, Loader2 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
-import songService from '../../services/songService';
 import postService from '../../services/postService';
 import { usePlayer } from '../../context/PlayerContext';
 import './css/Search.css';
@@ -97,6 +96,7 @@ const Search = () => {
         }, 500);
 
         return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchQuery, activeTab]);
 
     const handleClearSearch = () => {
@@ -144,7 +144,7 @@ const Search = () => {
         <div className="search-container">
             <Sidebar />
 
-            <main className="search-main lg:ml-[240px] ml-0 transition-all duration-300">
+            <main className="search-main lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300">
                 <div className="search-wrapper">
                     <header className="search-header">
                         <h1 className="search-title">Search</h1>

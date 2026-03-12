@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/layout/Sidebar';
-import { Plus, Music, MoreVertical, Play, Trash2, Edit2, Search as SearchIcon, X } from 'lucide-react';
+import { Plus, Music, MoreVertical, Play, X } from 'lucide-react';
 import playlistService from '../../services/playlistService';
 import songService from '../../services/songService';
 import { toast } from 'react-hot-toast';
@@ -12,13 +12,11 @@ const Playlists = () => {
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newPlaylist, setNewPlaylist] = useState({ name: '', description: '' });
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm] = useState('');
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [songs, setSongs] = useState([]);
     const [songsLoading, setSongsLoading] = useState(false);
-    const [songSearchQuery, setSongSearchQuery] = useState('');
-    const [songSearchResults, setSongSearchResults] = useState([]);
-    const [isSearchingSongs, setIsSearchingSongs] = useState(false);
+
     const { playTrack } = usePlayer();
 
     useEffect(() => {
@@ -54,8 +52,6 @@ const Playlists = () => {
 
     const handleViewPlaylist = (playlist) => {
         setSelectedPlaylist(playlist);
-        setSongSearchQuery('');
-        setSongSearchResults([]);
         fetchPlaylistSongs(playlist.playlistId);
     };
 
@@ -78,38 +74,7 @@ const Playlists = () => {
         }
     };
 
-    const handleAddSongDirectly = async (song) => {
-        try {
-            await playlistService.addSongToPlaylist(song.id || song.songId, selectedPlaylist.playlistId);
-            toast.success(`"${song.name}" added to playlist! 🎵`);
-            fetchPlaylistSongs(selectedPlaylist.playlistId);
-        } catch (error) {
-            console.error("Error adding song:", error);
-            toast.error("Failed to add song.");
-        }
-    };
 
-    const handleSearchSongs = async (query) => {
-        setSongSearchQuery(query);
-        if (query.length < 2) {
-            setSongSearchResults([]);
-            return;
-        }
-
-        try {
-            setIsSearchingSongs(true);
-            const response = await songService.searchSongs(query);
-            const data = response.data?.data || response.data || [];
-            // Filter out songs already in playlist
-            const currentIds = songs.map(s => s.songId);
-            const filtered = data.filter(s => !currentIds.includes(s.songId));
-            setSongSearchResults(filtered);
-        } catch (error) {
-            console.error("Error searching songs:", error);
-        } finally {
-            setIsSearchingSongs(false);
-        }
-    };
 
     const handlePlaySong = async (song) => {
         try {
@@ -148,7 +113,7 @@ const Playlists = () => {
         <div className="playlists-page-container">
             <Sidebar />
 
-            <main className="playlists-main lg:ml-[240px] ml-0 transition-all duration-300">
+            <main className="playlists-main lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300">
                 <div className="playlists-header-section">
                     <div className="flex justify-between items-end mb-8">
                         <div>

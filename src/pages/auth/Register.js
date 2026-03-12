@@ -287,7 +287,7 @@ function Register() {
                         {/* Step 2: OTP Verification */}
                         {step === 2 && (
                             <form onSubmit={handleOtpSubmit} className="login-form">
-                                <div className="alert-message alert-success" style={{ marginBottom: '15px' }}>
+                                <div className="alert-message alert-success">
                                     <div>OTP sent to <strong>{email}</strong></div>
                                 </div>
 

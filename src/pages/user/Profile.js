@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
-import { useModal } from "../../context/ModalContext";
+
 import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Disc } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
@@ -16,8 +16,8 @@ import { toast } from "react-hot-toast";
 
 function Profile() {
   const params = useParams();
-  const { user: currentUserData, updateUser } = useAuth();
-  const { playTrack, currentTrack, isPlaying } = usePlayer();
+  const { updateUser } = useAuth();
+  const { playTrack } = usePlayer();
   const navigate = useNavigate();
 
   // Handle userId from URL
@@ -32,7 +32,7 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("posts");
-  const [isChangePwdOpen, setIsChangePwdOpen] = useState(false);
+
   const [isFollowing, setIsFollowing] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
@@ -63,14 +63,7 @@ function Profile() {
 
   const [activeMenuId, setActiveMenuId] = useState(null);
 
-  // Edit Form State
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    isActive: true,
-    imageFile: null,
-    imagePreview: null,
-  });
+
 
   // Fetch User
   useEffect(() => {
@@ -104,12 +97,7 @@ function Profile() {
           if (userData.imageUrl) localStorage.setItem("imageUrl", userData.imageUrl);
         }
 
-        setForm({
-          name: userData.name || "",
-          email: userData.email || "",
-          isActive: userData.isActive ?? true,
-          imagePreview: getUserAvatar(userData.imageUrl),
-        });
+
         setIsFollowing(userData.isFollowed || false);
 
         // Fetch user stats
@@ -147,6 +135,7 @@ function Profile() {
         fetchPosts(targetId, 'OWNER'); // Still fetch OWNER posts, then filter for ALBUM targetType in render
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, targetId]);
 
   // Handle global post creation refresh
@@ -159,6 +148,7 @@ function Profile() {
     };
     window.addEventListener('POST_CREATED', handleGlobalPostCreated);
     return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetId, activeTab]);
 
   const fetchPosts = async (id, postType = null) => {
@@ -245,11 +235,6 @@ function Profile() {
         imageUrl: updatedUser.imageUrl,
         idUser: updatedUser.userId || updatedUser.idUser || updatedUser.id
       });
-
-      setForm(prev => ({
-        ...prev,
-        imagePreview: getUserAvatar(updatedUser.imageUrl)
-      }));
     } catch (err) {
       console.error("Avatar update error:", err);
       toast.error(err?.response?.data?.message || "Avatar update failed");
@@ -277,11 +262,6 @@ function Profile() {
         imageUrl: updatedUser.imageUrl,
         idUser: updatedUser.userId || updatedUser.idUser || updatedUser.id
       });
-
-      setForm(prev => ({
-        ...prev,
-        name: updatedUser.name
-      }));
       setIsEditingName(false);
     } catch (err) {
       console.error("Name update error:", err);
@@ -313,7 +293,7 @@ function Profile() {
   return (
     <div className="ig-profile-container">
       <Sidebar />
-      <main className="ig-profile-main ml-[120px] transition-all duration-300">
+      <main className="ig-profile-main ml-0 md:ml-[80px] lg:ml-[240px] transition-all duration-300">
         <div className="profile-cover-container">
           <img
             src="https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop"

@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Play, Pause, Music, Heart, MessageCircle, Share2, MoreHorizontal, ListMusic, X, Disc } from 'lucide-react';
 import SharePostModal from '../../components/modals/SharePostModal';
-import CommentSection from '../../components/content/CommentSection';
 import PostItem from '../../components/content/PostItem';
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
@@ -19,9 +17,6 @@ import groupService from '../../services/groupService';
 import { toast } from 'react-hot-toast';
 import './css/Feed.css';
 import { getUserAvatar } from '../../utils/userUtils';
-
-
-const DEFAULT_COVER_URL = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop";
 
 function NewFeed() {
   const navigate = useNavigate();
@@ -58,12 +53,8 @@ function NewFeed() {
   const [selectedPostIdDetail, setSelectedPostIdDetail] = useState(null);
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
   const [songToPlaylist, setSongToPlaylist] = useState({ id: null, name: '' });
-  const [activeMenuId, setActiveMenuId] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
   const [groupsLoading, setGroupsLoading] = useState(true);
-
-  const audioRef = useRef(null);
-
   // --- 1. Fetch User Info (Migrated to AuthContext) ---
   const fetchCurrentUser = useCallback(async () => {
     // No need to call API as user is available from context
@@ -321,7 +312,7 @@ function NewFeed() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-[240px] xl:mr-[320px] ml-0 mr-0 transition-all duration-300">
+      <main className="flex-1 lg:ml-[240px] md:ml-[80px] xl:mr-[320px] ml-0 mr-0 transition-all duration-300">
         <div className="max-w-[630px] mx-auto px-4 py-8">
           {/* Groups Section (Replaces Stories) */}
           <div className="stories-container mb-8">
@@ -421,14 +412,5 @@ function NewFeed() {
 }
 
 // Helpers
-function MoreHorizontalIcon() {
-  return (
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="1.5" />
-      <circle cx="6" cy="12" r="1.5" />
-      <circle cx="18" cy="12" r="1.5" />
-    </svg>
-  );
-}
 
 export default NewFeed;

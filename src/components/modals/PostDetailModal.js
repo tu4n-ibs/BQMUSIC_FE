@@ -5,18 +5,15 @@ import AddToPlaylistModal from './AddToPlaylistModal';
 import SharePostModal from './SharePostModal';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
-import commentService from '../../services/commentService';
 import songService from '../../services/songService';
 import CommentSection from '../content/CommentSection';
 import { getUserAvatar } from '../../utils/userUtils';
 import { formatDate } from '../../utils/dateUtils';
-import { useAuth } from '../../context/AuthContext';
 import { usePlayer } from '../../context/PlayerContext';
 import { toast } from 'react-hot-toast';
 import './PostDetailModal.css';
 
 const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
-    const { user } = useAuth();
     const navigate = useNavigate();
     const { playTrack, currentTrack, isPlaying, isPaused } = usePlayer();
     const [post, setPost] = useState(null);
@@ -31,6 +28,7 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
         if (isOpen && postId) {
             fetchPostDetails();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, postId]);
 
     const fetchPostDetails = async () => {
@@ -69,9 +67,6 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
             const musicLink = rawMusic ? (rawMusic.startsWith('http') ? rawMusic : `${process.env.REACT_APP_API_BASE_URL}${rawMusic}`) : null;
 
             // Handle author/user object nested or flat
-            const author = rawData.user || {};
-            const authorName = rawData.authorName || author.name || author.username || 'Unknown';
-            const authorAvatar = getUserAvatar(rawData.authorAvatar || author.imageUrl || author.avatar);
 
             const formattedPost = {
                 id: realId,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Check, Loader2, ListMusic, Search, ArrowRight } from 'lucide-react';
+import { X, Plus, Check, Loader2, ListMusic, Search } from 'lucide-react';
 import playlistService from '../../services/playlistService';
 import { toast } from 'react-hot-toast';
 import './css/AddToPlaylistModal.css';

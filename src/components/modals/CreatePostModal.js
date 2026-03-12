@@ -1,20 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Image as ImageIcon, Music, Loader2, UploadCloud, ChevronRight, ChevronLeft, Trash2, History, Plus, Disc, Mic2, Radio, Headphones, Guitar } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import axiosClient from '../../services/axiosClient';
+import { X, Image as ImageIcon, Music, Loader2, UploadCloud, ChevronRight, ChevronLeft, Trash2, History, Mic2, Radio, Headphones, Guitar } from 'lucide-react';
 import genreService from '../../services/genreService';
 import albumService from '../../services/albumService';
 import songService from '../../services/songService';
 import postService from '../../services/postService';
-import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import './css/CreatePostModal.css';
 
 const DRAFTS_KEY = 'bq_music_song_drafts';
 
 const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId, initialTargetType, initialTargetId, startStep, onlyUpload }) => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const [step, setStep] = useState(1); // 1: Upload Music, 2: Post Details
   const [isLoading, setIsLoading] = useState(false);
   const [showDrafts, setShowDrafts] = useState(false);

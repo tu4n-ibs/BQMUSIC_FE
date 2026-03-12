@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-    Home, Search, Compass, MessageCircle, Bell, PlusSquare, Menu,
-    Settings, Activity, Bookmark, Moon, Sun, CircleAlert as AlertCircle, Instagram, List, Users, Disc, History, TrendingUp
+    Home, Search, Bell, PlusSquare, Menu,
+    Bookmark, Moon, Sun, CircleAlert as AlertCircle, List, Users, Disc, History, TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';

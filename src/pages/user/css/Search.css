@@ -32,15 +32,11 @@
     margin-bottom: 40px;
 }
 
-.search-title {
-    font-size: 2.75rem;
-    font-weight: 850;
-    margin-bottom: 32px;
-    background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.03em;
+@media (max-width: 768px) {
+    .search-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
 }
 
 /* Search Bar */
@@ -180,6 +176,24 @@
     .results-grid {
         grid-template-columns: 1fr;
         gap: 12px;
+    }
+    
+    .result-card {
+        padding: 12px;
+        border-radius: 16px;
+    }
+    
+    .result-image-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .result-name {
+        font-size: 1rem;
+    }
+    
+    .result-meta {
+        font-size: 0.85rem;
     }
 }
 
