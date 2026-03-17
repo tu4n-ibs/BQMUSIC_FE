@@ -288,12 +288,14 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
 
                             {/* Content & Comments */}
                             <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
-                                <div className="mb-8">
-                                    <p className="post-content-text whitespace-pre-wrap">
-                                        <span className="font-bold text-white mr-1">{post.authorName}</span>
-                                        - {post.content}
-                                    </p>
-                                </div>
+                                {post.content && (
+                                    <div className="mb-8">
+                                        <p className="post-content-text whitespace-pre-wrap">
+                                            <span className="font-bold text-white mr-1">{post.authorName}</span>
+                                            - {post.content}
+                                        </p>
+                                    </div>
+                                )}
 
                                 {post.targetType === 'ALBUM' && post.albumData?.songs && (
                                     <div className="album-tracklist-section mt-6 mb-8">

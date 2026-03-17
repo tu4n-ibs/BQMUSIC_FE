@@ -73,9 +73,15 @@
 
 .top-songs-subtitle {
     color: #94a3b8;
-    font-size: 1.1rem;
+    font-size: 1rem;
     max-width: 500px;
-    line-height: 1.6;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .top-songs-subtitle {
+        max-width: 100%;
+    }
 }
 
 /* Controls */
@@ -346,17 +352,21 @@
         padding: 24px 20px;
         margin-bottom: 20px;
         border-radius: 20px;
-        text-align: center;
+        text-align: left;
+    }
+
+    .top-songs-header .flex {
+        gap: 0.5rem;
     }
 
     .top-songs-title {
-        font-size: 2.25rem;
+        font-size: 2rem;
         letter-spacing: -1px;
         margin-bottom: 8px;
     }
 
     .top-songs-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         opacity: 0.8;
     }
 
@@ -365,44 +375,31 @@
     }
 
     .song-rank {
-        width: 30px;
-        font-size: 0.9rem;
-        opacity: 0.6;
+        width: 24px;
+        font-size: 0.8rem;
+        opacity: 0.5;
     }
 
     .song-item {
-        padding: 12px;
-        gap: 12px;
-        border-radius: 16px;
+        padding: 10px;
+        gap: 10px;
+        border-radius: 14px;
     }
 
     .song-image-wrapper {
         margin: 0;
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
     }
 
     .song-name {
-        font-size: 0.9rem;
-        margin-bottom: 2px;
+        font-size: 0.85rem;
+        margin-bottom: 1px;
     }
 
     .song-artist {
-        font-size: 0.75rem;
-    }
-
-    .song-actions {
-        opacity: 1;
-        transform: none;
-        margin-left: auto;
-        gap: 4px;
-    }
-
-    .action-btn {
-        width: 32px;
-        height: 32px;
-        padding: 6px;
+        font-size: 0.7rem;
     }
 
     .period-tabs {
@@ -410,11 +407,25 @@
         overflow-x: auto;
         padding: 4px;
         justify-content: flex-start;
+        scrollbar-width: none;
+    }
+    
+    .period-tabs::-webkit-scrollbar {
+        display: none;
     }
     
     .period-tab {
         padding: 6px 14px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         white-space: nowrap;
+    }
+
+    .genre-filter {
+        gap: 8px;
+    }
+
+    .genre-tag {
+        padding: 6px 14px;
+        font-size: 0.75rem;
     }
 }

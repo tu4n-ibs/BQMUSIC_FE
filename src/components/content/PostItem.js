@@ -32,7 +32,7 @@ const PostItem = ({
                 (post.imageUrlAlbum || post.albumImageUrl).startsWith('http') ? (post.imageUrlAlbum || post.albumImageUrl) : `${process.env.REACT_APP_API_BASE_URL}${(post.imageUrlAlbum || post.albumImageUrl)}`
             ) : DEFAULT_COVER_URL);
 
-    const caption = post.caption || post.content || post.contentShare || 'No caption';
+    const caption = post.caption || post.content || post.contentShare;
     const likeCount = post.likes !== undefined ? post.likes : (post.likeCount || 0);
     const commentCount = post.commentCount || 0;
     const isLiked = post.isLiked || post.liked || false;
@@ -143,10 +143,12 @@ const PostItem = ({
                 <div className="likes-count mb-2">
                     {likeCount.toLocaleString()} likes
                 </div>
-                <div className="caption">
-                    <span className="username font-bold mr-2 text-white">{username}</span>
-                    <span className="opacity-90 text-slate-200">{caption}</span>
-                </div>
+                {caption && (
+                    <div className="caption">
+                        <span className="username font-bold mr-2 text-white">{username}</span>
+                        <span className="opacity-90 text-slate-200">{caption}</span>
+                    </div>
+                )}
 
                 <div className="comment-input-container cursor-pointer" onClick={() => onPostClick(id)}>
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">

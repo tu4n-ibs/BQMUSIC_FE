@@ -65,7 +65,7 @@ const Groups = () => {
         <div className="groups-container">
             <Sidebar />
 
-            <main className="ig-profile-main lg:ml-[240px] md:ml-[80px] ml-0 transition-all duration-300">
+            <main className="groups-main">
                 <div className="groups-content">
                     {/* Header Section */}
                     <header className="groups-header">

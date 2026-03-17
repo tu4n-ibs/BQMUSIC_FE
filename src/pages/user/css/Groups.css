@@ -13,8 +13,21 @@
 }
 
 .groups-main {
+    flex: 1;
     padding: 2rem;
     transition: all 0.4s ease;
+}
+
+@media (min-width: 1024px) {
+    .groups-main {
+        margin-left: 240px;
+    }
+}
+
+@media (max-width: 1023px) and (min-width: 769px) {
+    .groups-main {
+        margin-left: 80px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -27,6 +40,7 @@
 .groups-content {
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
 }
 
 /* Header Section */
@@ -179,7 +193,7 @@
 @media (max-width: 640px) {
     .groups-grid {
         grid-template-columns: 1fr;
-        gap: 1.25rem;
+        gap: 1rem;
         padding: 0;
     }
 
@@ -188,9 +202,13 @@
     }
     
     .groups-header h1 {
-        font-size: 2rem;
-        text-align: center;
-        width: 100%;
+        font-size: 1.75rem;
+        text-align: left;
+        width: auto;
+    }
+
+    .header-text p {
+        font-size: 0.85rem;
     }
 
     .header-content {

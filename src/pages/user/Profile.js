@@ -569,17 +569,6 @@ function Profile() {
                               {(post.targetType === 'SONG' || post.targetType === 'ALBUM' || post.idSong || post.idAlbum) && (
                                 <div className="relative flex items-center gap-2">
                                   <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handlePlayMusic(post);
-                                    }}
-                                    className="flex items-center gap-2 text-indigo-500 hover:text-indigo-400 font-bold bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg transition-all"
-                                  >
-                                    <Play className="w-4 h-4 fill-current" />
-                                    <span className="text-[11px] uppercase tracking-wider">Play</span>
-                                  </button>
-
-                                  <button
                                     className={`flex items-center gap-1.5 transition-colors p-1.5 rounded-md ${activeMenuId === post.id ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10'}`}
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -678,7 +667,6 @@ function Profile() {
                           <Headphones className="w-4 h-4 opacity-50" />
                           <span>{(song.playCount || 0).toLocaleString()}</span>
                         </div>
-                        <Heart className={`w-5 h-5 transition-colors ${song.isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-500 hover:text-rose-500'}`} />
                       </div>
                     </div>
                   ))}

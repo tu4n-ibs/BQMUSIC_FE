@@ -34,7 +34,12 @@ const Sidebar = () => {
         if (notifTimeoutRef.current) clearTimeout(notifTimeoutRef.current);
         notifTimeoutRef.current = setTimeout(() => {
             setIsNotificationsOpen(false);
-        }, 150); // Consistent delay
+        }, 300); // 300ms delay to allow moving to the panel
+    };
+
+    const handleImmediateClose = () => {
+        if (notifTimeoutRef.current) clearTimeout(notifTimeoutRef.current);
+        setIsNotificationsOpen(false);
     };
 
     const isActive = (path) => location.pathname === path;
@@ -121,12 +126,14 @@ const Sidebar = () => {
                         label="Home"
                         active={isActive('/newF')}
                         onClick={() => handleNavigation('/newF')}
+                        onMouseEnter={handleImmediateClose}
                     />
                     <NavItem
                         icon={<Search className="w-6 h-6" />}
                         label="Search"
                         active={isActive('/search')}
                         onClick={() => handleNavigation('/search')}
+                        onMouseEnter={handleImmediateClose}
                     />
                     <div className="hidden md:block">
                         <NavItem
@@ -134,6 +141,7 @@ const Sidebar = () => {
                             label="Groups"
                             active={isActive('/groups')}
                             onClick={() => handleNavigation('/groups')}
+                            onMouseEnter={handleImmediateClose}
                         />
                     </div>
                     <div
@@ -161,11 +169,13 @@ const Sidebar = () => {
                         label="Playlists"
                         active={isActive('/playlists')}
                         onClick={() => handleNavigation('/playlists')}
+                        onMouseEnter={handleImmediateClose}
                     />
                     <NavItem
                         icon={<PlusSquare className="w-6 h-6" />}
                         label="Create"
                         onClick={() => openCreatePostModal()}
+                        onMouseEnter={handleImmediateClose}
                     />
                     <div className="hidden md:block">
                         <NavItem
@@ -173,18 +183,21 @@ const Sidebar = () => {
                             label="History"
                             active={isActive('/history')}
                             onClick={() => handleNavigation('/history')}
+                            onMouseEnter={handleImmediateClose}
                         />
                         <NavItem
                             icon={<TrendingUp className="w-6 h-6" />}
                             label="Top Songs"
                             active={isActive('/top-songs')}
                             onClick={() => handleNavigation('/top-songs')}
+                            onMouseEnter={handleImmediateClose}
                         />
                         <NavItem
                             icon={<Disc className="w-6 h-6" />}
                             label="My Albums"
                             active={isActive('/my-albums')}
                             onClick={() => handleNavigation('/my-albums')}
+                            onMouseEnter={handleImmediateClose}
                         />
                     </div>
 
@@ -203,6 +216,7 @@ const Sidebar = () => {
                         label="Profile"
                         active={isActive(`/user/userId=${user?.idUser || ""}`)}
                         onClick={() => handleNavigation(`/user/userId=${user?.idUser || ""}`)}
+                        onMouseEnter={handleImmediateClose}
                     />
 
                     {/* More Button */}
@@ -210,6 +224,7 @@ const Sidebar = () => {
                         ref={buttonRef} 
                         className="flex-1 md:w-full cursor-pointer"
                         onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                        onMouseEnter={handleImmediateClose}
                     >
                         <NavItem
                             icon={<Menu className="w-6 h-6" />}
@@ -289,9 +304,10 @@ const Sidebar = () => {
     );
 };
 
-const NavItem = ({ icon, label, active, onClick }) => (
+const NavItem = ({ icon, label, active, onClick, onMouseEnter }) => (
     <div
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
         className={`ig-nav-item ${active ? 'active' : ''}`}
     >
         <div className="ig-icon-wrapper">

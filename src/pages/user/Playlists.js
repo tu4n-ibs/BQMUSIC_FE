@@ -227,11 +227,11 @@ const Playlists = () => {
                                     <div className="songs-body py-2">
                                         {songs.map((song, index) => (
                                             <div key={song.id || index} className="song-row grid grid-cols-[40px_1fr] md:grid-cols-[40px_1fr_1fr_1fr] px-4 py-3 hover:bg-white/5 rounded-xl transition group">
-                                                <div className="flex items-center text-sm opacity-40 group-hover:hidden">{index + 1}</div>
-                                                <div className="hidden items-center group-hover:flex">
+                                                <div className="flex items-center justify-center text-sm opacity-40">
+                                                    <span className="group-hover:hidden">{index + 1}</span>
                                                     <Play
-                                                        className="w-3 h-3 fill-indigo-500 text-indigo-500 cursor-pointer"
-                                                        onClick={() => handlePlaySong(song)}
+                                                        className="w-3 h-3 fill-indigo-500 text-indigo-500 cursor-pointer hidden group-hover:block"
+                                                        onClick={(e) => { e.stopPropagation(); handlePlaySong(song); }}
                                                     />
                                                 </div>
                                                 <div className="flex items-center gap-3 min-w-0">

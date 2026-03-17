@@ -123,9 +123,6 @@ const PlayerBar = () => {
                             </div>
                         )}
                     </div>
-                    <button className="player-action-btn hidden md:block">
-                        <Maximize2 className="w-5 h-5" />
-                    </button>
                 </div>
             </div>
         </div>
