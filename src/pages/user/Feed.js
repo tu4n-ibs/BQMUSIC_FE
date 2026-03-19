@@ -213,7 +213,7 @@ function NewFeed() {
         console.error("Failed to fetch song details for playback:", err);
       }
     }
-    
+
     musicLink = musicLink ? (musicLink.startsWith('http') ? musicLink : `${process.env.REACT_APP_API_BASE_URL}${musicLink}`) : null;
     if (!musicLink) return;
 
@@ -319,12 +319,12 @@ function NewFeed() {
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-[240px] md:ml-[80px] xl:mr-[320px] ml-0 mr-0 transition-all duration-300">
-        <div className="max-w-[630px] mx-auto px-4 py-8">
+        <div className="max-w-[630px] mx-auto px-4">
           {/* Groups Section (Replaces Stories) */}
           <div className="stories-container mb-8 relative">
             <div className="absolute top-3 right-5 z-10">
-              <button 
-                onClick={() => navigate('/groups')} 
+              <button
+                onClick={() => navigate('/groups')}
                 className="text-[10px] font-bold text-slate-400 hover:text-indigo-400 transition-colors uppercase tracking-widest flex items-center gap-1"
               >
                 Explore Groups
