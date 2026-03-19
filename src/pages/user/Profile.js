@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
 
-import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Disc, Music, Headphones } from 'lucide-react';
+import { Grid, User as UserIcon, Camera, Edit2, Check, X, Heart, Share2, MoreHorizontal, ListMusic, Play, Pause, Disc, Music, Headphones } from 'lucide-react';
 import userService from "../../services/userService";
 import postService from "../../services/postService";
 import songService from "../../services/songService";
