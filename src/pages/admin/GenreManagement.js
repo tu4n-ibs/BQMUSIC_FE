@@ -1,9 +1,20 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { 
+    Music, 
+    Search, 
+    Plus, 
+    Edit2, 
+    Trash2, 
+    Loader2, 
+    Info,
+    CheckCircle,
+    AlertCircle,
+    X
+} from 'lucide-react';
 import genreService from "../../services/genreService";
 import { getErrorMessage } from "../../utils/errorUtils";
-import "./css/GenreManagement.css";
-import "./css/Block.css"; // Reuse general admin styles
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./css/AdminDashboard.css"; // Reuse dashboard layout/table styles
+import "./css/AdminGenre.css";
 
 function GenreManagement() {
     const [genres, setGenres] = useState([]);
@@ -16,6 +27,7 @@ function GenreManagement() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentGenre, setCurrentGenre] = useState({ id: "", name: "", description: "" });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchGenres = useCallback(async (name = "") => {
         setLoading(true);
@@ -58,30 +70,24 @@ function GenreManagement() {
         setError("");
     };
 
-    const handleDeleteGenre = async (id, name) => {
-        if (!window.confirm(`Are you sure you want to delete the genre "${name}"?`)) return;
+    const handleDeleteGenre = async (genre) => {
+        if (!window.confirm(`Are you sure you want to delete the genre "${genre.name}"?`)) return;
 
         setLoading(true);
         setError("");
         try {
-            const response = await genreService.deleteGenre(id);
+            const response = await genreService.deleteGenre(genre.id);
             if (response && (response.success || response.status === 200)) {
-                setSuccessMessage(`Genre "${name}" deleted successfully!`);
-                fetchGenres(searchTerm);
+                setSuccessMessage(`Genre "${genre.name}" deleted successfully!`);
+                setGenres(prev => prev.filter(g => g.id !== genre.id));
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
-                // Specific handling for "in use" case if backend provides message
-                const msg = response?.message || "";
-                if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("link")) {
-                    setError(`Warning: Genre "${name}" currently has associated songs. Please move these songs to another genre before deleting.`);
-                } else {
-                    setError(msg || "Failed to delete genre.");
-                }
+                setError(response?.message || "Failed to delete genre.");
             }
         } catch (err) {
             const msg = getErrorMessage(err);
-            if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song") || msg.toLowerCase().includes("link")) {
-                setError(`Warning: Genre "${name}" currently has associated songs. Please move these songs to another genre before deleting.`);
+            if (msg.toLowerCase().includes("in use") || msg.toLowerCase().includes("song")) {
+                setError(`Warning: Genre "${genre.name}" is currently linked to songs. Please reassign them first.`);
             } else {
                 setError(msg);
             }
@@ -92,217 +98,191 @@ function GenreManagement() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setIsSubmitting(true);
         setError("");
         try {
             let response;
             const now = new Date().toISOString();
-            const userId = localStorage.getItem("userId") || ""; // Get userId from localStorage
+            const userId = localStorage.getItem("userId") || "";
 
             if (isEditing) {
                 response = await genreService.updateGenre(currentGenre.id, {
                     name: currentGenre.name,
                     description: currentGenre.description,
                     isActive: true,
-                    is_active: true,
                     updatedAt: now,
-                    updated_at: now,
-                    updatedBy: userId,
-                    updated_by: userId
+                    updatedBy: userId
                 });
             } else {
                 response = await genreService.createGenre({
                     name: currentGenre.name,
                     description: currentGenre.description,
                     isActive: true,
-                    is_active: true,
                     createdAt: now,
-                    created_at: now,
-                    updatedAt: now,
-                    updated_at: now,
                     createdBy: userId,
-                    created_by: userId,
-                    updatedBy: userId,
-                    updated_by: userId,
                     version: 0
                 });
             }
 
-            // Check for success or if res returns object with ID (case where backend doesn't wrap success)
             if (response && (response.success || response.id || response.idGenre)) {
-                setSuccessMessage(response.message || `Genre ${isEditing ? "updated" : "created"} successfully!`);
+                setSuccessMessage(`Genre ${isEditing ? "updated" : "created"} successfully!`);
                 handleCloseModal();
                 fetchGenres(searchTerm);
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
-                setError(response?.message || "Operation failed. Please check again.");
+                setError(response?.message || "Operation failed.");
             }
         } catch (err) {
             setError(getErrorMessage(err));
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="dashboard-container">
-            <div className="genre-management-container container py-5">
+        <div className="admin-dashboard">
+            <header className="dashboard-header-simple">
+                <div className="header-text">
+                    <h1>Genre Management</h1>
+                    <p>Categorize your library content efficiently</p>
+                </div>
+                <button className="btn-primary-admin" onClick={() => handleOpenModal()}>
+                    <Plus size={18} /> New Genre
+                </button>
+            </header>
 
-                {/* Header Section */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h2 className="genre-title">Genre Management</h2>
-                        <p className="text-secondary small mb-0">Organize and manage music categories with precision.</p>
+            {successMessage && (
+                <div className="admin-alert success animate__animated animate__fadeIn">
+                    <CheckCircle size={18} /> {successMessage}
+                </div>
+            )}
+
+            {error && !showModal && (
+                <div className="admin-alert danger animate__animated animate__fadeIn">
+                    <AlertCircle size={18} /> {error}
+                </div>
+            )}
+
+            <div className="data-table-container">
+                <div className="table-header-admin">
+                    <div className="search-box-admin">
+                        <Search size={18} />
+                        <input
+                            type="text"
+                            placeholder="Filter by genre name..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
-                    <button className="btn-genre-primary" onClick={() => handleOpenModal()}>
-                        <i className="bi bi-plus-lg me-2"></i> New Genre
-                    </button>
                 </div>
 
-                {successMessage && (
-                    <div className="alert-message alert-success mb-4 animate__animated animate__fadeIn">
-                        {successMessage}
-                    </div>
-                )}
-
-                {error && !showModal && (
-                    <div className="alert-message alert-danger mb-4 animate__animated animate__fadeIn">
-                        {error}
-                    </div>
-                )}
-
-                {/* Main Content Card */}
-                <div className="genre-card">
-                    <div className="genre-header">
-                        <h5 className="mb-0 fw-bold gold-text">Library Genres</h5>
-                        <div className="search-genre-wrapper">
-                            <i className="bi bi-search search-genre-icon"></i>
-                            <input
-                                type="text"
-                                className="search-genre-input"
-                                placeholder="Filter by genre name..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="table-responsive">
-                        <table className="genre-table">
-                            <thead>
+                <div className="table-responsive-admin">
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '80px' }}>ID</th>
+                                <th>Genre Name</th>
+                                <th>Description</th>
+                                <th className="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading && genres.length === 0 ? (
                                 <tr>
-                                    <th>#</th>
-                                    <th>Genre Name</th>
-                                    <th>Description</th>
-                                    <th className="text-end">Actions</th>
+                                    <td colSpan="4" className="text-center py-10">
+                                        <Loader2 className="animate-spin inline mr-2" /> Loading genres...
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {loading && genres.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="4" className="text-center py-5">
-                                            <div className="spinner-border text-primary" role="status">
-                                                <span className="visually-hidden">Loading...</span>
+                            ) : genres.length > 0 ? (
+                                genres.map((genre, index) => (
+                                    <tr key={genre.id}>
+                                        <td className="text-slate-500 text-xs">{(index + 1).toString().padStart(2, '0')}</td>
+                                        <td>
+                                            <div className="genre-name-cell-modern">
+                                                <div className="genre-avatar-mini"><Music size={14} /></div>
+                                                <span className="font-semibold">{genre.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="text-slate-400 text-sm max-w-md truncate">
+                                            {genre.description || "No description provided."}
+                                        </td>
+                                        <td className="text-right">
+                                            <div className="action-buttons-group">
+                                                <button
+                                                    className="btn-action-icon"
+                                                    onClick={() => handleOpenModal(genre)}
+                                                    title="Edit Genre"
+                                                >
+                                                    <Edit2 size={16} />
+                                                </button>
+                                                <button
+                                                    className="btn-action-icon delete"
+                                                    onClick={() => handleDeleteGenre(genre)}
+                                                    title="Delete Genre"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                ) : genres.length > 0 ? (
-                                    genres.map((genre, index) => (
-                                        <tr key={genre.id} className="genre-row">
-                                            <td className="text-secondary small">{(index + 1).toString().padStart(2, '0')}</td>
-                                            <td className="genre-name-cell">{genre.name}</td>
-                                            <td className="genre-desc-cell">{genre.description || "No description provided."}</td>
-                                            <td className="text-end">
-                                                <div className="genre-actions">
-                                                    <button
-                                                        className="btn-genre-action btn-genre-edit"
-                                                        onClick={() => handleOpenModal(genre)}
-                                                        title="Edit Genre"
-                                                    >
-                                                        <i className="bi bi-pencil-fill"></i>
-                                                    </button>
-                                                    <button
-                                                        className="btn-genre-action btn-genre-delete text-red-500 hover:bg-red-50"
-                                                        onClick={() => handleDeleteGenre(genre.id, genre.name)}
-                                                        title="Delete Genre"
-                                                    >
-                                                        <i className="bi bi-trash-fill"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4" className="text-center py-5 text-secondary">
-                                            {searchTerm ? `No genres found matching "${searchTerm}"` : "No genres available in the library."}
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="p-3 bg-secondary-subtle d-flex justify-content-between align-items-center">
-                        <span className="text-secondary small">Total Genres: <strong>{genres.length}</strong></span>
-                    </div>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-10 text-slate-500">
+                                        {searchTerm ? `No genres found matching "${searchTerm}"` : "No genres available."}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="table-footer-admin">
+                    <span>Total Genres: <strong>{genres.length}</strong></span>
                 </div>
             </div>
 
-            {/* Modal for Create/Update */}
+            {/* Modal */}
             {showModal && (
-                <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content genre-modal-content overflow-hidden border-0">
-                            <div className="modal-header border-0 bg-light p-4">
-                                <h5 className="modal-title fw-bold">
-                                    {isEditing ? "Update Genre" : "Create New Genre"}
-                                </h5>
-                                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
-                            </div>
-                            <form onSubmit={handleSubmit}>
-                                <div className="modal-body p-4">
-                                    {error && (
-                                        <div className="alert-message alert-danger border-0 rounded-3 small mb-3">
-                                            {error}
-                                        </div>
-                                    )}
-                                    <div className="mb-4">
-                                        <label className="genre-form-label">Genre Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control genre-form-input"
-                                            placeholder="e.g., Hip-hop, Jazz, Classical"
-                                            value={currentGenre.name}
-                                            onChange={(e) => setCurrentGenre({ ...currentGenre, name: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="genre-form-label">Description</label>
-                                        <textarea
-                                            className="form-control genre-form-input"
-                                            rows="4"
-                                            placeholder="Share some details about this genre..."
-                                            value={currentGenre.description}
-                                            onChange={(e) => setCurrentGenre({ ...currentGenre, description: e.target.value })}
-                                            required
-                                        ></textarea>
-                                    </div>
-                                </div>
-                                <div className="modal-footer border-0 p-4 pt-0">
-                                    <button type="button" className="btn btn-light rounded-3 px-4 fw-bold" onClick={handleCloseModal}>Cancel</button>
-                                    <button type="submit" className="btn-genre-primary px-4" disabled={loading}>
-                                        {loading ? (
-                                            <>
-                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Saving...
-                                            </>
-                                        ) : isEditing ? "Update Genre" : "Create Genre"}
-                                    </button>
-                                </div>
-                            </form>
+                <div className="admin-modal-overlay" onClick={handleCloseModal}>
+                    <div className="admin-modal-content wide" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header-admin">
+                            <h3>{isEditing ? "Edit Genre" : "Create New Genre"}</h3>
                         </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="modal-body-admin">
+                                {error && (
+                                    <div className="admin-alert danger mb-6">
+                                        <AlertCircle size={18} /> {error}
+                                    </div>
+                                )}
+                                <div className="input-group-admin">
+                                    <label>Genre Name</label>
+                                    <input
+                                        placeholder="e.g., Hip-hop, Lo-fi, Electronic"
+                                        value={currentGenre.name}
+                                        onChange={(e) => setCurrentGenre({ ...currentGenre, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-group-admin">
+                                    <label>Description</label>
+                                    <textarea
+                                        rows="4"
+                                        placeholder="Describe the characteristics of this genre..."
+                                        value={currentGenre.description}
+                                        onChange={(e) => setCurrentGenre({ ...currentGenre, description: e.target.value })}
+                                        required
+                                        className="admin-textarea"
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div className="modal-footer-admin">
+                                <button type="button" className="btn-secondary-admin" onClick={handleCloseModal}>Cancel</button>
+                                <button type="submit" className="btn-primary-admin" disabled={isSubmitting}>
+                                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : (isEditing ? "Save Changes" : "Create Genre")}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

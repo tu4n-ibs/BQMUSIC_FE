@@ -21,6 +21,7 @@ import TopSongs from "../pages/user/TopSongs";
 import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import AdminLayout from "../components/layout/AdminLayout";
 
 function AppRoutes() {
     return (
@@ -42,10 +43,13 @@ function AppRoutes() {
             {/* All protected routes wrapped in PrivateRoute */}
             <Route element={<PrivateRoute />}>
                 <Route path="/list" element={<List />} />
-                <Route path="/admin" element={<AdminMenu />} />
-                <Route path="/admin/history" element={<AdminHistory />} />
-                <Route path="/admin/genres" element={<GenreManagement />} />
-                <Route path="/admin/albums" element={<AlbumManagement />} />
+                
+                {/* Admin Routes with AdminLayout */}
+                <Route path="/admin" element={<AdminLayout><AdminMenu /></AdminLayout>} />
+                <Route path="/admin/history" element={<AdminLayout><AdminHistory /></AdminLayout>} />
+                <Route path="/admin/genres" element={<AdminLayout><GenreManagement /></AdminLayout>} />
+                
+                {/* User Routes */}
                 <Route path="/my-albums" element={<MyAlbums />} />
                 <Route path="/album/:albumId" element={<AlbumDetail />} />
                 <Route path="/user/:userId" element={<UserMenu />} />

@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "../admin/css/Block.css";
+import { 
+    Users, 
+    Search, 
+    MoreVertical, 
+    Eye, 
+    Edit2, 
+    Trash2, 
+    Plus,
+    UserCheck,
+    Star,
+    Shield,
+    Mail,
+    UserX,
+    Loader2
+} from 'lucide-react';
 import userService from "../../services/userService";
 import { toast } from "react-hot-toast";
+import "./css/AdminDashboard.css";
 
 function AdminMenu() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -19,44 +33,46 @@ function AdminMenu() {
     password: "",
   });
   const [image, setImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
-  // Load user list
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await userService.getAllUsers();
+      const userList = data.data?.content || data.content || data.data || data || [];
+      setUsers(userList);
+    } catch (error) {
+      console.error("Error loading users:", error);
+      toast.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await userService.getAllUsers();
-        // API can return { data: { content: [...] } } or { content: [...] } or direct array
-        const userList = data.data?.content || data.content || data.data || data || [];
-        setUsers(userList);
-      } catch (error) {
-        console.error("Error loading users:", error);
-      }
-    };
     fetchUsers();
   }, []);
 
-  // Filter users
   const filteredUsers = users.filter(user =>
     user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Statistics
-  const totalUsers = users.length;
-  const activeUsers = users.filter((u) => u.isActive).length;
-  // Mock "New Today"
-  const newUsersToday = Math.floor(Math.random() * 5);
+  const stats = [
+    { label: 'Total Users', value: users.length, icon: <Users size={20} />, color: 'blue' },
+    { label: 'Active Now', value: users.filter(u => u.isActive).length, icon: <UserCheck size={20} />, color: 'green' },
+    { label: 'Admin Team', value: users.filter(u => u.roles?.includes('ADMIN')).length, icon: <Shield size={20} />, color: 'purple' },
+  ];
 
-  // --- Handlers (Read, Update, Delete) ---
   const handleRead = async (id) => {
     try {
       const data = await userService.getUserById(id);
       setSelectedUser(data.data || data);
       setShowDetailModal(true);
     } catch (error) {
-      console.error("Error viewing details:", error);
+      toast.error("Could not fetch user details");
     }
   };
 
@@ -72,7 +88,9 @@ function AdminMenu() {
     setShowUpdateModal(true);
   };
 
-  const submitUpdate = async () => {
+  const submitUpdate = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
     try {
       const form = new FormData();
       form.append("name", formData.name);
@@ -83,309 +101,223 @@ function AdminMenu() {
 
       const targetId = selectedUser.userId || selectedUser.idUser || selectedUser.id;
       await userService.updateUser(targetId, form);
-      toast.success("Update successful!");
+      
+      toast.success("Profile updated successfully!");
       setShowUpdateModal(false);
-      window.location.reload();
+      
+      // Update local state without reload
+      setUsers(prev => prev.map(u => 
+        (u.userId || u.idUser || u.id) === targetId 
+        ? { ...u, ...formData, imageUrl: image ? URL.createObjectURL(image) : u.imageUrl } 
+        : u
+      ));
+      fetchUsers(); // Practical Refresh
     } catch (error) {
-      console.error("Update error:", error);
-      toast.error("Update failed!");
+      toast.error("Failed to update user");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  const handleDelete = async (user) => {
+    const id = user.userId || user.idUser || user.id;
+    if (!window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) return;
     try {
       await userService.deleteUser(id);
-      toast.success("Delete successful!");
-      setUsers(users.filter((u) => (u.userId || u.idUser || u.id) !== id));
+      toast.success("User deleted successfully");
+      setUsers(prev => prev.filter(u => (u.userId || u.idUser || u.id) !== id));
     } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("Delete failed!");
+      toast.error("Failed to delete user");
     }
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="admin-dashboard">
+      <header className="dashboard-header-simple">
+        <div className="header-text">
+          <h1>User Management</h1>
+          <p>Monitor and manage account permissions</p>
+        </div>
+        <button className="btn-primary-admin" onClick={() => navigate("/createUser")}>
+          <Plus size={18} /> Add New User
+        </button>
+      </header>
 
-      <div className="container mt-4">
-        {/* Module Header */}
-        <div className="dashboard-header rounded-3 px-4">
-          <div className="header-content">
-            <div>
-              <h2 className="page-title">User Management</h2>
-              <p className="text-muted mb-0" style={{ fontSize: '14px' }}>Manage your team and permissions here.</p>
+      <section className="stats-container">
+        {stats.map((stat, i) => (
+          <div key={i} className={`stat-card-admin ${stat.color}`}>
+            <div className="stat-icon-wrapper">{stat.icon}</div>
+            <div className="stat-data">
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
             </div>
-            <div className="header-actions">
-              <button
-                className="btn-history text-nowrap"
-                onClick={() => navigate("/admin/albums")}
-              >
-                <i className="bi bi-journal-album"></i> Album Management
-              </button>
-              <button
-                className="btn-history"
-                onClick={() => navigate("/admin/genres")}
-              >
-                <i className="bi bi-music-note-list"></i> Genre Management
-              </button>
-              <button
-                className="btn-history"
-                onClick={() => navigate("/history")}
-              >
-                <i className="bi bi-clock-history"></i> Log History
-              </button>
-              <button
-                className="btn-create"
-                onClick={() => navigate("/createUser")}
-              >
-                <i className="bi bi-plus-lg"></i> Create User
-              </button>
-            </div>
+          </div>
+        ))}
+      </section>
+
+      <div className="data-table-container">
+        <div className="table-header-admin">
+          <div className="search-box-admin">
+            <Search size={18} />
+            <input 
+              type="text" 
+              placeholder="Search by name or email..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon users">
-              <i className="bi bi-people-fill"></i>
-            </div>
-            <div className="stat-info">
-              <h3>Total Users</h3>
-              <p>{totalUsers}</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon active">
-              <i className="bi bi-person-check-fill"></i>
-            </div>
-            <div className="stat-info">
-              <h3>Active Now</h3>
-              <p>{activeUsers}</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon new">
-              <i className="bi bi-stars"></i>
-            </div>
-            <div className="stat-info">
-              <h3>New Today</h3>
-              <p>{newUsersToday}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content Card */}
-        <div className="main-card">
-          <div className="card-header">
-            <h5 className="mb-0 fw-bold">All Users</h5>
-            <div className="search-wrapper">
-              <i className="bi bi-search search-icon"></i>
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="table-responsive">
-            <table className="custom-table">
-              <thead>
-                <tr>
-                  <th style={{ paddingLeft: '32px' }}>User</th>
-                  <th>Role</th>
-                  <th>Contact</th>
-                  <th>Status</th>
-                  <th className="text-end" style={{ paddingRight: '32px' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.length > 0 ? filteredUsers.map((user, index) => (
-                  <tr key={index}>
-                    <td style={{ paddingLeft: '32px' }}>
-                      <div className="user-cell">
-                        {user.imageUrl ? (
-                          <img
-                            src={`${process.env.REACT_APP_API_BASE_URL}${user.imageUrl}`}
-                            alt={user.email}
-                            className="user-avatar"
-                          />
-                        ) : (
-                          <div className="user-avatar-placeholder">
-                            {user.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <div className="user-info">
-                          <span className="user-name">{user.name}</span>
-                        </div>
+        <div className="table-responsive-admin">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>User Details</th>
+                <th>Permissions</th>
+                <th>Status</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                {loading ? (
+                    <tr><td colSpan="4" className="text-center py-10"><Loader2 className="animate-spin inline mr-2" /> Loading records...</td></tr>
+                ) : filteredUsers.length > 0 ? filteredUsers.map((user, i) => (
+                <tr key={i}>
+                  <td>
+                    <div className="user-profile-cell">
+                      {user.imageUrl ? (
+                        <img 
+                          src={user.imageUrl.startsWith('blob') ? user.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${user.imageUrl}`} 
+                          alt="" 
+                          className="user-avatar-sm" 
+                        />
+                      ) : (
+                        <div className="user-avatar-placeholder-sm">{user.name.charAt(0)}</div>
+                      )}
+                      <div className="user-meta">
+                        <span className="user-name-cell">{user.name}</span>
+                        <span className="user-email-cell">{user.email}</span>
                       </div>
-                    </td>
-                    <td>
-                      {user.roles && user.roles.map(role => (
-                        <span key={role} className={`role-badge ${role === 'ADMIN' ? 'admin' : ''} me-1`}>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="roles-list">
+                      {user.roles?.map(role => (
+                        <span key={role} className={`role-tag ${role.toLowerCase()}`}>
                           {role}
                         </span>
                       ))}
-                    </td>
-                    <td className="text-muted">{user.email}</td>
-                    <td>
-                      <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
-                        <span className="status-dot"></span>
-                        {user.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="text-end" style={{ paddingRight: '32px' }}>
-                      <button
-                        className="action-btn btn-view"
-                        onClick={() => handleRead(user.userId || user.idUser || user.id)}
-                        title="View Details"
-                      >
-                        <i className="bi bi-eye-fill"></i>
-                      </button>
-                      <button
-                        className="action-btn btn-edit"
-                        onClick={() => handleUpdate(user)}
-                        title="Edit User"
-                      >
-                        <i className="bi bi-pencil-fill"></i>
-                      </button>
-                      <button
-                        className="action-btn btn-delete"
-                        onClick={() => handleDelete(user.userId || user.idUser || user.id)}
-                        title="Delete User"
-                      >
-                        <i className="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="5" className="text-center py-5 text-muted">
-                      No users found matching "{searchTerm}"
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          {/* Pagination Placeholder */}
-          <div className="p-3 border-top d-flex justify-content-between align-items-center">
-            <span className="text-muted small">Showing {filteredUsers.length} of {users.length} entries</span>
-            {/* Pagination logic will be added later */}
-          </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`status-tag ${user.isActive ? 'active' : 'inactive'}`}>
+                      {user.isActive ? 'Active' : 'Banned'}
+                    </span>
+                  </td>
+                  <td className="text-right">
+                    <div className="action-buttons-group">
+                      <button onClick={() => handleRead(user.userId || user.idUser || user.id)} className="btn-action-icon" title="View Details"><Eye size={16} /></button>
+                      <button onClick={() => handleUpdate(user)} className="btn-action-icon" title="Edit Permissions"><Edit2 size={16} /></button>
+                      <button onClick={() => handleDelete(user)} className="btn-action-icon delete" title="Remove Account"><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr><td colSpan="4" className="text-center py-10 text-slate-500">No users found matching your search.</td></tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* --- MODALS (Bootstrap Style) --- */}
-      {/* Detail Modal */}
+      {/* --- Modals --- */}
       {showDetailModal && selectedUser && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow-lg rounded-4">
-              <div className="modal-header border-bottom-0 pb-0">
-                <h5 className="modal-title fw-bold">User Details</h5>
-                <button className="btn-close" onClick={() => setShowDetailModal(false)}></button>
-              </div>
-              <div className="modal-body text-center pt-4">
-                {selectedUser.imageUrl ? (
-                  <img src={`${process.env.REACT_APP_API_BASE_URL}${selectedUser.imageUrl}`} className="rounded-circle mb-3 shadow-sm" width="100" height="100" style={{ objectFit: 'cover' }} alt="User" />
-                ) : (
-                  <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm" style={{ width: 100, height: 100, fontSize: 32 }}>
-                    {selectedUser.name.charAt(0)}
-                  </div>
-                )}
-                <h4 className="fw-bold">{selectedUser.name}</h4>
-                <p className="text-muted">{selectedUser.email}</p>
-
-                <div className="row mt-4 text-start bg-light p-3 rounded-3 mx-2">
-                  <div className="col-12 mb-2"><strong>Email:</strong> {selectedUser.email}</div>
-                  <div className="col-12 mb-2">
-                    <strong>Roles:</strong> {selectedUser.roles?.join(", ") || "None"}
-                  </div>
-                  <div className="col-12">
-                    <strong>Status:</strong> {selectedUser.isActive ? <span className="text-success fw-bold">Active</span> : <span className="text-danger fw-bold">Inactive</span>}
-                  </div>
+        <div className="admin-modal-overlay" onClick={() => setShowDetailModal(false)}>
+          <div className="admin-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header-admin">
+              <h3>Account Details</h3>
+            </div>
+            <div className="modal-body-admin center">
+                <div className="profile-hero">
+                    {selectedUser.imageUrl ? (
+                        <img src={`${process.env.REACT_APP_API_BASE_URL}${selectedUser.imageUrl}`} className="hero-avatar" alt="" />
+                    ) : (
+                        <div className="hero-avatar-placeholder">{selectedUser.name.charAt(0)}</div>
+                    )}
+                    <h2>{selectedUser.name}</h2>
+                    <p>{selectedUser.email}</p>
                 </div>
-              </div>
-              <div className="modal-footer border-top-0 justify-content-center pb-4">
-                <button className="btn btn-outline-secondary px-4 rounded-3" onClick={() => setShowDetailModal(false)}>Close</button>
-              </div>
+                <div className="detail-info-grid">
+                    <div className="info-item">
+                        <label>Member Since</label>
+                        <span>{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'N/A'}</span>
+                    </div>
+                    <div className="info-item">
+                        <label>Roles</label>
+                        <div className="roles-list center">
+                            {selectedUser.roles?.map(r => <span key={r} className="role-tag">{r}</span>)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="modal-footer-admin">
+                <button className="btn-secondary-admin" onClick={() => setShowDetailModal(false)}>Close</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Update Modal */}
       {showUpdateModal && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow-lg rounded-4">
-              <div className="modal-header">
-                <h5 className="modal-title fw-bold">Edit User</h5>
-                <button className="btn-close" onClick={() => setShowUpdateModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                <form>
-                  <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold text-uppercase">Full Name</label>
-                    <input
-                      className="form-control form-control-lg fs-6"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold text-uppercase">Email Address</label>
-                    <input
-                      className="form-control form-control-lg fs-6"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold text-uppercase">New Password</label>
-                    <input
-                      type="password"
-                      className="form-control form-control-lg fs-6"
-                      placeholder="Leave blank to keep current"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold text-uppercase">Avatar Update</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      onChange={(e) => setImage(e.target.files[0])}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold text-uppercase">Status</label>
-                    <select
-                      className="form-select form-select-lg fs-6"
-                      value={formData.isActive}
-                      onChange={(e) => setFormData({ ...formData, isActive: e.target.value === "true" })}
-                    >
-                      <option value={true}>Active</option>
-                      <option value={false}>Inactive</option>
-                    </select>
-                  </div>
-                </form>
-              </div>
-              <div className="modal-footer border-top-0">
-                <button className="btn btn-light text-muted fw-bold" onClick={() => setShowUpdateModal(false)}>Cancel</button>
-                <button className="btn btn-primary fw-bold px-4" onClick={submitUpdate}>Save Changes</button>
-              </div>
+        <div className="admin-modal-overlay" onClick={() => setShowUpdateModal(false)}>
+          <div className="admin-modal-content wide" onClick={e => e.stopPropagation()}>
+            <div className="modal-header-admin">
+              <h3>Edit Account - {selectedUser.name}</h3>
             </div>
+            <form onSubmit={submitUpdate}>
+                <div className="modal-body-admin">
+                    <div className="input-group-admin">
+                        <label>Full Name</label>
+                        <input 
+                            value={formData.name} 
+                            onChange={e => setFormData({...formData, name: e.target.value})}
+                        />
+                    </div>
+                    <div className="input-group-admin">
+                        <label>Email Address</label>
+                        <input 
+                            value={formData.email} 
+                            onChange={e => setFormData({...formData, email: e.target.value})}
+                        />
+                    </div>
+                    <div className="input-group-admin">
+                        <label>Password (Leave blank to keep current)</label>
+                        <input 
+                            type="password"
+                            value={formData.password} 
+                            onChange={e => setFormData({...formData, password: e.target.value})}
+                        />
+                    </div>
+                    <div className="input-group-admin">
+                        <label>Status</label>
+                        <select 
+                            value={formData.isActive}
+                            onChange={e => setFormData({...formData, isActive: e.target.value === "true"})}
+                        >
+                            <option value={true}>Active (Allowed Access)</option>
+                            <option value={false}>Suspended (Banned)</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="modal-footer-admin">
+                    <button type="button" className="btn-secondary-admin" onClick={() => setShowUpdateModal(false)}>Cancel</button>
+                    <button type="submit" className="btn-primary-admin" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : 'Save Changes'}
+                    </button>
+                </div>
+            </form>
           </div>
         </div>
       )}
-
-      {/* <Footer /> */}
     </div>
   );
 }
