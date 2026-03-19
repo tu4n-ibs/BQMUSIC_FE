@@ -65,7 +65,7 @@ const PostItem = ({
                                     <span className="username font-bold text-white hover:text-indigo-400 transition-colors">
                                         {post.groupName || 'Group'}
                                     </span>
-                                    <span className="text-[11px] text-slate-400 font-medium hover:text-white transition-colors"
+                                     <span className="text-[11px] text-slate-400 font-medium hover:text-white transition-colors"
                                         onClick={(e) => { e.stopPropagation(); onProfileClick(authorId); }}>
                                         {username}
                                     </span>
@@ -83,21 +83,21 @@ const PostItem = ({
                                     )}
                                 </>
                             )}
+                            {post.postType === 'SHARE' && (
+                                <div 
+                                    className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1 hover:text-indigo-400 transition-colors"
+                                    onClick={(e) => { e.stopPropagation(); onPostClick(post.idPostShare || post.id); }}
+                                >
+                                    <Share2 className="w-3 h-3" />
+                                    <span>Shared from </span>
+                                    <span className="font-bold text-indigo-400">{post.userNameShare || 'User'}</span>
+                                    <span>'s post</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {post.postType === 'SHARE' && (
-                    <div
-                        className="mt-2 ml-13 flex items-center gap-2 text-xs text-slate-400 hover:text-indigo-400 cursor-pointer transition-colors border-t border-white/5 pt-2 px-5"
-                        onClick={() => onPostClick(post.idPostShare || post.id)}
-                    >
-                        <Share2 className="w-3 h-3" />
-                        <span>Shared from </span>
-                        <span className="font-bold text-indigo-400">{post.userNameShare || 'User'}</span>
-                        <span>'s post</span>
-                    </div>
-                )}
             </div>
 
             <div className="post-media-container group cursor-pointer" onClick={() => onPostClick(id)}>

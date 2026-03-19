@@ -508,7 +508,7 @@ function Profile() {
             const displayedPosts = (activeTab === 'albums'
               ? userPosts.filter(p => p.postType === 'OWNER' && p.targetType === 'ALBUM')
               : userPosts.filter(p => p.postType === 'SHARE' || (p.postType === 'OWNER' && p.targetType !== 'ALBUM')))
-              .filter(p => isOwnProfile || p.visibility === 'PUBLIC');
+              .filter(p => isOwnProfile || p.visibility !== 'PRIVATE');
 
             return (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -674,7 +674,7 @@ function Profile() {
                 <div className="text-center py-20 opacity-50">Loading songs...</div>
               ) : userSongs.length > 0 ? (
                 <div className="flex flex-col gap-3">
-                      {userSongs.filter(song => isOwnProfile || song.visibility === 'PUBLIC').map((song, index) => (
+                      {userSongs.filter(song => isOwnProfile || song.visibility !== 'PRIVATE').map((song, index) => (
                         <div
                           key={song.id || index}
                           className="profile-song-row group"
