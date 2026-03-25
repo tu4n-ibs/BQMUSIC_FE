@@ -95,14 +95,11 @@ const AlbumManagement = () => {
         setIsSubmitting(true);
         try {
             const formData = new FormData();
-            const albumDto = {
-                name: form.name,
-                description: form.description
-            };
+            formData.append('name', form.name);
+            formData.append('description', form.description);
 
-            formData.append('album', new Blob([JSON.stringify(albumDto)], { type: "application/json" }));
             if (form.imageFile) {
-                formData.append('image', form.imageFile);
+                formData.append('file', form.imageFile);
             }
 
             if (editingAlbum) {
