@@ -59,8 +59,8 @@ const AlbumDetail = () => {
 
             setAlbum({
                 name: payload.name,
-                description: payload.description,
-                imageUrl: payload.albumImageUrl || payload.imageUrl,
+                description: payload.description || payload.albumDescription || '',
+                imageUrl: payload.albumImageUrl || payload.imageUrl || payload.album_image_url,
                 username: payload.username || payload.nameUser,
                 nameUser: payload.nameUser || payload.username,
                 userId: payload.userId || payload.userIdUser, // handle potential variations
@@ -199,7 +199,7 @@ const AlbumDetail = () => {
         );
     }
 
-    const albumRawImage = album.albumImageUrl || album.imageUrl;
+    const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
     const albumCover = albumRawImage
         ? (albumRawImage.startsWith('http') ? albumRawImage : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`)
         : null;

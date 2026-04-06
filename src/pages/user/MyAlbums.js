@@ -59,9 +59,12 @@ const MyAlbums = () => {
         if (album) {
             setEditingAlbum(album);
             const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
-            const albumCover = albumRawImage
-                ? (albumRawImage.startsWith('http') ? albumRawImage : (albumRawImage.startsWith('/') ? `${process.env.REACT_APP_API_BASE_URL}${albumRawImage}` : `${process.env.REACT_APP_API_BASE_URL}/${albumRawImage}`))
-                : null;
+            let albumCover = null;
+            if (albumRawImage) {
+                albumCover = albumRawImage.startsWith('http') 
+                    ? albumRawImage 
+                    : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`;
+            }
             setForm({
                 name: album.name,
                 description: album.description || '',
@@ -105,26 +108,22 @@ const MyAlbums = () => {
 
         setIsSubmitting(true);
         try {
-            // Build JSON payload for create/update
-            const albumPayload = {
-                name: form.name.trim(),
-                description: form.description.trim(),
-                imageUrl: form.imagePreview || '' // keep existing preview URL as fallback
-            };
+            const formData = new FormData();
+            formData.append('name', form.name.trim());
+            formData.append('description', form.description.trim());
+
+            if (form.imageFile) {
+                formData.append('file', form.imageFile);
+            }
 
             let albumId = editingAlbum?.id;
 
             if (editingAlbum) {
-                await albumService.updateAlbum(albumId, albumPayload);
+                await albumService.updateAlbum(albumId, formData);
             } else {
-                const result = await albumService.createAlbum(albumPayload);
-                // Backend returns the new album – try common ID field names
-                albumId = result?.data?.id || result?.id;
-            }
-
-            // If user picked a new image file, upload it separately
-            if (form.imageFile && albumId) {
-                await albumService.uploadAlbumImage(albumId, form.imageFile);
+                const result = await albumService.createAlbum(formData);
+                // Extra robust ID extraction
+                albumId = result?.data?.id || (typeof result?.data === 'number' || typeof result?.data === 'string' ? result.data : result?.id);
             }
 
             setIsModalOpen(false);

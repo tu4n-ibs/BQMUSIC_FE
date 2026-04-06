@@ -231,11 +231,11 @@ const Playlists = () => {
                                 <div className="text-center py-20 opacity-40">Fetching songs...</div>
                             ) : songs.length > 0 ? (
                                 <div className="songs-table">
-                                    <div className="playlist-songs-header px-4 py-2 border-b border-white/5 text-[10px] uppercase font-bold tracking-wider opacity-40">
+                                    <div className="playlist-songs-header grid px-4 py-2 border-b border-white/5 text-[10px] uppercase font-bold tracking-wider opacity-40">
                                         <span>#</span>
                                         <span>Title</span>
-                                        <span className="hidden md:inline">Artist</span>
-                                        <span className="hidden md:inline">Album / Group</span>
+                                        <span className="hidden md:block">Artist</span>
+                                        <span className="hidden md:block">Album / Group</span>
                                     </div>
                                     <div className="songs-body py-2">
                                         {songs.map((song, index) => (

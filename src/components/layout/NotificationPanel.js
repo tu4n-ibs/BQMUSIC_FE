@@ -218,14 +218,14 @@ const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
                                 {suggestions.slice(0, 5).map(user => (
                                     <div key={user.id} className="notification-item">
                                         <div className="user-avatar-wrapper">
-                                            <img src={getUserAvatar(user.imageUrl)} alt={user.name} className="user-avatar" />
+                                            <img src={user.avatar} alt={user.username} className="user-avatar" />
                                         </div>
                                         <div className="notification-info">
                                             <div>
-                                                <span className="user-name">{user.username || user.email?.split('@')[0]}</span>
-                                                <span className="notification-text text-xs">{user.name}</span>
+                                                <span className="user-name">{user.username}</span>
+                                                <span className="notification-text text-xs">{user.mutual || 'Suggested for you'}</span>
                                             </div>
-                                            <span className="notification-time opacity-70">Suggested for you</span>
+                                            <span className="notification-time opacity-70">New to the platform</span>
                                         </div>
                                         <div className="notification-action">
                                             <button
