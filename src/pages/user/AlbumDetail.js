@@ -58,10 +58,10 @@ const AlbumDetail = () => {
             const payload = response.data?.data || response.data || response;
 
             setAlbum({
-                name: payload.name,
-                description: payload.description || payload.albumDescription || '',
+                name: payload.albumName || payload.name || "Untitled Album",
+                description: payload.albumDescription || payload.description || '',
                 imageUrl: payload.albumImageUrl || payload.imageUrl || payload.album_image_url,
-                username: payload.username || payload.nameUser,
+                username: payload.nameUser || payload.username || "Artist",
                 nameUser: payload.nameUser || payload.username,
                 userId: payload.userId || payload.userIdUser, // handle potential variations
                 createdAt: payload.createdAt

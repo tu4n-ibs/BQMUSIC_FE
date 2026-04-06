@@ -66,8 +66,8 @@ const MyAlbums = () => {
                     : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`;
             }
             setForm({
-                name: album.name,
-                description: album.description || '',
+                name: album.albumName || album.name,
+                description: album.albumDescription || album.description || '',
                 imageFile: null,
                 imagePreview: albumCover
             });
@@ -109,8 +109,8 @@ const MyAlbums = () => {
         setIsSubmitting(true);
         try {
             const formData = new FormData();
-            formData.append('name', form.name.trim());
-            formData.append('description', form.description.trim());
+            formData.append('albumName', form.name.trim());
+            formData.append('albumDescription', form.description.trim());
 
             if (form.imageFile) {
                 formData.append('file', form.imageFile);
