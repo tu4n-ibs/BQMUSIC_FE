@@ -38,15 +38,17 @@ const SongManagement = () => {
         setLoading(true);
         setError("");
         try {
-            const response = await songService.getAdminSongs(pageNum, pageSize);
-            if (response && response.success) {
-                const data = response.data;
+            const res = await songService.getAdminSongs(pageNum, pageSize);
+            const apiResponse = res.data || res;
+            
+            if (apiResponse && (apiResponse.success || apiResponse.code === 200 || res.status === 200)) {
+                const data = apiResponse.data || {};
                 setSongs(data.content || []);
                 setTotalPages(data.totalPages || 0);
                 setTotalElements(data.totalElements || 0);
                 setPage(data.number || 0);
             } else {
-                setError(response.message || "Failed to fetch songs.");
+                setError(apiResponse.message || "Failed to fetch songs.");
             }
         } catch (err) {
             setError(getErrorMessage(err));
@@ -80,14 +82,15 @@ const SongManagement = () => {
         setLoading(true);
         setError("");
         try {
-            const response = await songService.deleteSong(songToDelete.id);
-            if (response && (response.success || response.status === 200)) {
+            const res = await songService.deleteSong(songToDelete.id);
+            const apiResponse = res.data || res;
+            if (apiResponse && (apiResponse.success || apiResponse.code === 200 || res.status === 200)) {
                 setSuccessMessage(`Song "${songToDelete.nameSong}" deleted successfully!`);
                 setSongs(prev => prev.filter(s => s.id !== songToDelete.id));
                 setTotalElements(prev => prev - 1);
                 setTimeout(() => setSuccessMessage(""), 3000);
             } else {
-                setError(response?.message || "Failed to delete song.");
+                setError(apiResponse?.message || "Failed to delete song.");
             }
         } catch (err) {
             setError(getErrorMessage(err));

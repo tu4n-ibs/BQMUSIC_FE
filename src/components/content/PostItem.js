@@ -49,7 +49,8 @@ const PostItem = ({
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const isSongOwner = post.songUserId === currentUser?.id;
-    const canDeleteSong = isSongOwner || isGroupAdmin;
+    const isPostOwner = (post.authorId || post.idUser) === currentUser?.id;
+    const canDeleteSong = !post.groupId && (isSongOwner || isPostOwner);
 
     return (
         <article className="post-article animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -107,19 +108,12 @@ const PostItem = ({
                     </div>
 
                     <div className="relative">
-                        <button 
-                            className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white"
-                            onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                        >
-                            <MoreHorizontal className="w-5 h-5" />
-                        </button>
-
                         {showMenu && (
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)}></div>
                                 <div className="absolute right-0 mt-2 w-48 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 py-2 overflow-hidden animate-in fade-in zoom-in duration-200">
                                     {idSong && (
-                                        <button 
+                                        <button
                                             className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider text-left"
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -132,7 +126,7 @@ const PostItem = ({
                                         </button>
                                     )}
                                     {canDeleteSong && idSong && (
-                                        <button 
+                                        <button
                                             className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:text-white hover:bg-rose-500/20 transition-all uppercase tracking-wider text-left"
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -144,7 +138,7 @@ const PostItem = ({
                                             Delete Song
                                         </button>
                                     )}
-                                    <button 
+                                    <button
                                         className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider text-left"
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -234,7 +228,7 @@ const PostItem = ({
                 )}
             </div>
 
-            <ConfirmModal 
+            <ConfirmModal
                 isOpen={isDeleteConfirmOpen}
                 onClose={() => setIsDeleteConfirmOpen(false)}
                 onConfirm={async () => {
