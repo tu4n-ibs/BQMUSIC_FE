@@ -715,7 +715,7 @@ function Profile() {
                 <SectionLoader message="Loading songs..." />
               ) : userSongs.length > 0 ? (
                 <div className="flex flex-col gap-3">
-                  {userSongs.filter(song => isOwnProfile || song.visibility !== 'PRIVATE').map((song, index) => (
+                  {userSongs.filter(song => (isOwnProfile || song.visibility !== 'PRIVATE') && (song.status === 'PUBLISHED' || song.status === 'published')).map((song, index) => (
                     <div
                       key={song.id || index}
                       className="profile-song-row group"

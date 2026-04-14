@@ -195,7 +195,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId, initialTarge
   const saveDraft = (songInfo) => {
     const newDraft = {
       ...songInfo,
-      id: Date.now(), // Local ID for UI management
+      localId: Date.now(), // Local identifier for UI management, don't overwrite server 'id'
       savedAt: new Date().toISOString()
     };
     const updatedDrafts = [newDraft, ...drafts];
@@ -203,9 +203,9 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId, initialTarge
     localStorage.setItem(DRAFTS_KEY, JSON.stringify(updatedDrafts));
   };
 
-  const removeDraft = (e, draftId) => {
+  const removeDraft = (e, localId) => {
     e.stopPropagation();
-    const updatedDrafts = drafts.filter(d => d.id !== draftId);
+    const updatedDrafts = drafts.filter(d => d.localId !== localId);
     setDrafts(updatedDrafts);
     localStorage.setItem(DRAFTS_KEY, JSON.stringify(updatedDrafts));
   };
@@ -345,7 +345,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId, initialTarge
               <div className="flex flex-col gap-2">
                 {drafts.map((draft) => (
                   <div
-                    key={draft.id}
+                    key={draft.localId}
                     onClick={() => selectDraft(draft)}
                     className="flex items-center justify-between p-3 rounded-lg bg-black/5 hover:bg-black/10 cursor-pointer transition border border-transparent hover:border-blue-300"
                   >
@@ -359,7 +359,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated, groupId, initialTarge
                       </div>
                     </div>
                     <button
-                      onClick={(e) => removeDraft(e, draft.id)}
+                      onClick={(e) => removeDraft(e, draft.localId)}
                       className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition"
                     >
                       <Trash2 className="w-4 h-4" />
