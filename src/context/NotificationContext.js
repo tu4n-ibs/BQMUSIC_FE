@@ -100,6 +100,7 @@ export const NotificationProvider = ({ children }) => {
     return (
         <NotificationContext.Provider value={{
             notifications,
+            setNotifications,
             unreadCount,
             markAsRead,
             markAllAsRead,

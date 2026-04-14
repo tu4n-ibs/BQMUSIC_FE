@@ -10,7 +10,7 @@ import { getUserAvatar } from '../../utils/userUtils';
 
 const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
     const navigate = useNavigate();
-    const { notifications, markAsRead, markAllAsRead, refreshNotifications } = useNotification();
+    const { notifications, setNotifications, markAsRead, markAllAsRead, refreshNotifications } = useNotification();
     const { suggestions, handleFollow } = useSuggestions();
 
     const handleClose = (e) => {
@@ -80,17 +80,34 @@ const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
             return;
         }
 
+        const isCurrentlyFollowed = notif.isFollowed || notif.following || false;
+
+        // Optimistic UI Update
+        if (setNotifications) {
+            setNotifications(prev => prev.map(n => 
+                n.id === notif.id ? { ...n, isFollowed: !isCurrentlyFollowed, following: !isCurrentlyFollowed } : n
+            ));
+        }
+
         try {
-            if (notif.isFollowed) {
+            if (isCurrentlyFollowed) {
                 await userService.unfollowUser(actorId);
             } else {
                 await userService.followUser(actorId);
             }
             
-            // Trigger a refresh of notifications to sync UI state
+            // Background refresh to ensure consistency
             if (refreshNotifications) refreshNotifications();
         } catch (error) {
             console.error("Error toggling follow status:", error);
+            
+            // Revert on error
+            if (setNotifications) {
+                setNotifications(prev => prev.map(n => 
+                    n.id === notif.id ? { ...n, isFollowed: isCurrentlyFollowed, following: isCurrentlyFollowed } : n
+                ));
+            }
+            
             const msg = error.response?.data?.message || "Failed to update follow status";
             toast.error(msg);
         }
@@ -167,9 +184,9 @@ const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
                                             e.stopPropagation();
                                             handleToggleFollowNotification(notif);
                                         }}
-                                        className={`btn-follow-action ${notif.isFollowed ? 'following' : ''}`}
+                                        className={`btn-follow-action ${(notif.isFollowed || notif.following) ? 'following' : ''}`}
                                     >
-                                        {notif.isFollowed ? 'Following' : 'Follow'}
+                                        {(notif.isFollowed || notif.following) ? 'Following' : 'Follow'}
                                     </button>
                                 ) : (
                                     !notif.isRead && <div className="unread-dot"></div>

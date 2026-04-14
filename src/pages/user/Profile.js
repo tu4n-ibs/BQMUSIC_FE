@@ -89,46 +89,47 @@ function Profile() {
     const fetchUser = async () => {
       try {
         const response = await userService.getUserById(targetId);
-        const userData = response.data || response;
-        setUser(userData);
+        const actualData = userData.data || userData;
+        setUser(actualData);
 
-        const realId = userData.userId || userData.idUser || userData.id;
+        const realId = actualData.userId || actualData.idUser || actualData.id;
         const isOwn = String(realId) === String(storedIdUser) ||
           String(targetId) === String(storedIdUser) ||
-          userData.email === localStorage.getItem("email");
+          actualData.email === localStorage.getItem("email");
 
         setIsOwnProfile(isOwn);
 
         if (realId && isOwn) {
           updateUser({
             idUser: realId,
-            name: userData.name,
-            imageUrl: userData.imageUrl
+            name: actualData.name,
+            imageUrl: actualData.imageUrl
           });
           localStorage.setItem("idUser", realId);
-          if (userData.name) localStorage.setItem("name", userData.name);
-          if (userData.imageUrl) localStorage.setItem("imageUrl", userData.imageUrl);
+          if (actualData.name) localStorage.setItem("name", actualData.name);
+          if (actualData.imageUrl) localStorage.setItem("imageUrl", actualData.imageUrl);
         }
 
 
-        // Recognition for isFollowed or isFollowing
-        setIsFollowing(userData.isFollowed || userData.isFollowing || false);
+        // Recognition for following status (support multiple names just in case)
+        setIsFollowing(actualData.following || actualData.isFollowed || actualData.isFollowing || false);
 
         // Fetch user stats
         try {
           const statsResponse = await userService.getUserStats(realId || targetId);
           const rawStats = statsResponse.data || statsResponse;
+          const statsContent = rawStats.data || rawStats;
           setStats({
-            postCount: rawStats.postCount || 0,
-            albumCount: rawStats.albumCount || 0,
-            followerCount: rawStats.followerCount || 0,
-            followingCount: rawStats.followingCount || 0
+            postCount: statsContent.postCount || 0,
+            albumCount: statsContent.albumCount || 0,
+            followerCount: statsContent.followerCount || 0,
+            followingCount: statsContent.followingCount || 0
           });
 
            if (!isOwn) {
-            const hasFollowStatus = rawStats.hasOwnProperty('isFollowing') || rawStats.hasOwnProperty('isFollowed');
+            const hasFollowStatus = statsContent.hasOwnProperty('following') || statsContent.hasOwnProperty('isFollowing') || statsContent.hasOwnProperty('isFollowed');
             if (hasFollowStatus) {
-              setIsFollowing(rawStats.isFollowing || rawStats.isFollowed);
+              setIsFollowing(statsContent.following || statsContent.isFollowing || statsContent.isFollowed || false);
             }
           }
         } catch (statsErr) {

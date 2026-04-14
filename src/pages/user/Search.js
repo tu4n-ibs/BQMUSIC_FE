@@ -166,7 +166,6 @@ const Search = () => {
                 <div className="search-wrapper">
                     <header className="search-header">
                         <div className="search-bar-container">
-                            <SearchIcon className={`search-icon ${loading ? 'animate-pulse text-indigo-500' : 'text-indigo-400'}`} strokeWidth={2.5} size={22} />
                             <input
                                 type="text"
                                 className="search-input"

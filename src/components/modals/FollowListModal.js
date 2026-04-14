@@ -110,7 +110,6 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
 
                 <div className="follow-modal-search">
                     <div className="search-input-wrapper">
-                        <Search className="search-icon" strokeWidth={2.5} size={20} />
                         <input
                             type="text"
                             placeholder="Search names..."
