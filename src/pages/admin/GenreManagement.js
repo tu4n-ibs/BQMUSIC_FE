@@ -11,6 +11,7 @@ import {
     AlertCircle,
     X
 } from 'lucide-react';
+import SectionLoader from '../../components/common/SectionLoader';
 import genreService from "../../services/genreService";
 import { getErrorMessage } from "../../utils/errorUtils";
 import ConfirmModal from "../../components/common/ConfirmModal";
@@ -201,7 +202,7 @@ function GenreManagement() {
                             {loading && genres.length === 0 ? (
                                 <tr>
                                     <td colSpan="4" className="text-center py-10">
-                                        <Loader2 className="animate-spin inline mr-2" /> Loading genres...
+                                        <SectionLoader message="Loading genres..." />
                                     </td>
                                 </tr>
                             ) : genres.length > 0 ? (

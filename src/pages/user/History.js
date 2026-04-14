@@ -6,6 +6,8 @@ import songService from '../../services/songService';
 import { usePlayer } from '../../context/PlayerContext';
 import { formatDate } from '../../utils/dateUtils';
 import { toast } from 'react-hot-toast';
+import PageLoader from '../../components/common/PageLoader';
+import SectionLoader from '../../components/common/SectionLoader';
 import './css/History.css';
 
 const History = () => {
@@ -96,7 +98,7 @@ const History = () => {
                 <div className="history-wrapper">
                     <header className="history-header">
                         <h1 className="history-title">Listening History</h1>
-                        <p className="history-subtitle">Keep track of everything you've listened to.</p>
+                        {loading && history.length === 0 ? <PageLoader message="Loading history..." /> : <p className="history-subtitle">Keep track of everything you've listened to.</p>}
                     </header>
 
                     <div className="history-content">
@@ -149,8 +151,7 @@ const History = () => {
                             </div>
                         ) : loading ? (
                             <div className="history-loading">
-                                <Clock className="w-12 h-12 animate-pulse mb-4 text-indigo-500/20" />
-                                <p>Loading your history...</p>
+                                <SectionLoader message="Loading your history..." />
                             </div>
                         ) : (
                             <div className="history-empty">

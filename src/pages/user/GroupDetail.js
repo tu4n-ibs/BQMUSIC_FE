@@ -20,6 +20,7 @@ import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import { usePlayer } from '../../context/PlayerContext';
 import { getUserAvatar } from '../../utils/userUtils';
 import { formatDate } from '../../utils/dateUtils';
+import PageLoader from '../../components/common/PageLoader';
 import './css/Groups.css';
 
 const GroupDetail = () => {
@@ -185,7 +186,7 @@ const GroupDetail = () => {
         setIsLoadingPending(true);
         try {
             const response = await postService.getPendingPostsByGroup(groupId);
-            setPendingPosts(response.content || []);
+            setPendingPosts(response || []);
         } catch (error) {
             console.error("Error fetching pending posts:", error);
         } finally {
@@ -354,7 +355,7 @@ const GroupDetail = () => {
         });
     };
 
-    if (loading) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Loading group...</div>;
+    if (loading) return <PageLoader message="Loading group..." />;
     if (!group) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Group not found</div>;
 
     return (

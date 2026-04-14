@@ -139,7 +139,7 @@ const groupService = {
     getJoinRequests: async (groupId) => {
         try {
             const response = await axiosClient.get(`/groups/${groupId}/join-requests/pending`);
-            return response.data.data || [];
+            return response.data.data.content || [];
         } catch (error) {
             console.error("Error fetching join requests:", error);
             throw error;

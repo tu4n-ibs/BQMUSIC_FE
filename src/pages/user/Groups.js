@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
-import { Plus, Users, ArrowRight, TrendingUp, Star } from 'lucide-react';
+import PageLoader from '../../components/common/PageLoader';
+import { Plus, Users, ArrowRight, Star } from 'lucide-react';
 import groupService from '../../services/groupService';
 import CreateGroupModal from '../../components/modals/CreateGroupModal';
 import { useAuth } from '../../context/AuthContext';
@@ -100,10 +101,7 @@ const Groups = () => {
                     {/* Groups Grid */}
                     <section className="groups-section">
                         {loading ? (
-                            <div className="py-20 text-center flex flex-col items-center gap-4 opacity-50">
-                                <TrendingUp className="w-8 h-8 animate-spin text-indigo-500" />
-                                <p className="font-bold">Syncing groups...</p>
-                            </div>
+                            <PageLoader message="Loading groups..." />
                         ) : displayedGroups.length === 0 ? (
                             <div className="py-20 text-center flex flex-col items-center justify-center border border-white/5 rounded-3xl bg-white/[0.02] backdrop-blur-xl">
                                 <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mb-6">

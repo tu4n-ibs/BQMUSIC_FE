@@ -18,27 +18,27 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
 
     const fetchUsers = useCallback(async (reset = false) => {
         if (!userId || !isOpen) return;
-        
+
         try {
             if (reset) {
                 setLoading(true);
                 setPage(0);
             }
-            
+
             const currentPage = reset ? 0 : page;
-            const response = type === 'followers' 
+            const response = type === 'followers'
                 ? await userService.getFollowers(userId, searchQuery, currentPage, 15)
                 : await userService.getFollowing(userId, searchQuery, currentPage, 15);
-            
+
             const data = response.data || response;
             const newUsers = data.content || [];
-            
+
             if (reset) {
                 setUsers(newUsers);
             } else {
                 setUsers(prev => [...prev, ...newUsers]);
             }
-            
+
             setHasMore(!data.last);
             setLoading(false);
             setIsSearching(false);
@@ -63,7 +63,7 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
     // Handle search with debounce
     useEffect(() => {
         if (!isOpen) return;
-        
+
         const timer = setTimeout(() => {
             if (isOpen) {
                 setIsSearching(true);
@@ -92,7 +92,7 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
     }, [page]);
 
     const handleUserClick = (targetUserId) => {
-        navigate(`/profile/userId=${targetUserId}`);
+        navigate(`/user/userId=${targetUserId}`);
         onClose();
     };
 
@@ -111,9 +111,9 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
                 <div className="follow-modal-search">
                     <div className="search-input-wrapper">
                         <Search className="search-icon" />
-                        <input 
-                            type="text" 
-                            placeholder="Search names..." 
+                        <input
+                            type="text"
+                            placeholder="Search names..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -125,15 +125,15 @@ const FollowListModal = ({ isOpen, onClose, userId, type, title }) => {
                     {users.length > 0 ? (
                         <div className="user-list">
                             {users.map((user, index) => (
-                                <div 
-                                    key={user.userId || user.id || index} 
+                                <div
+                                    key={user.userId || user.id || index}
                                     className="user-item"
                                     ref={index === users.length - 1 ? lastUserElementRef : null}
                                     onClick={() => handleUserClick(user.userId || user.id)}
                                 >
-                                    <img 
-                                        src={getUserAvatar(user.imageUrl)} 
-                                        alt={user.name} 
+                                    <img
+                                        src={getUserAvatar(user.imageUrl)}
+                                        alt={user.name}
                                         className="user-avatar"
                                     />
                                     <div className="user-info">

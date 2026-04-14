@@ -9,6 +9,8 @@ import {
     Loader2,
     RefreshCw
 } from 'lucide-react';
+import PageLoader from '../../components/common/PageLoader';
+import SectionLoader from '../../components/common/SectionLoader';
 import userService from "../../services/userService";
 import { toast } from "react-hot-toast";
 import "./css/AdminDashboard.css";
@@ -79,6 +81,8 @@ function AdminMenu() {
     }
   };
 
+  if (loading) return <PageLoader message="Loading dashboard..." />;
+
   return (
     <div className="admin-dashboard">
       <header className="dashboard-header-simple">
@@ -127,7 +131,7 @@ function AdminMenu() {
             </thead>
             <tbody>
                 {loading && users.length === 0 ? (
-                    <tr><td colSpan="3" className="text-center py-10"><Loader2 className="animate-spin inline mr-2" /> Loading accounts...</td></tr>
+                    <tr><td colSpan="3" className="text-center py-10"><SectionLoader message="Loading accounts..." /></td></tr>
                 ) : filteredUsers.length > 0 ? filteredUsers.map((user, i) => {
                   const targetId = user.id || user.userId || user.idUser;
                   const isActive = user.isActive ?? user.is_active;

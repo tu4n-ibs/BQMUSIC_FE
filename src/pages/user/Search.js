@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search as SearchIcon, X, Clock, User, Music, Disc, ChevronRight, MoreHorizontal, ListMusic, Loader2 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
+import SectionLoader from '../../components/common/SectionLoader';
 import postService from '../../services/postService';
 import songService from '../../services/songService';
 import { usePlayer } from '../../context/PlayerContext';
@@ -180,6 +181,10 @@ const Search = () => {
                                 </button>
                             )}
                         </div>
+
+                        {loading && (
+                            <SectionLoader message="Searching..." />
+                        )}
 
                         <div className="search-tabs">
                             {['songs', 'albums', 'users', 'groups'].map((tab) => (

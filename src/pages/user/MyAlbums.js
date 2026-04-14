@@ -8,6 +8,7 @@ import {
     Loader2
 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
+import PageLoader from '../../components/common/PageLoader';
 import '../admin/css/GenreManagement.css';
 import { toast } from 'react-hot-toast';
 import './css/MyAlbums.css';
@@ -198,10 +199,7 @@ const MyAlbums = () => {
 
                     <div className="mt-8">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <Loader2 className="w-10 h-10 animate-spin text-indigo-500 mb-4" />
-                                <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Curating your collection...</p>
-                            </div>
+                            <PageLoader message="Loading albums..." />
                         ) : albums.length > 0 ? (
                             <div className="album-grid">
                                 {albums.map((album) => (

@@ -6,6 +6,7 @@ import PostDetailModal from '../../components/modals/PostDetailModal';
 import AddToPlaylistModal from '../../components/modals/AddToPlaylistModal';
 import Sidebar from '../../components/layout/Sidebar';
 import RightSidebar from '../../components/layout/RightSidebar';
+import PageLoader from '../../components/common/PageLoader';
 import { useAuth } from '../../context/AuthContext';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { usePlayer } from '../../context/PlayerContext';
@@ -22,6 +23,7 @@ function NewFeed() {
   const navigate = useNavigate();
   const { postId } = useParams();
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { suggestions, handleFollow } = useSuggestions();
   const { playTrack, currentTrack, isPlaying } = usePlayer();
 
@@ -63,6 +65,7 @@ function NewFeed() {
   // --- 2. Fetch Posts ---
   const fetchPosts = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await postService.getNewFeedPosts(0, 20);
       const data = response.data;
 
@@ -117,6 +120,8 @@ function NewFeed() {
     } catch (error) {
       console.error("Error loading posts from API:", error);
       setPosts([]); // Clear posts on error
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -284,6 +289,8 @@ function NewFeed() {
       navigate(`/user/${authorId}`);
     }
   };
+
+  if (loading) return <PageLoader message="Loading feed..." />;
 
   return (
     <div className="flex min-h-screen feed-container">

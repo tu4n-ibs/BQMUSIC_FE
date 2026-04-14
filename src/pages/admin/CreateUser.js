@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import PageLoader from "../../components/common/PageLoader";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/Block.css"; // Reuse modern styles
@@ -77,6 +78,8 @@ function CreateUser() {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) return <PageLoader message="Creating user..." />;
 
   return (
     <div className="dashboard-container">

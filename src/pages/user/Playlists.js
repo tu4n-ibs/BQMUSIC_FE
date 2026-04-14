@@ -5,6 +5,8 @@ import playlistService from '../../services/playlistService';
 import songService from '../../services/songService';
 import { toast } from 'react-hot-toast';
 import { usePlayer } from '../../context/PlayerContext';
+import PageLoader from '../../components/common/PageLoader';
+import SectionLoader from '../../components/common/SectionLoader';
 import './css/Playlists.css';
 
 const Playlists = () => {
@@ -145,7 +147,9 @@ const Playlists = () => {
 
                 <div className="playlists-grid">
                     {loading && playlists.length === 0 ? (
-                        <div className="col-span-full py-20 text-center opacity-50">Loading your music...</div>
+                        <div className="col-span-full py-10">
+                            <SectionLoader message="Loading your music..." />
+                        </div>
                     ) : filteredPlaylists.length > 0 ? (
                         filteredPlaylists.map(playlist => (
                             <div

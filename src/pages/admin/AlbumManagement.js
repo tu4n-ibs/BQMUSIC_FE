@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import PageLoader from '../../components/common/PageLoader';
 import './css/GenreManagement.css';
 
 const AlbumManagement = () => {
@@ -172,6 +173,8 @@ const AlbumManagement = () => {
         }
     };
 
+    if (loading) return <PageLoader message="Loading albums..." />;
+
     return (
         <div className="dashboard-container">
             <div className="container mt-4">
@@ -206,9 +209,7 @@ const AlbumManagement = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {loading ? (
-                                    <tr><td colSpan="4" className="text-center py-5">Loading albums...</td></tr>
-                                ) : albums.length > 0 ? albums.map((album) => (
+                                {albums.length > 0 ? albums.map((album) => (
                                     <tr key={album.id}>
                                         <td style={{ paddingLeft: '32px' }}>
                                             <div className="user-cell">

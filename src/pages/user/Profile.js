@@ -10,6 +10,8 @@ import AddToPlaylistModal from "../../components/modals/AddToPlaylistModal";
 import PostDetailModal from '../../components/modals/PostDetailModal';
 import SharePostModal from '../../components/modals/SharePostModal';
 import FollowListModal from '../../components/modals/FollowListModal';
+import PageLoader from '../../components/common/PageLoader';
+import SectionLoader from '../../components/common/SectionLoader';
 import "./css/Profile.css";
 import { getUserAvatar } from "../../utils/userUtils";
 import { useAuth } from "../../context/AuthContext";
@@ -381,7 +383,7 @@ function Profile() {
     }
   };
 
-  if (loading) return <div className="bg-black min-h-screen text-white flex items-center justify-center">Loading...</div>;
+  if (loading) return <PageLoader message="Loading profile..." />;
   if (!user) return <div className="bg-black min-h-screen text-white flex items-center justify-center">User not found</div>;
 
   return (
@@ -527,7 +529,7 @@ function Profile() {
             return (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {postsLoading ? (
-                  <div className="text-center py-20 opacity-50">Loading posts...</div>
+                  <SectionLoader message="Loading posts..." />
                 ) : displayedPosts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {displayedPosts.map(post => (
@@ -685,7 +687,7 @@ function Profile() {
           {activeTab === 'songs' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {songsLoading ? (
-                <div className="text-center py-20 opacity-50">Loading songs...</div>
+                <SectionLoader message="Loading songs..." />
               ) : userSongs.length > 0 ? (
                 <div className="flex flex-col gap-3">
                       {userSongs.filter(song => isOwnProfile || song.visibility !== 'PRIVATE').map((song, index) => (

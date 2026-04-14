@@ -87,9 +87,11 @@ const postService = {
     /**
      * Get pending posts for a group (Admin only)
      */
-    getPendingPostsByGroup: async (groupId, page = 0, size = 10) => {
-        const response = await axiosClient.get(`/posts/group/${groupId}/pending?page=${page}&size=${size}`);
-        return response.data.data; // This is the Page object
+    getPendingPostsByGroup: async (groupId, query = '', page = 0, size = 10) => {
+        const response = await axiosClient.get(`/posts/group/${groupId}/pending`, {
+            params: { query, page, size }
+        });
+        return response.data.data.content || [];
     },
 
     /**

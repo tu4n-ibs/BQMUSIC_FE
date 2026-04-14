@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast';
 import CreatePostModal from '../../components/modals/CreatePostModal';
 import { getUserAvatar } from '../../utils/userUtils';
 import { formatDate } from '../../utils/dateUtils';
+import PageLoader from '../../components/common/PageLoader';
 import './css/AlbumDetail.css';
 
 const AlbumDetail = () => {
@@ -169,17 +170,7 @@ const AlbumDetail = () => {
     const isOwner = user?.idUser === album?.userId;
 
     if (loading) {
-        return (
-            <div className="flex min-h-screen bg-slate-950 text-white">
-                <Sidebar />
-                <div className="flex-1 lg:ml-[240px] md:ml-[80px] ml-0 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="w-12 h-12 animate-spin text-indigo-500" />
-                        <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Opening the vault...</p>
-                    </div>
-                </div>
-            </div>
-        );
+        return <PageLoader message="Loading album..." />;
     }
 
     if (error || !album) {

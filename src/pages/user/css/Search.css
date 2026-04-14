@@ -62,7 +62,7 @@
 
 .search-icon {
     position: absolute;
-    left: 20px;
+    left: 4px;
     color: var(--text-secondary);
     pointer-events: none;
     width: 20px;
@@ -177,21 +177,21 @@
         grid-template-columns: 1fr;
         gap: 12px;
     }
-    
+
     .result-card {
         padding: 12px;
         border-radius: 16px;
     }
-    
+
     .result-image-wrapper {
         width: 60px;
         height: 60px;
     }
-    
+
     .result-name {
         font-size: 1rem;
     }
-    
+
     .result-meta {
         font-size: 0.85rem;
     }

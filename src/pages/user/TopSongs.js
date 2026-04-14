@@ -5,6 +5,7 @@ import {
     ChevronRight, Disc
 } from 'lucide-react';
 import Sidebar from '../../components/layout/Sidebar';
+import PageLoader from '../../components/common/PageLoader';
 import songService from '../../services/songService';
 import genreService from '../../services/genreService';
 import { usePlayer } from '../../context/PlayerContext';
@@ -121,6 +122,8 @@ const TopSongs = () => {
         { id: 'WEEK_7', label: 'This Week' }
     ];
 
+    if (loading) return <PageLoader message="Loading chart..." />;
+
     return (
         <div className="top-songs-container bg-slate-950 min-h-screen">
             <Sidebar />
@@ -215,11 +218,6 @@ const TopSongs = () => {
                                     <ChevronRight className="w-5 h-5 ml-4 text-slate-700 opacity-0 group-hover:opacity-100" />
                                 </div>
                             ))
-                        ) : loading ? (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-500">
-                                <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
-                                <p className="font-medium">Scaling the charts...</p>
-                            </div>
                         ) : (
                             <div className="h-64 flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 rounded-3xl border-2 border-dashed border-white/5">
                                 <Disc className="w-16 h-16 mb-4 opacity-10" />
