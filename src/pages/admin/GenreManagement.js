@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import genreService from "../../services/genreService";
 import { getErrorMessage } from "../../utils/errorUtils";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import "./css/AdminDashboard.css"; // Reuse dashboard layout/table styles
 import "./css/AdminGenre.css";
 
@@ -28,6 +29,10 @@ function GenreManagement() {
     const [isEditing, setIsEditing] = useState(false);
     const [currentGenre, setCurrentGenre] = useState({ id: "", name: "", description: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // Confirm Delete state
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [genreToDelete, setGenreToDelete] = useState(null);
 
     const fetchGenres = useCallback(async (name = "") => {
         setLoading(true);
@@ -71,7 +76,13 @@ function GenreManagement() {
     };
 
     const handleDeleteGenre = async (genre) => {
-        if (!window.confirm(`Are you sure you want to delete the genre "${genre.name}"?`)) return;
+        setGenreToDelete(genre);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        const genre = genreToDelete;
+        if (!genre) return;
 
         setLoading(true);
         setError("");
@@ -286,6 +297,19 @@ function GenreManagement() {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={showDeleteConfirm}
+                onClose={() => {
+                    setShowDeleteConfirm(false);
+                    setGenreToDelete(null);
+                }}
+                onConfirm={confirmDelete}
+                title="Delete Genre"
+                message={`Are you sure you want to delete the genre "${genreToDelete?.name}"? This action cannot be undone.`}
+                confirmText="Delete"
+                type="danger"
+            />
         </div>
     );
 }

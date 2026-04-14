@@ -58,11 +58,10 @@ const AlbumDetail = () => {
             const payload = response.data?.data || response.data || response;
 
             setAlbum({
-                name: payload.albumName || payload.name || "Untitled Album",
-                description: payload.albumDescription || payload.description || '',
-                imageUrl: payload.albumImageUrl || payload.imageUrl || payload.album_image_url,
-                username: payload.nameUser || payload.username || "Artist",
-                nameUser: payload.nameUser || payload.username,
+                name: payload.name || "Untitled Album",
+                description: payload.description || '',
+                imageUrl: payload.imageUrl || payload.album_image_url,
+                username: payload.username || "Artist",
                 userId: payload.userId || payload.userIdUser, // handle potential variations
                 createdAt: payload.createdAt
             });
@@ -107,7 +106,7 @@ const AlbumDetail = () => {
             return {
                 id: s.songId || s.id || s.idSong,
                 title: s.songName || s.name || s.title,
-                artist: album.nameUser || album.username || "Artist",
+                artist: album.username || "Artist",
                 avatar: sImage ? (sImage.startsWith('http') ? sImage : `${process.env.REACT_APP_API_BASE_URL}${sImage}`) : getUserAvatar(null),
                 url: sUrl ? (sUrl.startsWith('http') ? sUrl : `${process.env.REACT_APP_API_BASE_URL}${sUrl}`) : null
             };
@@ -116,7 +115,7 @@ const AlbumDetail = () => {
         playTrack({
             id: songId,
             title: songMetadata?.name || song.songName || song.name,
-            artist: songMetadata?.artistName || album.nameUser || album.username || "Artist",
+            artist: songMetadata?.artistName || album.username || "Artist",
             avatar: songMetadata?.imageUrl || song.songImageUrl || song.imageUrl || album.imageUrl || getUserAvatar(null),
             url: fullMusicUrl
         }, queue, index);
@@ -199,7 +198,7 @@ const AlbumDetail = () => {
         );
     }
 
-    const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
+    const albumRawImage = album.imageUrl || album.album_image_url;
     const albumCover = albumRawImage
         ? (albumRawImage.startsWith('http') ? albumRawImage : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`)
         : null;
@@ -289,7 +288,7 @@ const AlbumDetail = () => {
                             <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-white/60">
                                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
                                     <User className="w-4 h-4 text-indigo-400" />
-                                    <span>{album.nameUser || album.username || "Unknown Artist"}</span>
+                                    <span>{album.username || "Unknown Artist"}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Music className="w-4 h-4" />
@@ -372,7 +371,7 @@ const AlbumDetail = () => {
                                                         {song.songName || song.name}
                                                     </span>
                                                     <span className="text-[11px] text-white/30 truncate">
-                                                        {album.nameUser || album.username || "Unknown"}
+                                                        {album.username || "Unknown"}
                                                     </span>
                                                 </div>
                                             </div>

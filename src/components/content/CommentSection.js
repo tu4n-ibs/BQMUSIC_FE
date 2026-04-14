@@ -5,6 +5,8 @@ import commentService from '../../services/commentService';
 import { getUserAvatar } from '../../utils/userUtils';
 import { formatDate } from '../../utils/dateUtils';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorUtils';
+import ConfirmModal from '../common/ConfirmModal';
 import { toast } from 'react-hot-toast';
 import './CommentSection.css';
 
@@ -17,6 +19,9 @@ const CommentSection = ({ postId, onClose, totalComments, onCommentAdded }) => {
     const navigate = useNavigate();
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [replyTo, setReplyTo] = useState(null); // { id, username }
     const [editingComment, setEditingComment] = useState(null); // { id, content }
@@ -113,10 +118,16 @@ const CommentSection = ({ postId, onClose, totalComments, onCommentAdded }) => {
         }
     };
 
-    const handleDeleteComment = async (commentId) => {
-        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    const handleDeleteComment = (commentId) => {
+        setCommentToDelete(commentId);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        const id = commentToDelete;
+        if (!id) return;
         try {
-            await commentService.deleteComment(commentId);
+            await commentService.deleteComment(id);
             fetchRootComments();
         } catch (error) {
             console.error("Error deleting comment:", error);

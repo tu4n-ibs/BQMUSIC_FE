@@ -175,7 +175,7 @@ function NewFeed() {
           const albumQueue = albumDetail.songs.map(song => ({
             id: song.songId,
             title: song.songName,
-            artist: albumDetail.nameUser || albumDetail.username || post.username,
+            artist: albumDetail.username || post.username,
             avatar: song.songImageUrl || albumDetail.imageUrl || post.postImage,
             url: song.musicUrl ? (song.musicUrl.startsWith('http') ? song.musicUrl : `${process.env.REACT_APP_API_BASE_URL}${song.musicUrl}`) : null
           }));

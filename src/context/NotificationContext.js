@@ -48,7 +48,10 @@ export const NotificationProvider = ({ children }) => {
                     setUnreadCount(prev => prev + 1);
 
                     if (window.alert) {
-                        window.alert(`${newNotif.user || 'Notification'}: ${newNotif.text || newNotif.content || 'New interaction'}`);
+                        toast(`${newNotif.user || 'Notification'}: ${newNotif.text || newNotif.content || 'New interaction'}`, {
+                            icon: '🔔',
+                            duration: 5000
+                        });
                     }
                 });
             };

@@ -271,14 +271,11 @@ const Sidebar = () => {
                     </div>
 
                     {/* Common Items for More Menu */}
-                    <MenuItem icon={<Bookmark className="w-5 h-5" />} label="Saved" />
                     <MenuItem
                         icon={theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
                         label="Switch appearance"
                         onClick={toggleTheme}
                     />
-                    <MenuItem icon={<AlertCircle className="w-5 h-5" />} label="Report a problem" />
-
                     <div className="h-0.5 bg-gray-700/30 my-1"></div>
 
                     <div 

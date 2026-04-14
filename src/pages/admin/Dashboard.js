@@ -16,8 +16,6 @@ import "./css/AdminDashboard.css";
 function AdminMenu() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isProcessing, setIsProcessing] = useState(null); // Track which user is being toggled
 
@@ -50,15 +48,6 @@ function AdminMenu() {
     { label: 'Banned users', value: users.filter(u => !(u.isActive ?? u.is_active)).length, icon: <UserMinus size={20} />, color: 'red' },
   ];
 
-  const handleRead = async (id) => {
-    try {
-      const data = await userService.getUserById(id);
-      setSelectedUser(data.data || data);
-      setShowDetailModal(true);
-    } catch (error) {
-      toast.error("Could not fetch user details");
-    }
-  };
 
   const handleToggleStatus = async (user) => {
     const targetId = user.id || user.userId || user.idUser;
@@ -148,7 +137,7 @@ function AdminMenu() {
                         <div className="user-profile-cell">
                           {user.imageUrl ? (
                             <img 
-                              src={user.imageUrl.startsWith('blob') ? user.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${user.imageUrl}`} 
+                              src={user.imageUrl.startsWith('http') ? user.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${user.imageUrl.startsWith('/') ? '' : '/'}${user.imageUrl}`} 
                               alt="" 
                               className="user-avatar-sm" 
                             />
@@ -168,13 +157,7 @@ function AdminMenu() {
                       </td>
                       <td className="text-right">
                         <div className="action-buttons-group">
-                          <button 
-                            onClick={() => handleRead(targetId)} 
-                            className="btn-action-icon" 
-                            title="Quick View"
-                          >
-                            <Eye size={16} />
-                          </button>
+
                           
                           <button 
                             onClick={() => handleToggleStatus(user)} 
@@ -199,42 +182,7 @@ function AdminMenu() {
         </div>
       </div>
 
-      {/* --- Detail Modal --- */}
-      {showDetailModal && selectedUser && (
-        <div className="admin-modal-overlay" onClick={() => setShowDetailModal(false)}>
-          <div className="admin-modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header-admin">
-              <h3>User Basic Profile</h3>
-            </div>
-            <div className="modal-body-admin center">
-                <div className="profile-hero">
-                    {selectedUser.imageUrl ? (
-                        <img src={`${process.env.REACT_APP_API_BASE_URL}${selectedUser.imageUrl}`} className="hero-avatar" alt="" />
-                    ) : (
-                        <div className="hero-avatar-placeholder">{selectedUser.name?.charAt(0) || 'U'}</div>
-                    )}
-                    <h2>{selectedUser.name}</h2>
-                    <p>{selectedUser.email}</p>
-                </div>
-                <div className="detail-info-grid">
-                    <div className="info-item">
-                        <label>Account Created</label>
-                        <span>{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'N/A'}</span>
-                    </div>
-                    <div className="info-item">
-                        <label>User Roles</label>
-                        <div className="roles-list center">
-                            {selectedUser.roles?.map(r => <span key={r} className="role-tag">{r}</span>)}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="modal-footer-admin">
-                <button className="btn-secondary-admin" onClick={() => setShowDetailModal(false)}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

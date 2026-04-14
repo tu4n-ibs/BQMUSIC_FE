@@ -1,15 +1,16 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-    Users, 
-    Music, 
-    LayoutDashboard, 
-    ArrowLeft, 
+import {
+    Users,
+    Music,
+    LayoutDashboard,
+    ArrowLeft,
     LogOut,
     Menu,
     X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmModal from '../common/ConfirmModal';
 import './css/AdminLayout.css';
 
 const AdminLayout = ({ children }) => {
@@ -17,6 +18,7 @@ const AdminLayout = ({ children }) => {
     const location = useLocation();
     const { logout } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
 
     const menuItems = [
         { id: 'dashboard', label: 'User Management', icon: <Users size={20} />, path: '/admin' },
@@ -24,16 +26,14 @@ const AdminLayout = ({ children }) => {
     ];
 
     const handleLogout = async () => {
-        if (window.confirm('Are you sure you want to log out?')) {
-            await logout();
-            navigate('/login');
-        }
+        await logout();
+        navigate('/login');
     };
 
     return (
         <div className="admin-layout">
             {/* Mobile Toggle */}
-            <button 
+            <button
                 className="admin-mobile-toggle"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
@@ -43,7 +43,7 @@ const AdminLayout = ({ children }) => {
             {/* Sidebar */}
             <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className="admin-sidebar-header">
-                    <div className="admin-logo" onClick={() => navigate('/newF')}>
+                    <div className="admin-logo" onClick={() => navigate('/admin')}>
                         <span className="logo-text">BQ</span>
                         <span className="logo-subtext">ADMIN</span>
                     </div>
@@ -53,7 +53,7 @@ const AdminLayout = ({ children }) => {
                     <div className="nav-section">
                         <span className="nav-section-title">Main Menu</span>
                         {menuItems.map((item) => (
-                            <div 
+                            <div
                                 key={item.id}
                                 className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
                                 onClick={() => navigate(item.path)}
@@ -66,17 +66,23 @@ const AdminLayout = ({ children }) => {
 
                     <div className="nav-section bottom">
                         <span className="nav-section-title">Actions</span>
-                        <div className="admin-nav-item secondary" onClick={() => navigate('/newF')}>
-                            <span className="nav-icon"><ArrowLeft size={20} /></span>
-                            <span className="nav-label">Back to Site</span>
-                        </div>
-                        <div className="admin-nav-item logout" onClick={handleLogout}>
+                        <div className="admin-nav-item logout" onClick={() => setShowLogoutConfirm(true)}>
                             <span className="nav-icon"><LogOut size={20} /></span>
                             <span className="nav-label">Logout</span>
                         </div>
                     </div>
                 </nav>
             </aside>
+
+            <ConfirmModal 
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={handleLogout}
+                title="Logout Confirmation"
+                message="Are you sure you want to log out of the admin panel?"
+                confirmText="Logout"
+                type="danger"
+            />
 
             {/* Main Content */}
             <main className={`admin-main ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>

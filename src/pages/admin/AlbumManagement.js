@@ -8,6 +8,7 @@ import {
     ChevronLeft, Loader2, CheckCircle2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import './css/GenreManagement.css';
 
 const AlbumManagement = () => {
@@ -31,6 +32,10 @@ const AlbumManagement = () => {
     const [availableSongs, setAvailableSongs] = useState([]);
     const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false);
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
+
+    // Confirm Delete state
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [albumIdToDelete, setAlbumIdToDelete] = useState(null);
 
     useEffect(() => {
         fetchAlbums();
@@ -119,7 +124,13 @@ const AlbumManagement = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this album?")) return;
+        setAlbumIdToDelete(id);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        const id = albumIdToDelete;
+        if (!id) return;
         try {
             await albumService.deleteAlbum(id);
             fetchAlbums();
@@ -358,6 +369,19 @@ const AlbumManagement = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={showDeleteConfirm}
+                onClose={() => {
+                    setShowDeleteConfirm(false);
+                    setAlbumIdToDelete(null);
+                }}
+                onConfirm={confirmDelete}
+                title="Delete Album"
+                message="Are you sure you want to delete this album? This action cannot be undone."
+                confirmText="Delete"
+                type="danger"
+            />
         </div>
     );
 };

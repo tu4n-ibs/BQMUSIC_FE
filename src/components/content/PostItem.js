@@ -28,8 +28,8 @@ const PostItem = ({
     const authorId = post.authorId || post.idUser;
     const postImage = (post.postImage ? (post.postImage.startsWith('http') ? post.postImage : `${process.env.REACT_APP_API_BASE_URL}${post.postImage}`) : null) ||
         (post.imageUrlSong ? (post.imageUrlSong.startsWith('http') ? post.imageUrlSong : `${process.env.REACT_APP_API_BASE_URL}${post.imageUrlSong}`) :
-            (post.imageUrlAlbum || post.albumImageUrl) ? (
-                (post.imageUrlAlbum || post.albumImageUrl).startsWith('http') ? (post.imageUrlAlbum || post.albumImageUrl) : `${process.env.REACT_APP_API_BASE_URL}${(post.imageUrlAlbum || post.albumImageUrl)}`
+            (post.imageUrlAlbum || post.imageUrl) ? (
+                (post.imageUrlAlbum || post.imageUrl).startsWith('http') ? (post.imageUrlAlbum || post.imageUrl) : `${process.env.REACT_APP_API_BASE_URL}${(post.imageUrlAlbum || post.imageUrl)}`
             ) : DEFAULT_COVER_URL);
 
     const caption = post.caption || post.content || post.contentShare;

@@ -58,7 +58,7 @@ const MyAlbums = () => {
     const handleOpenModal = (album = null) => {
         if (album) {
             setEditingAlbum(album);
-            const albumRawImage = album.albumImageUrl || album.imageUrl || album.album_image_url;
+            const albumRawImage = album.imageUrl || album.album_image_url;
             let albumCover = null;
             if (albumRawImage) {
                 albumCover = albumRawImage.startsWith('http') 
@@ -66,8 +66,8 @@ const MyAlbums = () => {
                     : `${process.env.REACT_APP_API_BASE_URL}${albumRawImage.startsWith('/') ? '' : '/'}${albumRawImage}`;
             }
             setForm({
-                name: album.albumName || album.name,
-                description: album.albumDescription || album.description || '',
+                name: album.name,
+                description: album.description || '',
                 imageFile: null,
                 imagePreview: albumCover
             });
@@ -109,8 +109,8 @@ const MyAlbums = () => {
         setIsSubmitting(true);
         try {
             const formData = new FormData();
-            formData.append('albumName', form.name.trim());
-            formData.append('albumDescription', form.description.trim());
+            formData.append('name', form.name.trim());
+            formData.append('description', form.description.trim());
 
             if (form.imageFile) {
                 formData.append('file', form.imageFile);
@@ -211,7 +211,7 @@ const MyAlbums = () => {
                                             onClick={() => navigate(`/album/${album.id}`)}
                                         >
                                             {(() => {
-                                                const imgPath = album.albumImageUrl || album.imageUrl || album.album_image_url;
+                                                const imgPath = album.imageUrl || album.album_image_url;
                                                 if (imgPath) {
                                                     const finalUrl = imgPath.startsWith('http')
                                                         ? imgPath
@@ -225,7 +225,7 @@ const MyAlbums = () => {
                                                 }
                                                 return null;
                                             })()}
-                                            <div className="w-full h-full bg-indigo-500/10 flex items-center justify-center placeholder-div" style={{ display: (album.albumImageUrl || album.imageUrl || album.album_image_url) ? 'none' : 'flex' }}>
+                                            <div className="w-full h-full bg-indigo-500/10 flex items-center justify-center placeholder-div" style={{ display: (album.imageUrl || album.album_image_url) ? 'none' : 'flex' }}>
                                                 <Disc className="w-16 h-16 text-indigo-500/20" />
                                             </div>
 

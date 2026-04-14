@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart, X } from 'lucide-react';
+import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart, X, Share2 } from 'lucide-react';
 import userService from '../../services/userService';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { useNotification } from '../../context/NotificationContext';
@@ -59,6 +59,11 @@ const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
             case 'ALBUM':
                 navigate('/my-albums');
                 break;
+            case 'USER':
+                if (targetId) {
+                    navigate(`/user/${targetId}`);
+                }
+                break;
             default:
                 // For other types like USER/FOLLOW, stay or go to profile
                 break;
@@ -96,6 +101,7 @@ const NotificationPanel = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
             case 'like': return <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500" />;
             case 'comment': return <MessageSquare className="w-3.5 h-3.5 text-blue-500" />;
             case 'mention': return <AtSign className="w-3.5 h-3.5 text-purple-500" />;
+            case 'share': return <Share2 className="w-3.5 h-3.5 text-green-500" />;
             default: return <Music className="w-3.5 h-3.5 text-slate-500" />;
         }
     };
