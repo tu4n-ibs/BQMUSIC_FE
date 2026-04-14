@@ -97,6 +97,25 @@ const songService = {
         let url = `/song/top-songs?period=${period}`;
         if (genreId) url += `&genreId=${genreId}`;
         return axiosClient.get(url);
+    },
+
+    /**
+     * Delete a song (soft delete)
+     * @param {string|number} songId 
+     * @returns {Promise}
+     */
+    deleteSong: async (songId) => {
+        return axiosClient.delete(`/song/delete?songId=${songId}`);
+    },
+
+    /**
+     * Get all published songs for administration
+     * @param {number} page 
+     * @param {number} size 
+     * @returns {Promise}
+     */
+    getAdminSongs: async (page = 0, size = 20) => {
+        return axiosClient.get(`/song/admin/list?page=${page}&size=${size}`);
     }
 };
 

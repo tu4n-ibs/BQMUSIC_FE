@@ -21,6 +21,7 @@ import OAuth2RedirectHandler from "../pages/auth/OAuth2RedirectHandler";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import AdminLayout from "../components/layout/AdminLayout";
+import SongManagement from "../pages/admin/SongManagement";
 
 function AppRoutes() {
     return (
@@ -46,6 +47,7 @@ function AppRoutes() {
                 {/* Admin Routes with AdminLayout */}
                 <Route path="/admin" element={<AdminLayout><AdminMenu /></AdminLayout>} />
                 <Route path="/admin/genres" element={<AdminLayout><GenreManagement /></AdminLayout>} />
+                <Route path="/admin/songs" element={<AdminLayout><SongManagement /></AdminLayout>} />
                 
                 {/* User Routes */}
                 <Route path="/my-albums" element={<MyAlbums />} />

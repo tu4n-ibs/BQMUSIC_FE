@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Heart, MessageCircle, Music, Play, Pause, MoreHorizontal, Share2, ListMusic } from 'lucide-react';
+import { X, Heart, MessageCircle, Music, Play, Pause, MoreHorizontal, Share2, ListMusic, Trash2 } from 'lucide-react';
 import AddToPlaylistModal from './AddToPlaylistModal';
+import ConfirmModal from './ConfirmModal';
 import SharePostModal from './SharePostModal';
 import postService from '../../services/postService';
 import likeService from '../../services/likeService';
@@ -13,7 +14,7 @@ import { usePlayer } from '../../context/PlayerContext';
 import { toast } from 'react-hot-toast';
 import './PostDetailModal.css';
 
-const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
+const PostDetailModal = ({ isOpen, onClose, postId, onUpdate, currentUser, isGroupAdmin }) => {
     const navigate = useNavigate();
     const { playTrack, currentTrack, isPlaying, isPaused } = usePlayer();
     const [post, setPost] = useState(null);
@@ -23,6 +24,8 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
     const [songToPlaylist, setSongToPlaylist] = useState({ id: null, name: '' });
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [postToShare, setPostToShare] = useState(null);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [songToDelete, setSongToDelete] = useState(null);
 
     useEffect(() => {
         if (isOpen && postId) {
@@ -74,6 +77,8 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 imageUrl: imageUrl,
                 musicLink: musicLink,
                 songName: songName,
+                authorId: rawData.userId || rawData.idUser || rawData.authorId,
+                idUser: rawData.idUser || rawData.userId,
                 authorName: rawData.userName || 'Unknown',
                 authorAvatar: getUserAvatar(rawData.userImage),
                 likeCount: rawData.likeCount || 0,
@@ -217,6 +222,34 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
         });
     };
 
+    const handleDeleteSong = async () => {
+        if (!songToDelete) return;
+        
+        try {
+            await songService.deleteSong(songToDelete.id);
+            toast.success("Song deleted successfully");
+            setIsDeleteConfirmOpen(false);
+            
+            // If the deleted song is the main target of this post, notify parent to hide the post
+            if (post && (post.idSong === songToDelete.id || post.targetId === songToDelete.id)) {
+                if (onUpdate) onUpdate(post.id, { isDeleted: true });
+                
+                // Also dispatch global event to hide all other posts of this song
+                window.dispatchEvent(new CustomEvent('SONG_DELETED', { 
+                    detail: { songId: songToDelete.id, postId: post.id } 
+                }));
+
+                onClose();
+            } else if (post.targetType === 'ALBUM') {
+                // Refresh post details to update tracklist
+                fetchPostDetails();
+            }
+        } catch (error) {
+            console.error("Error deleting song:", error);
+            toast.error("Failed to delete song");
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -288,6 +321,17 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
 
                             {/* Content & Comments */}
                             <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+                                {post.targetType === 'SONG' && post.songName && (
+                                    <div className="flex items-center gap-2 mb-6 p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
+                                        <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                            <Music className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-base font-black text-white">{post.songName}</span>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {post.content && (
                                     <div className="mb-8">
                                         <p className="post-content-text whitespace-pre-wrap">
@@ -391,6 +435,20 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                                                             <ListMusic className="w-4 h-4" />
                                                                             Add to Playlist
                                                                         </button>
+                                                                        {(song.userId === currentUser?.id || isGroupAdmin) && (
+                                                                            <button
+                                                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:text-white hover:bg-rose-500/20 transition-all uppercase tracking-wider"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setSongToDelete({ id: song.songId, name: song.name });
+                                                                                    setIsDeleteConfirmOpen(true);
+                                                                                    setShowTrackMenu(null);
+                                                                                }}
+                                                                            >
+                                                                                <Trash2 className="w-4 h-4" />
+                                                                                Delete Song
+                                                                            </button>
+                                                                        )}
                                                                         <button className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider">
                                                                             <Share2 className="w-4 h-4" />
                                                                             Share Track
@@ -475,6 +533,20 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                                                             <ListMusic className="w-4 h-4" />
                                                             Add to Playlist
                                                         </button>
+                                                        {((post.idUser === (post.userId || post.idUser)) || isGroupAdmin) && post.targetType === 'SONG' && (
+                                                            <button
+                                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-rose-400 hover:text-white hover:bg-rose-500/20 transition-all uppercase tracking-wider text-left"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setSongToDelete({ id: post.idSong || post.targetId, name: post.songName });
+                                                                    setIsDeleteConfirmOpen(true);
+                                                                    setShowTrackMenu(null);
+                                                                }}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                                Delete Song
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </>
                                             )}
@@ -514,6 +586,16 @@ const PostDetailModal = ({ isOpen, onClose, postId, onUpdate }) => {
                 onShareSuccess={() => {
                     // Update external state if necessary
                 }}
+            />
+
+            <ConfirmModal
+                isOpen={isDeleteConfirmOpen}
+                onClose={() => setIsDeleteConfirmOpen(false)}
+                onConfirm={handleDeleteSong}
+                title="Delete Song"
+                message={`Are you sure you want to delete "${songToDelete?.name}"? This will also hide all posts associated with this song.`}
+                confirmText="Delete"
+                type="danger"
             />
         </div>
     );

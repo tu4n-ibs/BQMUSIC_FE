@@ -23,6 +23,7 @@ const AdminLayout = ({ children }) => {
     const menuItems = [
         { id: 'dashboard', label: 'User Management', icon: <Users size={20} />, path: '/admin' },
         { id: 'genres', label: 'Genre Management', icon: <Music size={20} />, path: '/admin/genres' },
+        { id: 'songs', label: 'Song Management', icon: <Music size={20} />, path: '/admin/songs' },
     ];
 
     const handleLogout = async () => {

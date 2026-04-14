@@ -157,8 +157,16 @@ function NewFeed() {
     const handleGlobalPostCreated = () => {
       fetchPosts();
     };
+    const handleSongDeleted = (e) => {
+      const { songId } = e.detail;
+      setPosts(prev => prev.filter(p => p.idSong !== songId && p.targetId !== songId));
+    };
     window.addEventListener('POST_CREATED', handleGlobalPostCreated);
-    return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+    window.addEventListener('SONG_DELETED', handleSongDeleted);
+    return () => {
+      window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+      window.removeEventListener('SONG_DELETED', handleSongDeleted);
+    };
   }, [fetchPosts]);
 
   // Handle notification redirect to post detail
@@ -310,7 +318,11 @@ function NewFeed() {
         postId={selectedPostIdDetail}
         onUpdate={(postId, updates) => {
           // Sync updates to the feed list if needed
-          setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
+          if (updates.isDeleted) {
+            setPosts(prev => prev.filter(p => p.id !== postId));
+          } else {
+            setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
+          }
         }}
       />
 

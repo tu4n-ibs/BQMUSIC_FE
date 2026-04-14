@@ -273,8 +273,17 @@ const GroupDetail = () => {
                 }
             }
         };
+        const handleSongDeleted = (e) => {
+            const { songId } = e.detail;
+            setPosts(prev => prev.filter(p => p.idSong !== songId && p.targetId !== songId));
+            setPendingPosts(prev => prev.filter(p => p.idSong !== songId && p.targetId !== songId));
+        };
         window.addEventListener('POST_CREATED', handleGlobalPostCreated);
-        return () => window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+        window.addEventListener('SONG_DELETED', handleSongDeleted);
+        return () => {
+            window.removeEventListener('POST_CREATED', handleGlobalPostCreated);
+            window.removeEventListener('SONG_DELETED', handleSongDeleted);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groupId, group?.role, fetchGroupData]);
 
@@ -376,8 +385,14 @@ const GroupDetail = () => {
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
                 postId={selectedPostIdDetail}
+                currentUser={user}
+                isGroupAdmin={group?.role?.toUpperCase() === 'ADMIN' && activeTab === 'manage_content'}
                 onUpdate={(postId, updates) => {
-                    setPosts(prev => prev.map(p => p.idPost === postId ? { ...p, ...updates } : p));
+                    if (updates.isDeleted) {
+                        setPosts(prev => prev.filter(p => p.idPost !== postId));
+                    } else {
+                        setPosts(prev => prev.map(p => p.idPost === postId ? { ...p, ...updates } : p));
+                    }
                 }}
             />
 
@@ -494,6 +509,14 @@ const GroupDetail = () => {
                                     )}
                                 </button>
                             )}
+                            {group.role?.toUpperCase() === 'ADMIN' && (
+                                <button
+                                    className={`detail-tab ${activeTab === 'manage_content' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('manage_content')}
+                                >
+                                    <Shield className="w-4 h-4" /> Manage Content
+                                </button>
+                            )}
                         </div>
 
                         {group.role?.toUpperCase() === 'ADMIN' && activeTab === 'review_posts' && (
@@ -604,6 +627,49 @@ const GroupDetail = () => {
                                 )}
                             </div>
                         )}
+                        {group.role?.toUpperCase() === 'ADMIN' && activeTab === 'manage_content' && (
+                            <div className="group-feed flex flex-col gap-6">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-xl font-bold flex items-center gap-2">
+                                        <Shield className="w-5 h-5 text-indigo-400" />
+                                        Manage Group Content
+                                    </h3>
+                                    <div className="text-xs text-slate-500 font-medium bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                        {posts.length} Total Posts
+                                    </div>
+                                </div>
+                                {posts.length === 0 ? (
+                                    <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5">
+                                        <MessageSquare className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+                                        <p className="text-slate-500">No approved posts to manage.</p>
+                                    </div>
+                                ) : (
+                                    posts.map(post => (
+                                        <PostItem
+                                            key={post.idPost}
+                                            post={post}
+                                            currentUser={currentUser}
+                                            isPlaying={isPlaying}
+                                            currentTrack={currentTrack}
+                                            onPlayMusic={playTrack}
+                                            onToggleLike={toggleLike}
+                                            onProfileClick={(id) => navigate(`/profile/${id}`)}
+                                            onPostClick={(id) => { setSelectedPostIdDetail(id); setIsDetailModalOpen(true); }}
+                                            onSharePost={(p) => { setPostToShare(p); setIsShareModalOpen(true); }}
+                                            onAddToPlaylist={(track) => { setSongToPlaylist(track); setIsPlaylistModalOpen(true); }}
+                                            expandedComments={expandedComments[post.idPost]}
+                                            onToggleComments={(id) => setExpandedComments(prev => ({ ...prev, [id]: !prev[id] }))}
+                                            onCommentAdded={fetchGroupData}
+                                            onNavigateToGroup={(id) => {
+                                                if (id !== groupId) navigate(`/groups/${id}`);
+                                            }}
+                                            isGroupAdmin={true}
+                                        />
+                                    ))
+                                )}
+                            </div>
+                        )}
+
                         {group.role?.toUpperCase() === 'ADMIN' && activeTab === 'requests' && (
                             <div className="group-requests-section">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -757,14 +823,11 @@ const GroupDetail = () => {
                                                     }}
                                                     expandedComments={expandedComments[post.idPost]}
                                                     onToggleComments={(id) => setExpandedComments(prev => ({ ...prev, [id]: !prev[id] }))}
-                                                    onCommentAdded={() => {
-                                                        setPosts(prev => prev.map(p =>
-                                                            p.idPost === post.idPost ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p
-                                                        ));
-                                                    }}
+                                                    onCommentAdded={fetchGroupData}
                                                     onNavigateToGroup={(id) => {
                                                         if (id !== groupId) navigate(`/groups/${id}`);
                                                     }}
+                                                    isGroupAdmin={false}
                                                 />
                                             ))
                                         )}

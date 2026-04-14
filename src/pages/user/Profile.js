@@ -146,6 +146,32 @@ function Profile() {
   }, [targetId, navigate, storedIdUser, updateUser]);
 
   useEffect(() => {
+    const handleSongDeleted = (e) => {
+      const { songId } = e.detail;
+      // Filter out posts with the deleted song
+      setUserPosts(prev => prev.filter(p => p.idSong !== songId && p.targetId !== songId));
+      // Re-fetch stats to update post count
+      const fetchStats = async () => {
+        try {
+          const statsResponse = await userService.getUserStats(targetId);
+          const rawStats = statsResponse.data || statsResponse;
+          const statsContent = rawStats.data || rawStats;
+          setStats(prev => ({
+            ...prev,
+            postCount: statsContent.postCount || 0
+          }));
+        } catch (err) {
+          console.error("Error updating stats after deletion:", err);
+        }
+      };
+      fetchStats();
+    };
+
+    window.addEventListener('SONG_DELETED', handleSongDeleted);
+    return () => window.removeEventListener('SONG_DELETED', handleSongDeleted);
+  }, [targetId]);
+
+  useEffect(() => {
     if (targetId) {
       if (activeTab === 'posts') {
         fetchPosts(targetId, null); // null postType to get both OWNER and SHARE
@@ -277,7 +303,7 @@ function Profile() {
     }, queue, playIndex !== -1 ? playIndex : 0);
   };
 
-  const handlePlaySong = async (song, index) => {
+  const handlePlaySong = async (song, index, songsList = null) => {
     let musicLink = song.musicUrl || song.musicLink;
     let songId = song.songId || song.id;
     let songMetadata = null;
@@ -298,7 +324,8 @@ function Profile() {
     const avatarToUse = songMetadata?.imageUrl || song.imageUrl;
     const fullAvatar = avatarToUse ? (avatarToUse.startsWith('http') ? avatarToUse : `${process.env.REACT_APP_API_BASE_URL}${avatarToUse}`) : getUserAvatar(user.imageUrl);
 
-    const queue = userSongs.map(s => {
+    const sourceList = songsList || userSongs;
+    const queue = sourceList.map(s => {
       const sLink = s.musicUrl || s.musicLink;
       const sImage = s.imageUrl || s.songImage || s.image;
       return {
@@ -709,52 +736,55 @@ function Profile() {
             );
           })()}
 
-          {activeTab === 'songs' && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {songsLoading ? (
-                <SectionLoader message="Loading songs..." />
-              ) : userSongs.length > 0 ? (
-                <div className="flex flex-col gap-3">
-                  {userSongs.filter(song => (isOwnProfile || song.visibility !== 'PRIVATE') && (song.status === 'PUBLISHED' || song.status === 'published')).map((song, index) => (
-                    <div
-                      key={song.id || index}
-                      className="profile-song-row group"
-                      onClick={() => handlePlaySong(song, index)}
-                    >
-                      <div className="song-row-left">
-                        <img
-                          src={song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${song.imageUrl}`) : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
-                          alt={song.name || song.songName}
-                          className="song-row-img"
-                          onError={(e) => e.target.src = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
-                        />
-                        <div className="song-row-info">
-                          <div className="song-row-name">{song.name || song.songName}</div>
-                          <div className="song-row-artist">{song.artistName || user.name}</div>
+          {activeTab === 'songs' && (() => {
+            const filteredSongs = userSongs.filter(song => (isOwnProfile || song.visibility !== 'PRIVATE') && (song.status === 'PUBLISHED' || song.status === 'published'));
+            return (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {songsLoading ? (
+                  <SectionLoader message="Loading songs..." />
+                ) : filteredSongs.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {filteredSongs.map((song, index) => (
+                      <div
+                        key={song.id || index}
+                        className="profile-song-row group"
+                        onClick={() => handlePlaySong(song, index, filteredSongs)}
+                      >
+                        <div className="song-row-left">
+                          <img
+                            src={song.imageUrl ? (song.imageUrl.startsWith('http') ? song.imageUrl : `${process.env.REACT_APP_API_BASE_URL}${song.imageUrl}`) : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
+                            alt={song.name || song.songName}
+                            className="song-row-img"
+                            onError={(e) => e.target.src = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop"}
+                          />
+                          <div className="song-row-info">
+                            <div className="song-row-name">{song.name || song.songName}</div>
+                            <div className="song-row-artist">{song.artistName || user.name}</div>
+                          </div>
+                        </div>
+                        <div className="song-row-right">
+                          <div className="song-row-stat">
+                            <Headphones className="w-4 h-4 opacity-50" />
+                            <span>{(song.playCount || 0).toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="song-row-right">
-                        <div className="song-row-stat">
-                          <Headphones className="w-4 h-4 opacity-50" />
-                          <span>{(song.playCount || 0).toLocaleString()}</span>
-                        </div>
-                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="ig-empty-state">
+                    <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Music className="w-10 h-10 text-indigo-500" />
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="ig-empty-state">
-                  <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Music className="w-10 h-10 text-indigo-500" />
+                    <div className="ig-empty-title">No Songs Library</div>
+                    <div className="text-slate-500 max-w-sm mx-auto mb-8">
+                      This user hasn't added any songs to their library yet.
+                    </div>
                   </div>
-                  <div className="ig-empty-title">No Songs Library</div>
-                  <div className="text-slate-500 max-w-sm mx-auto mb-8">
-                    This user hasn't added any songs to their library yet.
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            );
+          })()}
 
 
         </div>
@@ -782,7 +812,13 @@ function Profile() {
         onClose={() => setIsDetailModalOpen(false)}
         postId={selectedPostIdDetail}
         onUpdate={(postId, updates) => {
-          setUserPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
+          if (updates.isDeleted) {
+            setUserPosts(prev => prev.filter(p => p.id !== postId));
+            // Trigger stats refresh
+            window.dispatchEvent(new CustomEvent('SONG_DELETED', { detail: { songId: null, postId } }));
+          } else {
+            setUserPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
+          }
         }}
       />
 
