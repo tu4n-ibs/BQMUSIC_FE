@@ -89,7 +89,7 @@ function Profile() {
     const fetchUser = async () => {
       try {
         const response = await userService.getUserById(targetId);
-        const actualData = userData.data || userData;
+        const actualData = response.data || response;
         setUser(actualData);
 
         const realId = actualData.userId || actualData.idUser || actualData.id;
@@ -373,7 +373,10 @@ function Profile() {
   };
 
    const handleFollowToggle = async () => {
-    if (!user || !targetId) return;
+    if (!user) return;
+    const resolvedId = user.userId || user.idUser || user.id || targetId;
+    if (!resolvedId) return;
+
     const originalFollowState = isFollowing;
     
     // Optimistic Update
@@ -387,9 +390,9 @@ function Profile() {
 
     try {
       if (originalFollowState) {
-        await userService.unfollowUser(targetId);
+        await userService.unfollowUser(resolvedId);
       } else {
-        await userService.followUser(targetId);
+        await userService.followUser(resolvedId);
       }
     } catch (err) {
       console.error("Error changing follow status:", err);
