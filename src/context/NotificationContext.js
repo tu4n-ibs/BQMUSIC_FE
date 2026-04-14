@@ -3,6 +3,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuth } from './AuthContext';
 import notificationService from '../services/notificationService';
+import { toast } from 'react-hot-toast';
 
 const NotificationContext = createContext();
 
@@ -47,12 +48,10 @@ export const NotificationProvider = ({ children }) => {
                     setNotifications(prev => [newNotif, ...prev]);
                     setUnreadCount(prev => prev + 1);
 
-                    if (window.alert) {
-                        toast(`${newNotif.user || 'Notification'}: ${newNotif.text || newNotif.content || 'New interaction'}`, {
-                            icon: '🔔',
-                            duration: 5000
-                        });
-                    }
+                    toast(`${newNotif.user || 'Notification'}: ${newNotif.text || newNotif.content || 'New interaction'}`, {
+                        icon: '🔔',
+                        duration: 5000
+                    });
                 });
             };
 
