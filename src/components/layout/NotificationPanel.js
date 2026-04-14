@@ -4,6 +4,7 @@ import { Bell, UserPlus, MessageSquare, AtSign, Music, CheckCheck, Heart, X, Sha
 import userService from '../../services/userService';
 import { useSuggestions } from '../../hooks/useSuggestions';
 import { useNotification } from '../../context/NotificationContext';
+import { toast } from 'react-hot-toast';
 import './css/NotificationPanel.css';
 import { getUserAvatar } from '../../utils/userUtils';
 
