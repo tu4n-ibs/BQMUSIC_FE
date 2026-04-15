@@ -385,7 +385,7 @@ const GroupDetail = () => {
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
                 postId={selectedPostIdDetail}
-                currentUser={user}
+                currentUser={{ id: user?.idUser || user?.userId || user?.id }}
                 isGroupAdmin={group?.role?.toUpperCase() === 'ADMIN' && activeTab === 'manage_content'}
                 onUpdate={(postId, updates) => {
                     if (updates.isDeleted) {

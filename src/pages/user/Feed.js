@@ -316,6 +316,7 @@ function NewFeed() {
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         postId={selectedPostIdDetail}
+        currentUser={{ id: user?.idUser || user?.userId || user?.id }}
         onUpdate={(postId, updates) => {
           // Sync updates to the feed list if needed
           if (updates.isDeleted) {

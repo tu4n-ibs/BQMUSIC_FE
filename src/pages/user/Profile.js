@@ -811,6 +811,7 @@ function Profile() {
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         postId={selectedPostIdDetail}
+        currentUser={{ id: storedIdUser }}
         onUpdate={(postId, updates) => {
           if (updates.isDeleted) {
             setUserPosts(prev => prev.filter(p => p.id !== postId));
